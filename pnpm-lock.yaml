@@ -140,6 +140,10 @@ importers:
         version: 4.3.0
 
   packages/theme:
+    dependencies:
+      '@fontsource/open-runde':
+        specifier: ^5.2.1
+        version: 5.2.1
     devDependencies:
       '@tailwindcss/vite':
         specifier: ^4.1.13
@@ -1392,6 +1396,12 @@ packages:
         integrity: sha512-+CNAzxglkrpNf/kKywqQfk74QjtceuOE7Qm+AF8miRvPF/wmmK5+OJOgVh3AVTT3RP2mH3+FOaxlE5v72owk0A==,
       }
     engines: { node: ^20.19.0 || ^22.13.0 || >=24 }
+
+  '@fontsource/open-runde@5.2.1':
+    resolution:
+      {
+        integrity: sha512-+Chu3ZSO8KrD5vAZfz+Z6CGoDWuMeZ+DezS14FjdnrPBg5SRqlM20aKgWDZBgcufNktBKLbKeaRRXoVeMXbuyQ==,
+      }
 
   '@humanfs/core@0.19.2':
     resolution:
@@ -9302,6 +9312,8 @@ snapshots:
     dependencies:
       '@eslint/core': 1.2.1
       levn: 0.4.1
+
+  '@fontsource/open-runde@5.2.1': {}
 
   '@humanfs/core@0.19.2':
     dependencies:

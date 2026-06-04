@@ -1,0 +1,52 @@
+---
+description: Write unit tests in Arrange–Act–Assert (AAA) structure
+globs: packages/**/*.spec.ts,packages/**/*.spec.tsx,packages/**/*.test.ts,packages/**/*.test.tsx
+alwaysApply: false
+---
+
+# Arrange–Act–Assert (AAA)
+
+Structure every test as three explicit blocks, separated by a blank line:
+
+1. **Arrange** — inputs, fixtures, and dependencies (no calls to the system under test).
+2. **Act** — one invocation of the behaviour under test (assign to `result`, `output`, etc.).
+3. **Assert** — `expect` on the outcome only.
+
+```typescript
+// ✅ GOOD
+it('returns true for an uppercase character cue', () => {
+  const line = 'STEEL';
+
+  const result = isCharacter(line);
+
+  expect(result).toBe(true);
+});
+
+// ❌ BAD — act and assert merged, no named result
+it('returns true for an uppercase character cue', () => {
+  expect(isCharacter('STEEL')).toBe(true);
+});
+```
+
+## Rules
+
+- One **Act** per test. If you need multiple acts, split tests or use `it.each` with one row per case.
+- Prefer a **named `result`** (or `output`) in Act; avoid `expect(fn(input)).toBe(...)` inline.
+- **Arrange** may define several inputs; still perform a single Act (e.g. one `classifyLine` call).
+- For React Testing Library, Act is `render(...)` or `userEvent`; Assert is `expect(screen...)` / `expect(element...)`.
+- Optional `// Arrange` comments only when blocks are long; blank lines are required either way.
+
+## `it.each`
+
+Each row is Arrange; Act and Assert stay in the callback:
+
+```typescript
+it.each(['STEEL', 'BRICK (O.S.)'])(
+  'returns true for character cue %s',
+  (line) => {
+    const result = isCharacter(line);
+
+    expect(result).toBe(true);
+  },
+);
+```

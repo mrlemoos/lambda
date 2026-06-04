@@ -1,11 +1,41 @@
 @import 'tailwindcss';
+@import '@fontsource/open-runde/400.css';
+@import '@fontsource/open-runde/600.css';
+@import '@fontsource/open-runde/700.css';
 
 @theme {
-  --font-script: 'Courier New', Courier, ui-monospace, monospace;
+  --font-script: Courier, 'Courier Prime', 'Courier New', monospace;
+  --font-outline: 'Open Runde', system-ui, sans-serif;
   --width-script-page-us-letter: 8.5in;
   --height-script-page-us-letter: 11in;
   --width-script-page-a4: 210mm;
   --height-script-page-a4: 297mm;
+  --line-height-script-tight: 1;
+}
+
+@utility section {
+  font-family: var(--font-outline);
+  font-size: 12pt;
+  font-weight: 700;
+  margin-top: 1.25em;
+  margin-bottom: 0.25em;
+}
+
+@utility synopsis {
+  font-family: var(--font-outline);
+  font-size: 11pt;
+  font-style: italic;
+  color: #555;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+@utility note {
+  font-family: var(--font-outline);
+  font-size: 11pt;
+  color: #555;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 @utility scene-heading {
@@ -13,6 +43,50 @@
   text-transform: uppercase;
   margin-top: 1.5em;
   margin-bottom: 0.5em;
+}
+
+@utility transition {
+  font-family: var(--font-script);
+  font-size: 12pt;
+  text-align: right;
+  padding-right: 1.25in;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+@utility character {
+  font-family: var(--font-script);
+  font-size: 12pt;
+  line-height: var(--line-height-script-tight);
+  text-transform: uppercase;
+  padding-left: 2.2in;
+  margin-top: 1em;
+  margin-bottom: 0;
+}
+
+@utility parenthetical {
+  font-family: var(--font-script);
+  font-size: 12pt;
+  line-height: var(--line-height-script-tight);
+  padding-left: 1.6in;
+  margin: 0;
+}
+
+@utility dialogue {
+  font-family: var(--font-script);
+  font-size: 12pt;
+  line-height: var(--line-height-script-tight);
+  max-width: 400px;
+  padding-left: 1.5in;
+  overflow-wrap: break-word;
+  margin: 0;
+}
+
+@utility action {
+  font-family: var(--font-script);
+  font-size: 12pt;
+  margin-top: 1em;
+  margin-bottom: 0;
 }
 
 @utility script-page {
@@ -26,7 +100,89 @@
   box-sizing: border-box;
 }
 
+@utility title-page-sheet {
+  font-family: var(--font-script);
+  font-size: 12pt;
+  line-height: var(--line-height-script-tight);
+  display: flex;
+  flex-direction: column;
+  width: var(--width-script-page-us-letter);
+  min-height: var(--height-script-page-us-letter);
+  margin-inline: auto;
+  padding: 1in 1in 1in 1.5in;
+  background: white;
+  color: black;
+  box-sizing: border-box;
+}
+
+@utility title-page-centre {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 0;
+}
+
+@utility title-page-title {
+  text-transform: uppercase;
+  margin: 0;
+}
+
+@utility title-page-credit {
+  margin: 1.5em 0 0;
+}
+
+@utility title-page-author {
+  margin: 0.25em 0 0;
+}
+
+@utility title-page-source {
+  margin: 1.5em 0 0;
+}
+
+@utility title-page-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+@utility title-page-contact {
+  text-align: left;
+}
+
+@utility title-page-meta {
+  text-align: right;
+}
+
 [data-page-format='a4'] .script-page {
   width: var(--width-script-page-a4);
   min-height: var(--height-script-page-a4);
+}
+
+[data-page-format='a4'] .title-page-sheet {
+  width: var(--width-script-page-a4);
+  min-height: var(--height-script-page-a4);
+  padding: 25.4mm 25.4mm 25.4mm 38.1mm;
+}
+
+.script-page :is(.character, .parenthetical, .dialogue) {
+  margin-block: 0;
+}
+
+.title-page-sheet
+  :is(
+    .title-page-title,
+    .title-page-credit,
+    .title-page-author,
+    .title-page-source
+  ) {
+  margin-block: 0;
+}
+
+.title-page-contact p,
+.title-page-meta p {
+  margin: 0;
 }

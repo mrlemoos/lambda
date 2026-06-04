@@ -29,7 +29,19 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) for every commi
 - Format: `<type>(<scope>): <imperative summary>` — scope optional; no trailing period on subject
 - Types: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `chore`, `build`, `ci`, `style`, `revert`
 - Subject: imperative mood (`add`, `fix`, `remove`), ≤72 characters
-- Body: only when the *why* is not obvious from the subject (breaking changes, migrations, issue links)
+- Body: only when the _why_ is not obvious from the subject (breaking changes, migrations, issue links)
 - Examples: `feat(editor): add scene heading node`, `chore: add pre-commit hooks`, `docs: update CONTEXT glossary`
 
 Do not use prose subjects like `Add …` or `Update …` without a type prefix.
+
+## Test-driven development
+
+Use **red–green–refactor** TDD when adding or changing behaviour (see the `tdd` skill):
+
+1. **Red** — one failing test for one behaviour, via the public interface.
+2. **Green** — minimal code to pass that test only.
+3. **Refactor** — clean up while tests stay green; never refactor on red.
+
+Work in **vertical slices** (one test → one implementation), not horizontal batches of tests then code.
+
+Tests must follow **Arrange–Act–Assert** (see `.cursor/rules/test-aaa-format.mdc`): separate Arrange, Act, and Assert blocks with a blank line between each; one Act per test; name the outcome (`result`, `output`, etc.) before asserting.

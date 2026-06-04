@@ -13,7 +13,9 @@
       "default": "./src/index.ts"
     }
   },
-  "dependencies": {},
+  "dependencies": {
+    "@fontsource/open-runde": "^5.2.1"
+  },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.13",
     "tailwindcss": "^4.1.13"

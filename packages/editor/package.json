@@ -8,18 +8,72 @@
   "types": "./dist/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
-    "./styles.css": "./src/styles.css",
+    "./styles.css": "./src/lib/styles.css",
     ".": {
       "@org/source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./elements/Section": {
+      "@org/source": "./src/lib/elements/Section.ts",
+      "types": "./src/lib/elements/Section.ts",
+      "import": "./src/lib/elements/Section.ts",
+      "default": "./src/lib/elements/Section.ts"
+    },
+    "./elements/Synopsis": {
+      "@org/source": "./src/lib/elements/Synopsis.ts",
+      "types": "./src/lib/elements/Synopsis.ts",
+      "import": "./src/lib/elements/Synopsis.ts",
+      "default": "./src/lib/elements/Synopsis.ts"
+    },
+    "./elements/Note": {
+      "@org/source": "./src/lib/elements/Note.ts",
+      "types": "./src/lib/elements/Note.ts",
+      "import": "./src/lib/elements/Note.ts",
+      "default": "./src/lib/elements/Note.ts"
+    },
+    "./elements/TitlePage": {
+      "@org/source": "./src/lib/elements/TitlePage.ts",
+      "types": "./src/lib/elements/TitlePage.ts",
+      "import": "./src/lib/elements/TitlePage.ts",
+      "default": "./src/lib/elements/TitlePage.ts"
+    },
     "./elements/SceneHeading": {
-      "@org/source": "./src/elements/SceneHeading.ts",
-      "types": "./src/elements/SceneHeading.ts",
-      "import": "./src/elements/SceneHeading.ts",
-      "default": "./src/elements/SceneHeading.ts"
+      "@org/source": "./src/lib/elements/SceneHeading.ts",
+      "types": "./src/lib/elements/SceneHeading.ts",
+      "import": "./src/lib/elements/SceneHeading.ts",
+      "default": "./src/lib/elements/SceneHeading.ts"
+    },
+    "./elements/Transition": {
+      "@org/source": "./src/lib/elements/Transition.ts",
+      "types": "./src/lib/elements/Transition.ts",
+      "import": "./src/lib/elements/Transition.ts",
+      "default": "./src/lib/elements/Transition.ts"
+    },
+    "./elements/Character": {
+      "@org/source": "./src/lib/elements/Character.ts",
+      "types": "./src/lib/elements/Character.ts",
+      "import": "./src/lib/elements/Character.ts",
+      "default": "./src/lib/elements/Character.ts"
+    },
+    "./elements/Parenthetical": {
+      "@org/source": "./src/lib/elements/Parenthetical.ts",
+      "types": "./src/lib/elements/Parenthetical.ts",
+      "import": "./src/lib/elements/Parenthetical.ts",
+      "default": "./src/lib/elements/Parenthetical.ts"
+    },
+    "./elements/Dialogue": {
+      "@org/source": "./src/lib/elements/Dialogue.ts",
+      "types": "./src/lib/elements/Dialogue.ts",
+      "import": "./src/lib/elements/Dialogue.ts",
+      "default": "./src/lib/elements/Dialogue.ts"
+    },
+    "./elements/Action": {
+      "@org/source": "./src/lib/elements/Action.ts",
+      "types": "./src/lib/elements/Action.ts",
+      "import": "./src/lib/elements/Action.ts",
+      "default": "./src/lib/elements/Action.ts"
     }
   },
   "dependencies": {

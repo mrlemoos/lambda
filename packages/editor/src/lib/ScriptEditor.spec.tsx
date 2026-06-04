@@ -12,6 +12,7 @@ describe('ScriptEditor', () => {
     );
 
     const heading = screen.getByText('INT. KITCHEN - DAY');
+
     expect(heading).toHaveClass('scene-heading');
   });
 
@@ -22,9 +23,11 @@ describe('ScriptEditor', () => {
       </ScriptEditor>,
     );
 
-    expect(
-      screen.getByText('INT. KITCHEN - DAY').closest('[data-page-format]'),
-    ).toHaveAttribute('data-page-format', 'us-letter');
+    const pageRoot = screen
+      .getByText('INT. KITCHEN - DAY')
+      .closest('[data-page-format]');
+
+    expect(pageRoot).toHaveAttribute('data-page-format', 'us-letter');
   });
 
   it('applies a4 page format when requested', () => {
@@ -34,8 +37,10 @@ describe('ScriptEditor', () => {
       </ScriptEditor>,
     );
 
-    expect(
-      screen.getByText('INT. KITCHEN - DAY').closest('[data-page-format]'),
-    ).toHaveAttribute('data-page-format', 'a4');
+    const pageRoot = screen
+      .getByText('INT. KITCHEN - DAY')
+      .closest('[data-page-format]');
+
+    expect(pageRoot).toHaveAttribute('data-page-format', 'a4');
   });
 });
