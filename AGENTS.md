@@ -21,3 +21,15 @@
 - The `nx-generate` skill handles generator discovery internally - don't call nx_docs just to look up generator syntax
 
 <!-- nx configuration end-->
+
+## Git commits
+
+Use [Conventional Commits](https://www.conventionalcommits.org/) for every commit.
+
+- Format: `<type>(<scope>): <imperative summary>` — scope optional; no trailing period on subject
+- Types: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `chore`, `build`, `ci`, `style`, `revert`
+- Subject: imperative mood (`add`, `fix`, `remove`), ≤72 characters
+- Body: only when the *why* is not obvious from the subject (breaking changes, migrations, issue links)
+- Examples: `feat(editor): add scene heading node`, `chore: add pre-commit hooks`, `docs: update CONTEXT glossary`
+
+Do not use prose subjects like `Add …` or `Update …` without a type prefix.
