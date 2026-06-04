@@ -1,0 +1,32 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-script: 'Courier New', Courier, ui-monospace, monospace;
+  --width-script-page-us-letter: 8.5in;
+  --height-script-page-us-letter: 11in;
+  --width-script-page-a4: 210mm;
+  --height-script-page-a4: 297mm;
+}
+
+@utility scene-heading {
+  font-family: var(--font-script);
+  text-transform: uppercase;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+@utility script-page {
+  font-family: var(--font-script);
+  width: var(--width-script-page-us-letter);
+  min-height: var(--height-script-page-us-letter);
+  margin-inline: auto;
+  padding: 1in 1in 1in 1.5in;
+  background: white;
+  color: black;
+  box-sizing: border-box;
+}
+
+[data-page-format='a4'] .script-page {
+  width: var(--width-script-page-a4);
+  min-height: var(--height-script-page-a4);
+}

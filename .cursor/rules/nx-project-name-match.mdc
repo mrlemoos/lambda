@@ -1,0 +1,20 @@
+---
+description: Nx project name must match package.json name when project.json exists
+alwaysApply: true
+---
+
+# Nx project and package name parity
+
+When a package has `project.json`, its `name` field **must** exactly match the `name` field in that package's `package.json`.
+
+```json
+// packages/editor/project.json
+{ "name": "@lambda/editor" }
+
+// packages/editor/package.json
+{ "name": "@lambda/editor" }
+```
+
+- Scaffolding: set both to the scoped npm name (e.g. `@lambda/editor`), not a short name like `editor`.
+- Renaming: update `project.json`, `package.json`, and any `nx` commands / CI that reference the project.
+- If there is no `project.json` (Nx config inlined in `package.json` only), this rule does not apply.

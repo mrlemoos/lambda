@@ -1,0 +1,24 @@
+---
+description: Use Vite for builds and Vitest for unit tests in this monorepo
+alwaysApply: true
+---
+
+# Vite + Vitest only
+
+Libraries and apps in this workspace use:
+
+- **Vite** for bundling, dev server, and Storybook builder (`vite.config.mts`).
+- **Vitest** for unit and component tests (`*.spec.ts` / `*.test.ts`).
+
+Do **not** introduce:
+
+- Webpack, Rollup-only, or esbuild-only app bundlers for new packages (unless Nx generator requires a one-off and you migrate to Vite immediately).
+- Jest or other test runners for new tests.
+
+Run tests through Nx:
+
+```bash
+pnpm nx test @lambda/editor
+```
+
+New React libraries: `@nx/react:library` with `--bundler=vite` and `--unitTestRunner=vitest`.
