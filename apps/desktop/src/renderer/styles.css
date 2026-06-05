@@ -105,6 +105,14 @@ html[data-platform='darwin'] .app-shell {
   min-height: calc(100vh - env(titlebar-area-height, 40px));
 }
 
+.app-shell.script-workspace,
+html[data-platform='darwin'] .app-shell.script-workspace {
+  background: var(--color-script-page-bg);
+  border-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .app-shell :is(button, a),
 .app-shell :is(button, a):focus,
 .app-shell :is(button, a):focus-visible {

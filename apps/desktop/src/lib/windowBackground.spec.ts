@@ -12,7 +12,7 @@ describe('resolveWindowBackgroundColor', () => {
     expect(resolveWindowBackgroundColor(true, 'linux')).toBe('#000000');
   });
 
-  it('uses a light shell colour when the system prefers light mode on other platforms', () => {
-    expect(resolveWindowBackgroundColor(false, 'win32')).toBe('#e8e8ec');
+  it('uses the script page colour when the system prefers light mode on other platforms', () => {
+    expect(resolveWindowBackgroundColor(false, 'win32')).toBe('#ffffff');
   });
 });

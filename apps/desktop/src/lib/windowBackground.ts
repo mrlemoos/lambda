@@ -1,6 +1,6 @@
 const MACOS_TRANSPARENT_WINDOW = '#00000000';
 
-/** Matches non-macOS `--app-page` in `renderer/styles.css`. */
+/** Matches non-macOS `--color-script-page-bg` from `@lambda/theme`. */
 export function resolveWindowBackgroundColor(
   shouldUseDarkColors: boolean,
   platform: NodeJS.Platform = process.platform,
@@ -9,5 +9,5 @@ export function resolveWindowBackgroundColor(
     return MACOS_TRANSPARENT_WINDOW;
   }
 
-  return shouldUseDarkColors ? '#000000' : '#e8e8ec';
+  return shouldUseDarkColors ? '#000000' : '#ffffff';
 }
