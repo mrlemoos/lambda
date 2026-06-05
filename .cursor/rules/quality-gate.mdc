@@ -1,0 +1,50 @@
+---
+description: Agents must not finish work until typecheck, lint, and tests are green
+alwaysApply: true
+---
+
+# Quality gate (typecheck · lint · test)
+
+Do **not** mark a task complete, commit, open a PR, or move to the next slice until all three pass.
+
+## Required command
+
+From the repo root:
+
+```bash
+pnpm nx run-many -t typecheck,lint,test --nxBail
+```
+
+Use `--skipNxCache` when verifying fixes to a failing gate. Prefer `nx affected` when only a subset changed:
+
+```bash
+pnpm nx affected -t typecheck,lint,test --nxBail
+```
+
+## Hard stops
+
+- **Red gate → stop.** Fix failures before new features, refactors, or “while I’m here” edits.
+- **Do not skip** typecheck, lint, or test because “tests already passed” or “only a small change”.
+- **Do not commit or push** on a red gate unless the user explicitly asks to commit broken work.
+
+## When to run
+
+| Moment | Action |
+|--------|--------|
+| Before claiming done | Run the full gate |
+| After fixing one failure | Re-run the full gate (not just the failed target) |
+| Mid-task discovery of gate failure | Fix immediately; do not stack more changes |
+
+## On failure
+
+1. Read the first failing task output ( `--nxBail` stops at the first failure).
+2. Fix the root cause with the smallest correct diff.
+3. Re-run the full gate until exit code `0`.
+
+## Scope notes
+
+- **typecheck** — `tsc --build` per package (includes spec/storybook projects).
+- **lint** — ESLint via `@nx/eslint/plugin` (root `eslint.config.mjs`).
+- **test** — Vitest via `@nx/vite`; depends on `^build`.
+
+A passing gate is necessary but not sufficient: also honour TDD, AAA tests, and conventional commits when requested.

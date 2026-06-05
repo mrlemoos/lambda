@@ -1,0 +1,39 @@
+---
+description: Use transparent outline-color on focused editing surfaces, not outline none
+globs: packages/theme/**/*.css,packages/editor/**/*.{tsx,css}
+alwaysApply: false
+---
+
+# Focus outline on editing surfaces
+
+Custom writing surfaces (TipTap / `contenteditable`) must **not** rely on the browser’s default focus ring — it clashes with the script page — and must **not** use `outline: none`, which removes focus indication for keyboard and assistive tech.
+
+Use **`outline-color: transparent`** instead. The outline remains in the focus model; only the visible colour is suppressed.
+
+## ✅ GOOD
+
+```css
+.script-page :is(.ProseMirror, .script-editor-content):focus,
+.script-page :is(.ProseMirror, .script-editor-content):focus-visible {
+  outline-color: transparent;
+}
+```
+
+## ❌ BAD
+
+```css
+/* Removes focus from the accessibility tree / keyboard UX */
+.ProseMirror:focus {
+  outline: none;
+}
+
+/* Default browser ring on a white script page */
+/* (no rule — avoid) */
+```
+
+## When to apply
+
+- TipTap `EditorContent` / `.ProseMirror` inside `.script-page`
+- Any future `contenteditable` or embedded editor chrome in `@lambda/editor`
+
+If a surface needs a *visible* focus indicator (e.g. a button), use a deliberate design token — do not reuse this pattern outside the writing surface.

@@ -77,11 +77,19 @@
     }
   },
   "dependencies": {
-    "@lambda/theme": "workspace:*"
+    "@lambda/theme": "workspace:*",
+    "@tiptap/core": "^3.25.0",
+    "@tiptap/extension-document": "^3.25.0",
+    "@tiptap/extension-history": "^3.25.0",
+    "@tiptap/extension-paragraph": "^3.25.0",
+    "@tiptap/extension-text": "^3.25.0",
+    "@tiptap/pm": "^3.25.0",
+    "@tiptap/react": "^3.25.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.13",
     "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/user-event": "^14.6.1",
     "tailwindcss": "^4.1.13"
   }
 }

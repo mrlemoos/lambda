@@ -11,6 +11,7 @@
   --width-script-page-a4: 210mm;
   --height-script-page-a4: 297mm;
   --line-height-script-tight: 1;
+  --color-script-page-border: rgb(0 0 0 / 0.08);
 }
 
 @utility section {
@@ -36,6 +37,10 @@
   color: #555;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
+}
+
+@utility forced-prefix {
+  color: #888;
 }
 
 @utility scene-heading {
@@ -98,6 +103,7 @@
   background: white;
   color: black;
   box-sizing: border-box;
+  border: 1px solid var(--color-script-page-border);
 }
 
 @utility title-page-sheet {
@@ -162,6 +168,11 @@
   min-height: var(--height-script-page-a4);
 }
 
+.script-page :is(.ProseMirror, .script-editor-content):focus,
+.script-page :is(.ProseMirror, .script-editor-content):focus-visible {
+  outline-color: transparent;
+}
+
 [data-page-format='a4'] .title-page-sheet {
   width: var(--width-script-page-a4);
   min-height: var(--height-script-page-a4);
@@ -170,6 +181,22 @@
 
 .script-page :is(.character, .parenthetical, .dialogue) {
   margin-block: 0;
+}
+
+.script-page :is(.section, .synopsis, .note) {
+  font-family: var(--font-outline);
+}
+
+.script-page
+  :is(
+    .scene-heading,
+    .action,
+    .transition,
+    .character,
+    .parenthetical,
+    .dialogue
+  ) {
+  font-family: var(--font-script);
 }
 
 .title-page-sheet
