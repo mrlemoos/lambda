@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "husky",
-    "dev": "nx run-many -t dev"
+    "dev": "nx dev @lambda/desktop"
   },
   "private": true,
   "devDependencies": {
