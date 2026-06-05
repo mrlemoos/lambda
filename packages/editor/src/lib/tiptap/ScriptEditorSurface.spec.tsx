@@ -18,6 +18,14 @@ function pressEnter(element: Element) {
 }
 
 describe('ScriptEditorSurface', () => {
+  it('shows page number 1 on the first body page', async () => {
+    render(<ScriptEditorSurface />);
+
+    const pageNumber = await waitFor(() => screen.getByText('1.'));
+
+    expect(pageNumber).toHaveClass('script-page-number');
+  });
+
   it('classifies a scene heading when the user presses Enter', async () => {
     const user = userEvent.setup();
 

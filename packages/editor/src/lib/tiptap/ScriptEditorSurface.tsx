@@ -1,6 +1,5 @@
-import { EditorContent } from '@tiptap/react';
-
-import { ScriptEditor, type PageFormat } from '../ScriptEditor';
+import type { PageFormat } from '../ScriptEditor';
+import { ScriptEditorContent } from './ScriptEditorContent';
 import { useScriptEditor } from './useScriptEditor';
 
 export type ScriptEditorSurfaceProps = {
@@ -16,9 +15,5 @@ export function ScriptEditorSurface({
     return null;
   }
 
-  return (
-    <ScriptEditor pageFormat={pageFormat}>
-      <EditorContent editor={editor} />
-    </ScriptEditor>
-  );
+  return <ScriptEditorContent editor={editor} pageFormat={pageFormat} />;
 }

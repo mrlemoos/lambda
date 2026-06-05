@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { useEditor } from '@tiptap/react';
 
-import { ScriptEditor, type PageFormat } from '../ScriptEditor';
+import type { PageFormat } from '../ScriptEditor';
+import { ScriptEditorContent } from './ScriptEditorContent';
 import { ScriptEditorSurface } from './ScriptEditorSurface';
 import { createScriptEditorExtensions } from './useScriptEditor';
 
@@ -52,11 +53,7 @@ function ScriptEditorWithContent({
     return null;
   }
 
-  return (
-    <ScriptEditor pageFormat={pageFormat}>
-      <EditorContent editor={editor} />
-    </ScriptEditor>
-  );
+  return <ScriptEditorContent editor={editor} pageFormat={pageFormat} />;
 }
 
 export const ForcedSceneHeading: Story = {
