@@ -102,8 +102,21 @@ html[data-platform='darwin'] body::before {
   left: 0;
   right: 0;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   -webkit-app-region: drag;
   app-region: drag;
+}
+
+.window-drag-region-filename {
+  max-width: min(42rem, 55vw);
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 html[data-platform='darwin'] .window-drag-region {

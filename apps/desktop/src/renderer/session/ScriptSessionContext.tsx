@@ -25,6 +25,7 @@ export type UnsavedChoice = 'save' | 'discard' | 'cancel';
 type ScriptSessionContextValue = {
   script: FountainScript | null;
   filePath: string | null;
+  fileName: string;
   dirty: boolean;
   startNewScript: () => Promise<void>;
   openScriptFromDisk: () => Promise<void>;
@@ -51,6 +52,10 @@ function createSessionFromText(
   };
 }
 
+function fileNameFromPath(filePath: string | null): string {
+  return filePath?.split(/[/\\]/).pop() || 'Untitled';
+}
+
 export function ScriptSessionProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const [script, setScript] = useState<FountainScript | null>(null);
@@ -60,10 +65,11 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
   const [openError, setOpenError] = useState<string | null>(null);
 
   const dirty = script ? isDirty(savedText, currentText) : false;
+  const fileName = useMemo(() => fileNameFromPath(filePath), [filePath]);
 
   const syncWindowTitle = useCallback(
     async (path: string | null, edited: boolean) => {
-      const fileName = path ? (path.split('/').pop() ?? path) : null;
+      const fileName = path ? fileNameFromPath(path) : null;
       await window.lambda.setWindowTitle(
         formatWindowTitle({ fileName, isDirty: edited }),
       );
@@ -304,6 +310,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     () => ({
       script,
       filePath,
+      fileName,
       dirty,
       startNewScript,
       openScriptFromDisk,
@@ -317,6 +324,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     [
       script,
       filePath,
+      fileName,
       dirty,
       startNewScript,
       openScriptFromDisk,
