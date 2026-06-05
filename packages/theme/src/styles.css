@@ -120,16 +120,24 @@
 }
 
 @utility script-page {
+  --script-page-border-width: 1px;
+
   position: relative;
   font-family: var(--font-script);
-  width: var(--width-script-page-us-letter);
-  min-height: var(--height-script-page-us-letter);
+  width: calc(
+    var(--width-script-page-us-letter) + var(--script-page-border-width) +
+      var(--script-page-border-width)
+  );
+  min-height: calc(
+    var(--height-script-page-us-letter) + var(--script-page-border-width) +
+      var(--script-page-border-width)
+  );
   margin-inline: auto;
   padding: 1in 1in 1in 1.5in;
   background: var(--color-script-page-bg);
   color: var(--color-script-page-fg);
   box-sizing: border-box;
-  border: 1px solid var(--color-script-page-border);
+  border: var(--script-page-border-width) solid var(--color-script-page-border);
 }
 
 @utility script-page-body {
@@ -241,8 +249,14 @@
 }
 
 [data-page-format='a4'] .script-page {
-  width: var(--width-script-page-a4);
-  min-height: var(--height-script-page-a4);
+  width: calc(
+    var(--width-script-page-a4) + var(--script-page-border-width) +
+      var(--script-page-border-width)
+  );
+  min-height: calc(
+    var(--height-script-page-a4) + var(--script-page-border-width) +
+      var(--script-page-border-width)
+  );
 }
 
 .script-page :is(.ProseMirror, .script-editor-content),
