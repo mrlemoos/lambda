@@ -8,8 +8,15 @@ import {
   app,
   dialog,
   ipcMain,
+  nativeTheme,
   type MenuItemConstructorOptions,
 } from 'electron';
+
+import {
+  configureMacWindowChrome,
+  getMacBrowserWindowOptions,
+} from '../lib/macWindowChrome.js';
+import { resolveWindowBackgroundColor } from '../lib/windowBackground.js';
 
 const mainDir = fileURLToPath(new URL('.', import.meta.url));
 
@@ -77,17 +84,35 @@ function buildMenu(): Menu {
   return Menu.buildFromTemplate(template);
 }
 
+const isMac = process.platform === 'darwin';
+
+function syncWindowBackgroundColor(window: BrowserWindow): void {
+  window.setBackgroundColor(
+    resolveWindowBackgroundColor(nativeTheme.shouldUseDarkColors),
+  );
+}
+
 function createWindow(): void {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     title: 'Untitled — Lambda',
+    backgroundColor: resolveWindowBackgroundColor(
+      nativeTheme.shouldUseDarkColors,
+    ),
+    ...(isMac ? getMacBrowserWindowOptions() : {}),
     webPreferences: {
       preload: join(mainDir, '../preload/index.js'),
       contextIsolation: true,
       nodeIntegration: false,
     },
   });
+
+  syncWindowBackgroundColor(mainWindow);
+
+  if (isMac) {
+    configureMacWindowChrome(mainWindow);
+  }
 
   if (!app.isPackaged && process.env.ELECTRON_RENDERER_URL) {
     mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL);
@@ -99,6 +124,11 @@ function createWindow(): void {
 app.whenReady().then(() => {
   Menu.setApplicationMenu(buildMenu());
   registerIpcHandlers();
+  nativeTheme.on('updated', () => {
+    if (mainWindow) {
+      syncWindowBackgroundColor(mainWindow);
+    }
+  });
   createWindow();
 
   app.on('activate', () => {

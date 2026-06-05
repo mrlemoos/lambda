@@ -60,4 +60,14 @@ describe('parseTitlePage', () => {
 
     expect(parseTitlePage(lines).credit).toBe('Written by');
   });
+
+  it('parses unindented title text after a key-only Title line', () => {
+    const lines = ['Title:', 'MY SCRIPT', 'Credit: by', 'Author: Jane Doe'];
+
+    const result = parseTitlePage(lines);
+
+    expect(result.title).toEqual(['MY SCRIPT']);
+    expect(result.credit).toBe('by');
+    expect(result.author).toEqual(['Jane Doe']);
+  });
 });

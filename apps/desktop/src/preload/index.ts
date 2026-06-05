@@ -3,6 +3,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 import type { LambdaApi } from './api.js';
 
 const api: LambdaApi = {
+  platform: process.platform,
   onFileCommand(listener) {
     const handler = (_event: Electron.IpcRendererEvent, command: string) => {
       listener(command as Parameters<LambdaApi['onFileCommand']>[0]);

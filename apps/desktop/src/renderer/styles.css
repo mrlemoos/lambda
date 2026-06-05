@@ -1,17 +1,120 @@
 @import '@lambda/editor/styles.css';
 
+@theme {
+  --color-black-900: #000000;
+}
+
+:root {
+  color-scheme: light dark;
+
+  --app-fg: #111111;
+  --app-page: #e8e8ec;
+  --glass-surface: rgb(255 255 255 / 0.58);
+  --glass-border: rgb(255 255 255 / 0.42);
+  --glass-blur: 18px;
+  --glass-mesh-1: rgb(99 102 241 / 0.14);
+  --glass-mesh-2: rgb(14 165 233 / 0.1);
+  --link-fg: #0c4a6e;
+  --error-bg: rgb(254 242 242 / 0.92);
+  --error-fg: #991b1b;
+  --modal-backdrop: rgb(0 0 0 / 0.35);
+  --modal-bg: rgb(255 255 255 / 0.94);
+  --modal-border: rgb(0 0 0 / 0.08);
+  --button-bg: rgb(255 255 255 / 0.72);
+  --button-border: rgb(0 0 0 / 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --app-fg: #ffffff;
+    --app-page: var(--color-black-900);
+    --glass-surface: rgb(255 255 255 / 0.045);
+    --glass-border: rgb(255 255 255 / 0.08);
+    --glass-mesh-1: rgb(255 255 255 / 0.035);
+    --glass-mesh-2: rgb(255 255 255 / 0.02);
+    --link-fg: #ffffff;
+    --error-bg: rgb(69 10 10 / 0.72);
+    --error-fg: #fecaca;
+    --modal-backdrop: rgb(0 0 0 / 0.72);
+    --modal-bg: rgb(0 0 0 / 0.88);
+    --modal-border: rgb(255 255 255 / 0.12);
+    --button-bg: rgb(255 255 255 / 0.08);
+    --button-border: rgb(255 255 255 / 0.16);
+  }
+}
+
+html {
+  min-height: 100%;
+  background-color: var(--app-page);
+}
+
+html[data-platform='darwin'] {
+  background-color: transparent;
+}
+
 body {
   margin: 0;
+  min-height: 100vh;
   font-family:
     system-ui,
     -apple-system,
     sans-serif;
-  background: #1a1a1a;
-  color: #f5f5f5;
+  color: var(--app-fg);
+  background-color: transparent;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 80% 55% at 12% 8%,
+      var(--glass-mesh-1),
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at 88% 92%,
+      var(--glass-mesh-2),
+      transparent 58%
+    ),
+    var(--app-page);
+}
+
+html[data-platform='darwin'] body::before {
+  display: none;
+}
+
+.app-shell {
+  min-height: 100vh;
+  box-sizing: border-box;
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+html[data-platform='darwin'] .app-shell {
+  background: transparent;
+  border-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding-top: env(titlebar-area-height, 40px);
+  min-height: calc(100vh - env(titlebar-area-height, 40px));
+}
+
+.app-shell :is(button, a),
+.app-shell :is(button, a):focus,
+.app-shell :is(button, a):focus-visible {
+  outline-color: var(--outline-color);
+  outline-style: solid;
+  outline-width: 0;
+  box-shadow: none;
 }
 
 .welcome {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -23,8 +126,9 @@ body {
   max-width: 28rem;
   padding: 0.75rem 1rem;
   border-radius: 6px;
-  background: #3a1f1f;
-  color: #ffb4b4;
+  border: 1px solid var(--glass-border);
+  background: var(--error-bg);
+  color: var(--error-fg);
   text-align: center;
 }
 
@@ -37,13 +141,14 @@ body {
   font-size: 1rem;
   padding: 0.6rem 1.2rem;
   cursor: pointer;
+  color: inherit;
+  background: var(--button-bg);
+  border: 1px solid var(--button-border);
+  border-radius: 6px;
 }
 
 .script-workspace {
-  min-height: 100vh;
   padding: 2rem 1rem 3rem;
-  background: #2e2e2e;
-  box-sizing: border-box;
 }
 
 .script-toolbar {
@@ -53,29 +158,40 @@ body {
 }
 
 .script-toolbar a {
-  color: #9cf;
+  color: var(--link-fg);
 }
 
 .script-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
   padding: 2rem;
+}
+
+.script-empty a {
+  color: var(--link-fg);
 }
 
 .unsaved-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgb(0 0 0 / 55%);
+  background: var(--modal-backdrop);
   display: grid;
   place-items: center;
   z-index: 1000;
 }
 
 .unsaved-modal {
-  border: 1px solid #444;
+  border: 1px solid var(--modal-border);
   border-radius: 8px;
   padding: 1.25rem;
-  background: #1c1c1c;
+  background: var(--modal-bg);
   color: inherit;
   max-width: 28rem;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 
 .unsaved-modal-actions {
@@ -86,4 +202,9 @@ body {
 
 .unsaved-modal-actions button {
   cursor: pointer;
+  color: inherit;
+  background: var(--button-bg);
+  border: 1px solid var(--button-border);
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
 }

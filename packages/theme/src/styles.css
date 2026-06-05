@@ -10,9 +10,29 @@
   --height-script-page-us-letter: 11in;
   --width-script-page-a4: 210mm;
   --height-script-page-a4: 297mm;
+  --height-script-content-us-letter: calc(
+    var(--height-script-page-us-letter) - 2in
+  );
+  --height-script-content-a4: calc(var(--height-script-page-a4) - 50.8mm);
   --line-height-script-tight: 1;
   --line-height-script-double: 2;
-  --color-script-page-border: rgb(0 0 0 / 0.08);
+  --color-script-page-bg: #ffffff;
+  --color-script-page-fg: #000000;
+  --color-script-page-border: transparent;
+  --color-script-page-muted: #555555;
+  --color-script-page-prefix: #888888;
+  --color-script-page-number: rgb(0 0 0 / 0.45);
+  --outline-color: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-script-page-bg: #000000;
+    --color-script-page-fg: #ffffff;
+    --color-script-page-muted: rgb(255 255 255 / 0.62);
+    --color-script-page-prefix: rgb(255 255 255 / 0.45);
+    --color-script-page-number: rgb(255 255 255 / 0.45);
+  }
 }
 
 @utility section {
@@ -27,7 +47,7 @@
   font-family: var(--font-outline);
   font-size: 11pt;
   font-style: italic;
-  color: #555;
+  color: var(--color-script-page-muted);
   margin-top: 0.5em;
   margin-bottom: 0.5em;
 }
@@ -35,13 +55,13 @@
 @utility note {
   font-family: var(--font-outline);
   font-size: 11pt;
-  color: #555;
+  color: var(--color-script-page-muted);
   margin-top: 0.5em;
   margin-bottom: 0.5em;
 }
 
 @utility forced-prefix {
-  color: #888;
+  color: var(--color-script-page-prefix);
 }
 
 @utility scene-heading {
@@ -106,8 +126,8 @@
   min-height: var(--height-script-page-us-letter);
   margin-inline: auto;
   padding: 1in 1in 1in 1.5in;
-  background: white;
-  color: black;
+  background: var(--color-script-page-bg);
+  color: var(--color-script-page-fg);
   box-sizing: border-box;
   border: 1px solid var(--color-script-page-border);
 }
@@ -115,6 +135,21 @@
 @utility script-page-body {
   position: relative;
   z-index: 1;
+  min-height: var(--height-script-content-us-letter);
+}
+
+.script-page-body :is(.tiptap, .ProseMirror, .script-editor-content) {
+  min-height: var(--height-script-content-us-letter);
+}
+
+[data-page-format='a4'] .script-page-body {
+  min-height: var(--height-script-content-a4);
+}
+
+[data-page-format='a4']
+  .script-page-body
+  :is(.tiptap, .ProseMirror, .script-editor-content) {
+  min-height: var(--height-script-content-a4);
 }
 
 /* Pagination gap replaces the element's own margin-top (see PaginationLayout). */
@@ -135,7 +170,7 @@
   font-family: var(--font-script);
   font-size: 12pt;
   line-height: var(--line-height-script-tight);
-  color: rgb(0 0 0 / 0.45);
+  color: var(--color-script-page-number);
 }
 
 @utility script-page-boundary {
@@ -158,8 +193,8 @@
   min-height: var(--height-script-page-us-letter);
   margin-inline: auto;
   padding: 1in 1in 1in 1.5in;
-  background: white;
-  color: black;
+  background: var(--color-script-page-bg);
+  color: var(--color-script-page-fg);
   box-sizing: border-box;
 }
 
@@ -210,9 +245,15 @@
   min-height: var(--height-script-page-a4);
 }
 
+.script-page :is(.ProseMirror, .script-editor-content),
 .script-page :is(.ProseMirror, .script-editor-content):focus,
-.script-page :is(.ProseMirror, .script-editor-content):focus-visible {
-  outline-color: transparent;
+.script-page :is(.ProseMirror, .script-editor-content):focus-visible,
+.script-page :focus,
+.script-page :focus-visible {
+  outline-color: var(--outline-color);
+  outline-style: solid;
+  outline-width: 0;
+  box-shadow: none;
 }
 
 [data-page-format='a4'] .title-page-sheet {

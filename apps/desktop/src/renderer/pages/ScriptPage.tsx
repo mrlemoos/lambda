@@ -11,7 +11,7 @@ export function ScriptPage() {
 
   if (!script) {
     return (
-      <main className="script-empty">
+      <main className="app-shell script-empty">
         <p>No script is open.</p>
         <Link to="/">Back to welcome</Link>
       </main>
@@ -27,7 +27,7 @@ export function ScriptPage() {
   };
 
   return (
-    <main className="script-workspace">
+    <main className="app-shell script-workspace">
       <header className="script-toolbar">
         <Link to="/" onClick={(event) => void handleBack(event)}>
           ← Welcome

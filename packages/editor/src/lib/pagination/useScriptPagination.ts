@@ -2,18 +2,23 @@ import type { Editor } from '@tiptap/core';
 import { useEffect, useState } from 'react';
 
 import type { PageFormat } from '../ScriptEditor';
+import { getPageLayout } from './pageLayout';
 import { paginateScript } from './paginateScript';
 import { paginationLayoutPluginKey } from './paginationLayoutExtension';
 import { serializeTipTapDocument } from './serializeTipTapDocument';
 import type { PaginationResult } from './types';
 
-const EMPTY_PAGINATION = (pageFormat: PageFormat): PaginationResult => ({
-  pages: [{ number: 1, topOffsetPt: 0 }],
-  boundaries: [],
-  placements: [],
-  totalHeightPt: 0,
-  pageFormat,
-});
+const EMPTY_PAGINATION = (pageFormat: PageFormat): PaginationResult => {
+  const layout = getPageLayout(pageFormat);
+
+  return {
+    pages: [{ number: 1, topOffsetPt: 0 }],
+    boundaries: [],
+    placements: [],
+    totalHeightPt: layout.contentHeightPt,
+    pageFormat,
+  };
+};
 
 export function useScriptPagination(
   editor: Editor | null,

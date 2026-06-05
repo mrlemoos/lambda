@@ -5,7 +5,7 @@ export function WelcomePage() {
     useScriptSession();
 
   return (
-    <main className="welcome">
+    <main className="app-shell welcome">
       <h1>Lambda</h1>
       <p>Offline Fountain screenwriting</p>
       {openError ? (

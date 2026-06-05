@@ -1,5 +1,6 @@
 import type { PaginationResult } from './types';
 import { getPageLayout, PT_PER_INCH } from './pageLayout';
+import { resolveScriptSheetHeightPt } from './scriptSheetHeight';
 
 export type ScriptPageChromeProps = {
   pagination: PaginationResult;
@@ -17,11 +18,7 @@ export function ScriptPageChrome({ pagination }: ScriptPageChromeProps) {
       className="script-page-chrome"
       aria-hidden
       style={{
-        minHeight: ptToInches(
-          layout.paddingTopPt +
-            pagination.totalHeightPt +
-            layout.paddingBottomPt,
-        ),
+        minHeight: ptToInches(resolveScriptSheetHeightPt(pagination, layout)),
       }}
     >
       {pagination.pages.map((page) => (

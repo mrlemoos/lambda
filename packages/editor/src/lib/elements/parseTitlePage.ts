@@ -1,3 +1,4 @@
+import { isSceneHeading } from './SceneHeading';
 import { isTitlePage } from './TitlePage';
 import { isTransition } from './Transition';
 
@@ -13,6 +14,10 @@ export type TitlePageData = {
 };
 
 const TITLE_PAGE_KEY = /^([A-Za-z][A-Za-z0-9 ]*):\s*(.*)$/;
+
+function isTitlePageKeyLine(trimmed: string): boolean {
+  return /^[A-Za-z][A-Za-z0-9 ]*:/.test(trimmed) && !isTransition(trimmed);
+}
 
 function stripInlineMarkup(text: string): string {
   return text
@@ -37,18 +42,23 @@ function nextNonEmptyLineIndex(lines: string[], fromIndex: number): number {
 
 export function extractTitlePageLines(lines: string[]): string[] {
   const result: string[] = [];
+  let inTitlePage = false;
 
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index];
-    const previousLine = index > 0 ? lines[index - 1] : undefined;
     const trimmed = line.trim();
+    const previousLine = index > 0 ? lines[index - 1] : undefined;
 
-    if (isTitlePage(line, previousLine)) {
-      result.push(line);
+    if (!inTitlePage) {
+      if (isTitlePage(line, previousLine)) {
+        inTitlePage = true;
+        result.push(line);
+      }
+
       continue;
     }
 
-    if (!trimmed && result.length > 0) {
+    if (!trimmed) {
       const nextIndex = nextNonEmptyLineIndex(lines, index + 1);
 
       if (nextIndex === -1) {
@@ -56,9 +66,13 @@ export function extractTitlePageLines(lines: string[]): string[] {
         continue;
       }
 
-      const nextPrevious = nextIndex > 0 ? lines[nextIndex - 1] : undefined;
+      const nextTrimmed = lines[nextIndex].trim();
 
-      if (isTitlePage(lines[nextIndex], nextPrevious)) {
+      if (isSceneHeading(nextTrimmed)) {
+        break;
+      }
+
+      if (isTitlePageKeyLine(nextTrimmed)) {
         result.push(line);
         continue;
       }
@@ -66,9 +80,11 @@ export function extractTitlePageLines(lines: string[]): string[] {
       break;
     }
 
-    if (result.length > 0) {
+    if (isSceneHeading(trimmed)) {
       break;
     }
+
+    result.push(line);
   }
 
   return result;
@@ -94,7 +110,7 @@ export function parseTitlePage(lines: string[]): TitlePageData {
       continue;
     }
 
-    if (/^\s{2,}\S/.test(line) && currentKey) {
+    if (currentKey && trimmed) {
       appendValue(data, currentKey, stripInlineMarkup(trimmed));
     }
   }

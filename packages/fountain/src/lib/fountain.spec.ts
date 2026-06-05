@@ -70,4 +70,23 @@ They enter.
 
     expect(stringifyFountain(document)).toBe(source);
   });
+
+  it('parses title pages with unindented title text before other keys', () => {
+    const source = `Title:
+MY SCRIPT
+Credit: by
+Author: Jane Doe
+
+INT. KITCHEN - DAY
+They enter.
+`;
+
+    expect(() => parseFountain(source)).not.toThrow();
+    expect(parseFountain(source).titlePage).toEqual([
+      'Title:',
+      'MY SCRIPT',
+      'Credit: by',
+      'Author: Jane Doe',
+    ]);
+  });
 });
