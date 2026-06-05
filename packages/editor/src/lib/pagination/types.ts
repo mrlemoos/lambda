@@ -25,6 +25,12 @@ export type ScriptBlock = {
   text: string;
 };
 
+export type BlockPlacement = {
+  /** Extra space before this block so it clears the page boundary. */
+  marginTopPt: number;
+  topOffsetPt: number;
+};
+
 export type ScriptPage = {
   number: number;
   topOffsetPt: number;
@@ -37,6 +43,7 @@ export type PageBoundary = {
 export type PaginationResult = {
   pages: ScriptPage[];
   boundaries: PageBoundary[];
+  placements: BlockPlacement[];
   totalHeightPt: number;
   pageFormat: PageFormat;
 };

@@ -129,7 +129,7 @@ The edge between two printable sheets on the writing surface. Shown while editin
 _Avoid_: Page break (Fountain/manual), page divider (vague).
 
 **Outline element**:
-A **Section**, **Synopsis**, or **Note** block — structural or author-only lines that use the outline typeface (`--font-outline`) and are omitted from standard screenplay print layout. Rendered **in flow** where the author typed, but **Pagination** assigns them zero line weight — they do not push **Page boundary** placement (a boundary may fall visually through outline content). Slugline write-mode parity.
+A **Section**, **Synopsis**, or **Note** block — structural or author-only lines that use the outline typeface (`--font-outline`) and are omitted from standard screenplay print layout. Rendered **in flow** where the author typed. **Pagination** assigns them zero **screenplay line** weight (they do not consume the 54-line page budget) but their measured height and element gaps **do** count toward printable **Page height** — each outline block reduces remaining vertical space on the sheet like any body element.
 _Avoid_: Outline Navigator (product feature, out of scope), outline view.
 
 **Page number**:

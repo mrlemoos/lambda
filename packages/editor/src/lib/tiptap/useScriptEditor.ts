@@ -3,6 +3,7 @@ import History from '@tiptap/extension-history';
 import Text from '@tiptap/extension-text';
 import { useEditor, type UseEditorOptions } from '@tiptap/react';
 
+import { PaginationLayout } from '../pagination/paginationLayoutExtension';
 import { Action } from './actionExtension';
 import { ClassifyOnEnter } from './classifyOnEnter';
 import { ForcedPrefixHighlight } from './forcedPrefixHighlight';
@@ -21,6 +22,7 @@ export function createScriptEditorExtensions() {
     Synopsis,
     ClassifyOnEnter,
     ForcedPrefixHighlight,
+    PaginationLayout,
     History,
   ];
 }

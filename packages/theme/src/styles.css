@@ -45,6 +45,8 @@
 
 @utility scene-heading {
   font-family: var(--font-script);
+  font-size: 12pt;
+  line-height: var(--line-height-script-tight);
   text-transform: uppercase;
   margin-top: 1.5em;
   margin-bottom: 0.5em;
@@ -53,6 +55,7 @@
 @utility transition {
   font-family: var(--font-script);
   font-size: 12pt;
+  line-height: var(--line-height-script-tight);
   text-align: right;
   padding-right: 1.25in;
   margin-top: 1em;
@@ -90,6 +93,7 @@
 @utility action {
   font-family: var(--font-script);
   font-size: 12pt;
+  line-height: var(--line-height-script-tight);
   margin-top: 1em;
   margin-bottom: 0;
 }
@@ -110,6 +114,11 @@
 @utility script-page-body {
   position: relative;
   z-index: 1;
+}
+
+/* Pagination gap replaces the element's own margin-top (see PaginationLayout). */
+.script-page-body .pagination-page-start {
+  margin-bottom: 0;
 }
 
 @utility script-page-chrome {

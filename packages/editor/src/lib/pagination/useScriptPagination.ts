@@ -3,12 +3,14 @@ import { useEffect, useState } from 'react';
 
 import type { PageFormat } from '../ScriptEditor';
 import { paginateScript } from './paginateScript';
+import { paginationLayoutPluginKey } from './paginationLayoutExtension';
 import { serializeTipTapDocument } from './serializeTipTapDocument';
 import type { PaginationResult } from './types';
 
 const EMPTY_PAGINATION = (pageFormat: PageFormat): PaginationResult => ({
   pages: [{ number: 1, topOffsetPt: 0 }],
   boundaries: [],
+  placements: [],
   totalHeightPt: 0,
   pageFormat,
 });
@@ -28,8 +30,15 @@ export function useScriptPagination(
 
     const update = () => {
       const blocks = serializeTipTapDocument(editor.getJSON());
+      const result = paginateScript(blocks, pageFormat);
 
-      setPagination(paginateScript(blocks, pageFormat));
+      setPagination(result);
+
+      if (!editor.isDestroyed && editor.view) {
+        editor.view.dispatch(
+          editor.state.tr.setMeta(paginationLayoutPluginKey, result.placements),
+        );
+      }
     };
 
     update();

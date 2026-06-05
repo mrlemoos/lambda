@@ -56,6 +56,37 @@ function ScriptEditorWithContent({
   return <ScriptEditorContent editor={editor} pageFormat={pageFormat} />;
 }
 
+function actionParagraphs(count: number): string {
+  return Array.from(
+    { length: count },
+    (_, index) =>
+      `<p class='action'>Beat ${index + 1}. The camera holds on the warehouse — dust, silence, then movement.</p>`,
+  ).join('');
+}
+
+export const MultiPage: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Long enough to span three body pages (page numbers 1.–3. and grey boundaries). Scroll to verify pagination.',
+      },
+    },
+  },
+  render: () => (
+    <ScriptEditorWithContent
+      content={[
+        "<p class='section'># Act I</p>",
+        "<p class='synopsis'>= Outline beats do not advance page count.</p>",
+        "<p class='scene-heading'>INT. WAREHOUSE - NIGHT</p>",
+        actionParagraphs(28),
+        "<p class='scene-heading'>EXT. LOADING DOCK - NIGHT</p>",
+        actionParagraphs(28),
+      ].join('')}
+    />
+  ),
+};
+
 export const ForcedSceneHeading: Story = {
   render: () => (
     <ScriptEditorWithContent content="<p class='action'>.SNIPER SCOPE POV</p>" />
