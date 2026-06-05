@@ -4,6 +4,7 @@ import type { ScriptBlock, ScriptElementType } from './types';
 
 const NODE_TYPE_MAP: Record<string, ScriptElementType | undefined> = {
   action: 'action',
+  centeredText: 'centeredText',
   sceneHeading: 'sceneHeading',
   section: 'section',
   synopsis: 'synopsis',

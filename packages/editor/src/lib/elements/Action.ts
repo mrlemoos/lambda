@@ -1,3 +1,4 @@
+import { isCenteredText } from './CenteredText';
 import { isCharacter } from './Character';
 import { isDialogue } from './Dialogue';
 import { isNote } from './Note';
@@ -26,6 +27,10 @@ export function isAction(text: string, previousLine?: string): boolean {
   }
 
   if (isNote(text)) {
+    return false;
+  }
+
+  if (isCenteredText(text)) {
     return false;
   }
 

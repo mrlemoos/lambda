@@ -16,6 +16,7 @@ const BODY_NODE_TYPE: Partial<Record<ClassifiedElement, string>> = {
   section: 'section',
   synopsis: 'synopsis',
   note: 'note',
+  'centered-text': 'centeredText',
   character: 'character',
   parenthetical: 'parenthetical',
   dialogue: 'dialogue',
@@ -36,6 +37,8 @@ export function parseFountain(source: string): FountainScript {
     const trimmed = line.trim();
 
     if (!trimmed) {
+      previousLine = undefined;
+      previousNodeType = undefined;
       continue;
     }
 
@@ -44,11 +47,18 @@ export function parseFountain(source: string): FountainScript {
       previousNodeType,
     });
 
-    if (!classified || classified === 'title-page') {
+    if (!classified) {
       throw new Error(`Unrecognised line in script body: ${trimmed}`);
     }
 
-    const nodeType = BODY_NODE_TYPE[classified];
+    const followedByBlank =
+      index + 1 < bodyLines.length && bodyLines[index + 1].trim().length === 0;
+    const bodyClassified =
+      classified === 'title-page' ||
+      (classified === 'character' && followedByBlank)
+        ? 'action'
+        : classified;
+    const nodeType = BODY_NODE_TYPE[bodyClassified];
 
     if (!nodeType) {
       throw new Error(`Unsupported element in script body: ${classified}`);
@@ -138,18 +148,138 @@ export function stringifyFountain(script: FountainScript): string {
 function textNode(type: string, text: string): JSONContent {
   return {
     type,
-    content: [{ type: 'text', text }],
+    content: parseInlineFountain(text),
   };
 }
 
+type InlineMark = 'bold' | 'italic' | 'underline';
+type InlineMarkJson = { type: InlineMark };
+
+const MARKER_BY_TYPE: Record<InlineMark, string> = {
+  bold: '**',
+  italic: '*',
+  underline: '_',
+};
+
+function marksFor(types: InlineMark[]): InlineMarkJson[] | undefined {
+  if (types.length === 0) {
+    return undefined;
+  }
+
+  return types.map((type) => ({ type }));
+}
+
+function sameMarks(left: InlineMark[], right: InlineMark[]): boolean {
+  return (
+    left.length === right.length &&
+    left.every((type, index) => type === right[index])
+  );
+}
+
+function parseInlineFountain(text: string): JSONContent[] {
+  const nodes: JSONContent[] = [];
+  let buffer = '';
+  let bufferMarks: InlineMark[] = [];
+  const activeMarks: InlineMark[] = [];
+
+  function flush() {
+    if (!buffer) {
+      return;
+    }
+
+    const node: JSONContent = {
+      type: 'text',
+      text: buffer,
+    };
+    const marks = marksFor(bufferMarks);
+
+    if (marks) {
+      node.marks = marks;
+    }
+
+    nodes.push(node);
+    buffer = '';
+  }
+
+  function append(value: string) {
+    if (!sameMarks(bufferMarks, activeMarks)) {
+      flush();
+      bufferMarks = [...activeMarks];
+    }
+
+    buffer += value;
+  }
+
+  function toggle(type: InlineMark) {
+    flush();
+
+    const index = activeMarks.indexOf(type);
+
+    if (index === -1) {
+      activeMarks.push(type);
+    } else {
+      activeMarks.splice(index, 1);
+    }
+
+    bufferMarks = [...activeMarks];
+  }
+
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    const next = text[index + 1];
+
+    if (char === '\\' && (next === '*' || next === '_')) {
+      append(next);
+      index += 1;
+      continue;
+    }
+
+    if (text.startsWith('**', index)) {
+      toggle('bold');
+      index += 1;
+      continue;
+    }
+
+    if (char === '*') {
+      toggle('italic');
+      continue;
+    }
+
+    if (char === '_') {
+      toggle('underline');
+      continue;
+    }
+
+    append(char);
+  }
+
+  flush();
+
+  return nodes;
+}
+
 function stringifyNode(node: JSONContent): string {
+  if (node.type === 'text') {
+    return stringifyTextNode(node);
+  }
+
   return (node.content ?? [])
     .map((child) => {
-      if (child.type === 'text') {
-        return child.text ?? '';
-      }
-
       return stringifyNode(child);
     })
     .join('');
+}
+
+function stringifyTextNode(node: JSONContent): string {
+  let text = node.text ?? '';
+  const marks = (node.marks ?? [])
+    .map((mark) => mark.type)
+    .filter((type): type is InlineMark => type in MARKER_BY_TYPE);
+
+  for (let index = marks.length - 1; index >= 0; index -= 1) {
+    const marker = MARKER_BY_TYPE[marks[index]];
+    text = `${marker}${text}${marker}`;
+  }
+
+  return text;
 }

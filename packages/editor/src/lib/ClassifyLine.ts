@@ -1,4 +1,5 @@
 import { isAction } from './elements/Action';
+import { isCenteredText } from './elements/CenteredText';
 import { isCharacter } from './elements/Character';
 import { isDialogue } from './elements/Dialogue';
 import { isNote } from './elements/Note';
@@ -14,6 +15,7 @@ export type ClassifiedElement =
   | 'section'
   | 'synopsis'
   | 'note'
+  | 'centered-text'
   | 'title-page'
   | 'transition'
   | 'character'
@@ -39,6 +41,10 @@ export function classifyLine(
 
   if (isNote(text)) {
     return 'note';
+  }
+
+  if (isCenteredText(text)) {
+    return 'centered-text';
   }
 
   if (isTitlePage(text, previousLine)) {

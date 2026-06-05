@@ -15,6 +15,7 @@ describe('classifyLine', () => {
     ['# Act I', 'section'],
     ['= Setup the story.', 'synopsis'],
     ['[[Todo: fix later]]', 'note'],
+    ['> THE END <', 'centered-text'],
     ['Title: BRICK & STEEL', 'title-page'],
   ])('classifies %s as %s', (line, expected) => {
     const result = classifyLine(line);

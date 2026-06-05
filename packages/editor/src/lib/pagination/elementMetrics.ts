@@ -37,6 +37,15 @@ export const ELEMENT_METRICS: Record<ScriptElementType, ElementMetrics> = {
     countsTowardPageLines: true,
     countsTowardPageHeight: true,
   },
+  centeredText: {
+    fontSizePt: 12,
+    lineHeightPt: SCRIPT_LINE_HEIGHT_PT,
+    marginTopPt: emToPt(1, 12),
+    marginBottomPt: 0,
+    contentWidthPt: 'full',
+    countsTowardPageLines: true,
+    countsTowardPageHeight: true,
+  },
   sceneHeading: {
     fontSizePt: 12,
     lineHeightPt: SCRIPT_LINE_HEIGHT_PT,

@@ -12,6 +12,8 @@ export function classifiedToNodeType(
       return 'synopsis';
     case 'note':
       return 'note';
+    case 'centered-text':
+      return 'centeredText';
     case 'character':
       return 'character';
     case 'parenthetical':

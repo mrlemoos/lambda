@@ -266,6 +266,10 @@
   margin-block: 0;
 }
 
+.script-page .centered-text {
+  text-align: center;
+}
+
 /* Fallback when block type is still `action` immediately after a cue. */
 .script-page p.character + p.action,
 .script-page p.parenthetical + p.action {
@@ -284,6 +288,7 @@
   :is(
     .scene-heading,
     .action,
+    .centered-text,
     .transition,
     .character,
     .parenthetical,

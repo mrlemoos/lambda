@@ -50,12 +50,13 @@ export function extractTitlePageLines(lines: string[]): string[] {
     const previousLine = index > 0 ? lines[index - 1] : undefined;
 
     if (!inTitlePage) {
-      if (isTitlePage(line, previousLine)) {
+      if (index === 0 && isTitlePage(line, previousLine)) {
         inTitlePage = true;
         result.push(line);
+        continue;
       }
 
-      continue;
+      break;
     }
 
     if (!trimmed) {

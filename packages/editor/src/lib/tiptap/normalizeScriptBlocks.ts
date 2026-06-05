@@ -28,7 +28,14 @@ export function normalizeScriptDocumentTransaction(
     }
 
     const classified = classifyBlock(text, previousBlockContext(doc, index));
-    const targetName = classifiedToNodeType(classified);
+    const followedByBlank =
+      index + 1 < doc.childCount &&
+      doc.child(index + 1).type.name === 'action' &&
+      doc.child(index + 1).textContent.trim().length === 0;
+    const targetName =
+      classified === 'character' && followedByBlank
+        ? 'action'
+        : classifiedToNodeType(classified);
 
     if (node.type.name === targetName) {
       continue;

@@ -8,6 +8,10 @@ const KNOWN_TRANSITIONS = [
 export function isTransition(text: string): boolean {
   const trimmed = text.trim();
 
+  if (trimmed.startsWith('>') && trimmed.endsWith('<')) {
+    return false;
+  }
+
   if (trimmed.startsWith('>')) {
     return true;
   }

@@ -29,4 +29,10 @@ describe('classifyBlock', () => {
 
     expect(result).toBe('action');
   });
+
+  it('treats prose after a blank line as action even when earlier text is uppercase', () => {
+    const result = classifyBlock('This ad shines on a billboard.');
+
+    expect(result).toBe('action');
+  });
 });

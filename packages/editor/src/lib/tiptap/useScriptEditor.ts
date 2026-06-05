@@ -6,12 +6,14 @@ import { useMemo } from 'react';
 
 import { PaginationLayout } from '../pagination/paginationLayoutExtension';
 import { Action } from './actionExtension';
+import { CenteredText } from './centeredTextExtension';
 import { Character } from './characterExtension';
 import { ClassifyCurrentBlock } from './classifyCurrentBlock';
 import { ClassifyOnEnter } from './classifyOnEnter';
 import { NormalizeScriptBlocks } from './normalizeScriptBlocks';
 import { Dialogue } from './dialogueExtension';
 import { ForcedPrefixHighlight } from './forcedPrefixHighlight';
+import { Bold, Italic, Underline } from './inlineMarkExtensions';
 import { Note } from './noteExtension';
 import { Parenthetical } from './parentheticalExtension';
 import { SceneHeading } from './sceneHeadingExtension';
@@ -30,11 +32,15 @@ export function createScriptEditorExtensions() {
   return [
     ScriptDocument,
     Text,
+    Bold,
+    Italic,
+    Underline,
     Action,
     SceneHeading,
     Section,
     Synopsis,
     Note,
+    CenteredText,
     Character,
     Parenthetical,
     Dialogue,

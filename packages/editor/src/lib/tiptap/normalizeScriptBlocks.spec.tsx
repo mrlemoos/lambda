@@ -40,4 +40,37 @@ describe('NormalizeScriptBlocks', () => {
 
     editor.destroy();
   });
+
+  it('does not classify prose as dialogue when a blank line follows uppercase action', async () => {
+    const editor = createScriptEditor({
+      content: {
+        type: 'doc',
+        content: [
+          {
+            type: 'action',
+            content: [{ type: 'text', text: 'A DIGITAL AD' }],
+          },
+          {
+            type: 'action',
+          },
+          {
+            type: 'action',
+            content: [{ type: 'text', text: 'This ad shines on a billboard.' }],
+          },
+        ],
+      },
+    });
+
+    render(<EditorContent editor={editor} />);
+
+    await waitFor(() => {
+      expect(editor.getJSON().content?.map((node) => node.type)).toEqual([
+        'action',
+        'action',
+        'action',
+      ]);
+    });
+
+    editor.destroy();
+  });
 });

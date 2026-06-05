@@ -35,6 +35,12 @@ export function previousBlockContext(
     if (CUE_CONTEXT_TYPES.has(nodeType)) {
       return { previousLine: text, previousNodeType: nodeType };
     }
+
+    if (nodeType === 'dialogue') {
+      continue;
+    }
+
+    return {};
   }
 
   return {};

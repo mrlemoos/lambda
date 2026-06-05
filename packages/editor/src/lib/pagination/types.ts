@@ -2,6 +2,7 @@ import type { PageFormat } from '../ScriptEditor';
 
 export type BodyScriptElementType =
   | 'action'
+  | 'centeredText'
   | 'sceneHeading'
   | 'character'
   | 'parenthetical'
