@@ -54,4 +54,10 @@ describe('parseTitlePage', () => {
 
     expect(result.title).toEqual(['BRICK & STEEL']);
   });
+
+  it('includes blank lines between title page keys', () => {
+    const lines = ['Title:', '', 'Credit: Written by', 'Author:', ''];
+
+    expect(parseTitlePage(lines).credit).toBe('Written by');
+  });
 });

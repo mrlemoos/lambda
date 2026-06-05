@@ -1,0 +1,35 @@
+{
+  "name": "@lambda/desktop",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/desktop/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "dev": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "cwd": "apps/desktop",
+        "command": "rm -rf node_modules/.vite && electron-vite dev"
+      }
+    },
+    "verify-editor-bundle": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["@lambda/editor:build"],
+      "options": {
+        "cwd": "apps/desktop",
+        "command": "node scripts/verify-editor-bundle.mjs"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "cwd": "apps/desktop",
+        "command": "electron-vite build"
+      },
+      "outputs": ["{projectRoot}/out"]
+    }
+  }
+}

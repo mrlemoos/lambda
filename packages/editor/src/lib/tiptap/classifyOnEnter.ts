@@ -1,65 +1,54 @@
 import { Extension } from '@tiptap/core';
+import { TextSelection } from '@tiptap/pm/state';
 
-import { classifyLine, type ClassifiedElement } from '../ClassifyLine';
-
-function classifiedToNodeType(classified: ClassifiedElement | null): string {
-  switch (classified) {
-    case 'scene-heading':
-      return 'sceneHeading';
-    case 'section':
-      return 'section';
-    case 'synopsis':
-      return 'synopsis';
-    default:
-      return 'action';
-  }
-}
-
-function blockPosAtSelection(selection: {
-  $from: { depth: number; before: (depth: number) => number };
-}): number {
-  return selection.$from.before(selection.$from.depth);
-}
+import {
+  blockIndexInDocument,
+  classifyBlock,
+  previousBlockContext,
+  textblockDepth,
+} from './classifyBlock';
+import {
+  classifiedToNextBlockType,
+  classifiedToNodeType,
+} from './classifyBlockTypes';
 
 export const ClassifyOnEnter = Extension.create({
   name: 'classifyOnEnter',
+  priority: 1000,
 
   addKeyboardShortcuts() {
     return {
       Enter: ({ editor }) => {
-        const { state } = editor;
-        const { selection, schema } = state;
+        const { state, schema } = editor;
+        const { selection } = state;
         const { $from } = selection;
         const text = $from.parent.textContent;
-        const blockIndex = $from.index(1);
-        const previousLine =
-          blockIndex === 0
-            ? undefined
-            : state.doc.child(blockIndex - 1).textContent;
-        const classified = classifyLine(text, previousLine);
-        const nodeTypeName = classifiedToNodeType(classified);
-        const classifiedType = schema.nodes[nodeTypeName];
-        const actionType = schema.nodes.action;
-        const currentBlockPos = blockPosAtSelection(selection);
+        const blockIndex = blockIndexInDocument($from);
+        const classified = classifyBlock(
+          text,
+          previousBlockContext(state.doc, blockIndex),
+        );
+        const classifiedType = schema.nodes[classifiedToNodeType(classified)];
+        const nextBlockType =
+          schema.nodes[classifiedToNextBlockType(classified)];
+        const depth = textblockDepth($from);
+        const currentBlockPos = $from.before(depth);
+        const currentNode = $from.parent;
 
         return editor
           .chain()
           .command(({ tr, dispatch }) => {
-            if (dispatch) {
-              tr.setNodeMarkup(currentBlockPos, classifiedType);
-            }
-
-            return true;
-          })
-          .splitBlock()
-          .command(({ tr, state: updatedState, dispatch }) => {
             if (!dispatch) {
               return true;
             }
 
-            const newBlockPos = blockPosAtSelection(updatedState.selection);
+            tr.setNodeMarkup(currentBlockPos, classifiedType);
 
-            tr.setNodeMarkup(newBlockPos, actionType);
+            const insertPos = currentBlockPos + currentNode.nodeSize;
+            const newNode = nextBlockType.create();
+
+            tr.insert(insertPos, newNode);
+            tr.setSelection(TextSelection.near(tr.doc.resolve(insertPos + 1)));
 
             return true;
           })

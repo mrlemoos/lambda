@@ -25,15 +25,48 @@ function normaliseKey(key: string): string {
   return key.toLowerCase();
 }
 
+function nextNonEmptyLineIndex(lines: string[], fromIndex: number): number {
+  for (let index = fromIndex; index < lines.length; index += 1) {
+    if (lines[index].trim()) {
+      return index;
+    }
+  }
+
+  return -1;
+}
+
 export function extractTitlePageLines(lines: string[]): string[] {
   const result: string[] = [];
 
   for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
     const previousLine = index > 0 ? lines[index - 1] : undefined;
+    const trimmed = line.trim();
 
-    if (isTitlePage(lines[index], previousLine)) {
-      result.push(lines[index]);
-    } else if (result.length > 0) {
+    if (isTitlePage(line, previousLine)) {
+      result.push(line);
+      continue;
+    }
+
+    if (!trimmed && result.length > 0) {
+      const nextIndex = nextNonEmptyLineIndex(lines, index + 1);
+
+      if (nextIndex === -1) {
+        result.push(line);
+        continue;
+      }
+
+      const nextPrevious = nextIndex > 0 ? lines[nextIndex - 1] : undefined;
+
+      if (isTitlePage(lines[nextIndex], nextPrevious)) {
+        result.push(line);
+        continue;
+      }
+
+      break;
+    }
+
+    if (result.length > 0) {
       break;
     }
   }

@@ -13,6 +13,10 @@ const SCRIPT_BLOCK_TYPES = new Set([
   'section',
   'synopsis',
   'note',
+  'character',
+  'parenthetical',
+  'dialogue',
+  'transition',
 ]);
 
 export function buildPaginationDecorations(

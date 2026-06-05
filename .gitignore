@@ -3,7 +3,9 @@
 # compiled output
 dist
 tmp
+out
 out-tsc
+.scratch
 
 # dependencies
 node_modules

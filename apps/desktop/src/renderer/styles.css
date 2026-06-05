@@ -1,0 +1,89 @@
+@import '@lambda/editor/styles.css';
+
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  background: #1a1a1a;
+  color: #f5f5f5;
+}
+
+.welcome {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.welcome-error {
+  max-width: 28rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  background: #3a1f1f;
+  color: #ffb4b4;
+  text-align: center;
+}
+
+.welcome-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.welcome-actions button {
+  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+}
+
+.script-workspace {
+  min-height: 100vh;
+  padding: 2rem 1rem 3rem;
+  background: #2e2e2e;
+  box-sizing: border-box;
+}
+
+.script-toolbar {
+  max-width: 8.5in;
+  margin: 0 auto 1rem;
+  padding: 0 0.25rem;
+}
+
+.script-toolbar a {
+  color: #9cf;
+}
+
+.script-empty {
+  padding: 2rem;
+}
+
+.unsaved-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 55%);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+}
+
+.unsaved-modal {
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 1.25rem;
+  background: #1c1c1c;
+  color: inherit;
+  max-width: 28rem;
+}
+
+.unsaved-modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.unsaved-modal-actions button {
+  cursor: pointer;
+}

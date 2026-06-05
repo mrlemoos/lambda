@@ -48,7 +48,7 @@ export const ELEMENT_METRICS: Record<ScriptElementType, ElementMetrics> = {
   },
   character: {
     fontSizePt: 12,
-    lineHeightPt: SCRIPT_LINE_HEIGHT_PT,
+    lineHeightPt: SCRIPT_LINE_HEIGHT_PT * 2,
     marginTopPt: emToPt(1, 12),
     marginBottomPt: 0,
     contentWidthPt: 'full',

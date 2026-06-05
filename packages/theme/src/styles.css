@@ -11,6 +11,7 @@
   --width-script-page-a4: 210mm;
   --height-script-page-a4: 297mm;
   --line-height-script-tight: 1;
+  --line-height-script-double: 2;
   --color-script-page-border: rgb(0 0 0 / 0.08);
 }
 
@@ -65,7 +66,7 @@
 @utility character {
   font-family: var(--font-script);
   font-size: 12pt;
-  line-height: var(--line-height-script-tight);
+  line-height: var(--line-height-script-double);
   text-transform: uppercase;
   padding-left: 2.2in;
   margin-top: 1em;
@@ -222,6 +223,16 @@
 
 .script-page :is(.character, .parenthetical, .dialogue) {
   margin-block: 0;
+}
+
+/* Fallback when block type is still `action` immediately after a cue. */
+.script-page p.character + p.action,
+.script-page p.parenthetical + p.action {
+  max-width: 400px;
+  padding-left: 1.5in;
+  overflow-wrap: break-word;
+  margin: 0;
+  line-height: var(--line-height-script-tight);
 }
 
 .script-page :is(.section, .synopsis, .note) {

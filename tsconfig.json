@@ -8,6 +8,12 @@
     },
     {
       "path": "./packages/editor"
+    },
+    {
+      "path": "./packages/fountain"
+    },
+    {
+      "path": "./apps/desktop"
     }
   ]
 }

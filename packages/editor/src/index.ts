@@ -9,6 +9,7 @@ export {
 } from './lib/tiptap/ScriptEditorSurface';
 export {
   createScriptEditor,
+  getEditorRuntimeMarker,
   useScriptEditor,
 } from './lib/tiptap/useScriptEditor';
 export {
@@ -20,3 +21,9 @@ export {
   extractTitlePageLines,
   type TitlePageData,
 } from './lib/elements/parseTitlePage';
+export { classifyLine, type ClassifiedElement } from './lib/ClassifyLine';
+export {
+  classifyBlock,
+  previousBlockContext,
+  type ClassifyBlockContext,
+} from './lib/tiptap/classifyBlock';

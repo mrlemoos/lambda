@@ -1,0 +1,17 @@
+{
+  "name": "@lambda/desktop",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./out/main/index.js",
+  "dependencies": {
+    "@lambda/editor": "workspace:*",
+    "@lambda/fountain": "workspace:*",
+    "@lambda/theme": "workspace:*"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.0",
+    "electron": "^42.3.3",
+    "electron-vite": "^5.0.0",
+    "tailwindcss": "^4.1.13"
+  }
+}

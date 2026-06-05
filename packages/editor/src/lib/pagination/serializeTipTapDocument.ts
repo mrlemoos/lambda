@@ -7,6 +7,11 @@ const NODE_TYPE_MAP: Record<string, ScriptElementType | undefined> = {
   sceneHeading: 'sceneHeading',
   section: 'section',
   synopsis: 'synopsis',
+  note: 'note',
+  character: 'character',
+  parenthetical: 'parenthetical',
+  dialogue: 'dialogue',
+  transition: 'transition',
 };
 
 function nodeText(node: JSONContent): string {

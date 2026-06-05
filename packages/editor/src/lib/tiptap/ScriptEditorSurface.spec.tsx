@@ -49,4 +49,40 @@ describe('ScriptEditorSurface', () => {
 
     expect(heading).toHaveClass('scene-heading');
   });
+
+  it('indents dialogue after a character cue', async () => {
+    const user = userEvent.setup();
+
+    render(<ScriptEditorSurface />);
+
+    const editor = await waitFor(() => {
+      const proseMirror = document.querySelector('.ProseMirror');
+
+      if (!proseMirror) {
+        throw new Error('Editor not ready');
+      }
+
+      return proseMirror;
+    });
+
+    await user.click(editor);
+    await user.type(editor, 'INT. HOUSE - DAY');
+    pressEnter(editor);
+    await user.type(editor, 'Some action line goes here...');
+    pressEnter(editor);
+    await user.type(editor, 'CHARACTER NAME');
+    pressEnter(editor);
+    await user.type(editor, 'This is a line of dialogue.');
+
+    const dialogue = await screen.findByText('This is a line of dialogue.');
+
+    expect(dialogue).toHaveClass('dialogue');
+
+    pressEnter(editor);
+    await user.type(editor, 'He crosses the room.');
+
+    const action = await screen.findByText('He crosses the room.');
+
+    expect(action).toHaveClass('action');
+  });
 });
