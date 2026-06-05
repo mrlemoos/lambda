@@ -35,4 +35,31 @@ describe('classifyBlock', () => {
 
     expect(result).toBe('action');
   });
+
+  it('treats uppercase lines continuing action paragraphs as action', () => {
+    const result = classifyBlock('A DIGITAL AD', {
+      previousLine: 'The monitor flashes.',
+      previousNodeType: 'action',
+    });
+
+    expect(result).toBe('action');
+  });
+
+  it('treats prose after uppercase action as action', () => {
+    const result = classifyBlock('This ad shines on a billboard.', {
+      previousLine: 'A DIGITAL AD',
+      previousNodeType: 'action',
+    });
+
+    expect(result).toBe('action');
+  });
+
+  it('keeps explicitly forced characters after action paragraphs', () => {
+    const result = classifyBlock('@McCLANE', {
+      previousLine: 'The monitor flashes.',
+      previousNodeType: 'action',
+    });
+
+    expect(result).toBe('character');
+  });
 });

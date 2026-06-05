@@ -1,12 +1,12 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { WindowDragRegion } from '../components/WindowDragRegion';
 import {
   ScriptSessionProvider,
   useScriptSession,
 } from './ScriptSessionContext';
+import { WindowDragRegion } from '../components/WindowDragRegion';
 
 function SessionHarness() {
   const session = useScriptSession();
@@ -16,6 +16,25 @@ function SessionHarness() {
       <WindowDragRegion fileName={session.fileName} />
       <button type="button" onClick={() => void session.openScriptFromDisk()}>
         Open
+      </button>
+      <button
+        type="button"
+        onClick={() =>
+          session.updateDocument({
+            type: 'doc',
+            content: [
+              {
+                type: 'action',
+                content: [{ type: 'text', text: 'Existing line plus more' }],
+              },
+            ],
+          })
+        }
+      >
+        Edit
+      </button>
+      <button type="button" onClick={() => void session.saveScript()}>
+        Save
       </button>
     </>
   );
@@ -32,6 +51,34 @@ describe('ScriptSessionProvider', () => {
       showSaveDialog: vi.fn(async () => '/tmp/existing.fountain'),
       setWindowTitle: vi.fn(async () => undefined),
     };
+  });
+
+  it('saves the latest document after an immediate edit', async () => {
+    render(
+      <MemoryRouter>
+        <ScriptSessionProvider>
+          <SessionHarness />
+        </ScriptSessionProvider>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Open' }));
+
+    await waitFor(() => {
+      expect(window.lambda.readFile).toHaveBeenCalledWith(
+        '/tmp/existing.fountain',
+      );
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+    await waitFor(() => {
+      expect(window.lambda.writeFile).toHaveBeenCalledWith(
+        '/tmp/existing.fountain',
+        'Existing line plus more\n',
+      );
+    });
   });
 
   it('shows the opened filename in the window drag region', async () => {

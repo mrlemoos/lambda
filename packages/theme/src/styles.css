@@ -69,8 +69,7 @@
   font-size: 12pt;
   line-height: var(--line-height-script-tight);
   text-transform: uppercase;
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
+  margin: 0;
 }
 
 @utility transition {
@@ -79,18 +78,16 @@
   line-height: var(--line-height-script-tight);
   text-align: right;
   padding-right: 1.25in;
-  margin-top: 1em;
-  margin-bottom: 1em;
+  margin: 0;
 }
 
 @utility character {
   font-family: var(--font-script);
   font-size: 12pt;
-  line-height: var(--line-height-script-double);
+  line-height: var(--line-height-script-tight);
   text-transform: uppercase;
   padding-left: 2.2in;
-  margin-top: 1em;
-  margin-bottom: 0;
+  margin: 0;
 }
 
 @utility parenthetical {
@@ -115,25 +112,30 @@
   font-family: var(--font-script);
   font-size: 12pt;
   line-height: var(--line-height-script-tight);
-  margin-top: 1em;
-  margin-bottom: 0;
+  margin: 0;
 }
 
 @utility script-page {
   --script-page-border-width: 1px;
+  --script-page-breathing-room: 3px;
 
   position: relative;
   font-family: var(--font-script);
   width: calc(
     var(--width-script-page-us-letter) + var(--script-page-border-width) +
-      var(--script-page-border-width)
+      var(--script-page-border-width) + var(--script-page-breathing-room) +
+      var(--script-page-breathing-room)
   );
   min-height: calc(
     var(--height-script-page-us-letter) + var(--script-page-border-width) +
-      var(--script-page-border-width)
+      var(--script-page-border-width) + var(--script-page-breathing-room) +
+      var(--script-page-breathing-room)
   );
   margin-inline: auto;
-  padding: 1in 1in 1in 1.5in;
+  padding: calc(1in + var(--script-page-breathing-room))
+    calc(1in + var(--script-page-breathing-room))
+    calc(1in + var(--script-page-breathing-room))
+    calc(1.5in + var(--script-page-breathing-room));
   background: var(--color-script-page-bg);
   color: var(--color-script-page-fg);
   box-sizing: border-box;
@@ -251,11 +253,13 @@
 [data-page-format='a4'] .script-page {
   width: calc(
     var(--width-script-page-a4) + var(--script-page-border-width) +
-      var(--script-page-border-width)
+      var(--script-page-border-width) + var(--script-page-breathing-room) +
+      var(--script-page-breathing-room)
   );
   min-height: calc(
     var(--height-script-page-a4) + var(--script-page-border-width) +
-      var(--script-page-border-width)
+      var(--script-page-border-width) + var(--script-page-breathing-room) +
+      var(--script-page-breathing-room)
   );
 }
 

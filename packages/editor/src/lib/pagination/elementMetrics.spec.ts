@@ -1,24 +1,37 @@
 import { describe, expect, it } from 'vitest';
 
-import { measureBlock } from './elementMetrics';
+import { ELEMENT_METRICS, measureBlock } from './elementMetrics';
 import { getPageLayout } from './pageLayout';
 
 const beatText = (n: number) =>
   `Beat ${n}. The camera holds on the warehouse — dust, silence, then movement.`;
 
 describe('measureBlock', () => {
-  it('collapses adjacent vertical margins between action blocks', () => {
-    const layout = getPageLayout('us-letter');
-    const block = { type: 'action' as const, text: 'Steam rises.' };
-
-    const first = measureBlock(block, layout, 0);
-    const second = measureBlock(block, layout, first.marginBottomPt);
-
-    expect(second.heightPt).toBeLessThan(first.heightPt * 2);
-    expect(second.heightPt).toBe(first.heightPt);
+  it('does not add automatic vertical margins to screenplay body elements', () => {
+    expect(ELEMENT_METRICS.action.marginTopPt).toBe(0);
+    expect(ELEMENT_METRICS.action.marginBottomPt).toBe(0);
+    expect(ELEMENT_METRICS.centeredText.marginTopPt).toBe(0);
+    expect(ELEMENT_METRICS.sceneHeading.marginTopPt).toBe(0);
+    expect(ELEMENT_METRICS.sceneHeading.marginBottomPt).toBe(0);
+    expect(ELEMENT_METRICS.character.marginTopPt).toBe(0);
+    expect(ELEMENT_METRICS.character.lineHeightPt).toBe(
+      ELEMENT_METRICS.action.lineHeightPt,
+    );
+    expect(ELEMENT_METRICS.transition.marginTopPt).toBe(0);
+    expect(ELEMENT_METRICS.transition.marginBottomPt).toBe(0);
   });
 
-  it('predicts a page break before beat 16 in the multi-page story opener', () => {
+  it('measures empty action blocks as typed blank lines', () => {
+    const layout = getPageLayout('us-letter');
+    const block = { type: 'action' as const, text: '' };
+
+    const measurement = measureBlock(block, layout, 0);
+
+    expect(measurement.heightPt).toBe(ELEMENT_METRICS.action.lineHeightPt);
+    expect(measurement.paginationLines).toBe(1);
+  });
+
+  it('predicts a page break using typed blank lines instead of body margins', () => {
     const layout = getPageLayout('us-letter');
     const blocks = [
       { type: 'section' as const, text: '# Act I' },
@@ -58,7 +71,7 @@ describe('measureBlock', () => {
     }
 
     const beatBlockIndex = blocks.findIndex(
-      (block) => block.text === beatText(16),
+      (block) => block.text === beatText(25),
     );
 
     expect(firstBreakBeat).toBe(beatBlockIndex);

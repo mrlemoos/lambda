@@ -37,15 +37,31 @@ export function parseFountain(source: string): FountainScript {
     const trimmed = line.trim();
 
     if (!trimmed) {
+      const separatesBodyContent = bodyLines
+        .slice(index + 1)
+        .some((nextLine) => nextLine.trim().length > 0);
+
+      if (separatesBodyContent) {
+        content.push({ ...EMPTY_ACTION_BLOCK });
+      }
+
       previousLine = undefined;
       previousNodeType = undefined;
       continue;
     }
 
-    const classified = classifyBlock(trimmed, {
+    const classifiedBlock = classifyBlock(trimmed, {
       previousLine,
       previousNodeType,
     });
+    const classified =
+      (classifiedBlock === 'character' || classifiedBlock === 'dialogue') &&
+      previousNodeType === 'action' &&
+      typeof previousLine === 'string' &&
+      previousLine.trim().length > 0 &&
+      !trimmed.startsWith('@')
+        ? 'action'
+        : classifiedBlock;
 
     if (!classified) {
       throw new Error(`Unrecognised line in script body: ${trimmed}`);
@@ -102,25 +118,18 @@ function nodeHasText(node: JSONContent): boolean {
 
 function stringifyBodyNodes(nodes: JSONContent[]): string[] {
   const bodyLines: string[] = [];
-  let previousType: string | undefined;
 
   for (const node of nodes) {
-    if (!nodeHasText(node)) {
+    if (!nodeHasText(node) && node.type !== 'action') {
       continue;
     }
 
-    const needsBlankLineBefore =
-      bodyLines.length > 0 &&
-      (node.type === 'sceneHeading' ||
-        node.type === 'transition' ||
-        (node.type === 'character' && previousType === 'sceneHeading'));
-
-    if (needsBlankLineBefore) {
+    if (!nodeHasText(node)) {
       bodyLines.push('');
+      continue;
     }
 
     bodyLines.push(stringifyNode(node));
-    previousType = node.type;
   }
 
   return bodyLines;
@@ -129,10 +138,12 @@ function stringifyBodyNodes(nodes: JSONContent[]): string[] {
 export function stringifyFountain(script: FountainScript): string {
   const bodyLines = stringifyBodyNodes(script.document.content ?? []);
   const hasTitlePage = script.titlePage.length > 0;
-  const hasBody = bodyLines.length > 0;
+  const hasBody = bodyLines.some((line) => line.trim().length > 0);
 
   if (!hasTitlePage) {
-    return `${bodyLines.join('\n')}${hasBody ? '\n' : ''}`;
+    const hasBodyLines = bodyLines.length > 0;
+
+    return `${bodyLines.join('\n')}${hasBodyLines ? '\n' : ''}`;
   }
 
   if (!hasBody) {
@@ -142,7 +153,11 @@ export function stringifyFountain(script: FountainScript): string {
     return lastLine.trim() === '' ? titleText : `${titleText}\n`;
   }
 
-  return `${script.titlePage.join('\n')}\n\n${bodyLines.join('\n')}\n`;
+  const titleText = script.titlePage.join('\n');
+  const bodyText = bodyLines.join('\n');
+  const separator = bodyLines[0] === '' ? '\n' : '\n\n';
+
+  return `${titleText}${separator}${bodyText}\n`;
 }
 
 function textNode(type: string, text: string): JSONContent {

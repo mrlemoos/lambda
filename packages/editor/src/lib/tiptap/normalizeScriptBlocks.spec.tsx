@@ -19,6 +19,9 @@ describe('NormalizeScriptBlocks', () => {
             content: [{ type: 'text', text: 'Some action line goes here...' }],
           },
           {
+            type: 'action',
+          },
+          {
             type: 'character',
             content: [{ type: 'text', text: 'CHARACTER NAME' }],
           },

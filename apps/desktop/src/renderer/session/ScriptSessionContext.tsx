@@ -4,7 +4,7 @@ import {
   stringifyFountain,
   type FountainScript,
 } from '@lambda/fountain';
-import type { JSONContent } from '@tiptap/core';
+import type { ScriptEditorSurfaceProps } from '@lambda/editor';
 import {
   createContext,
   useCallback,
@@ -21,6 +21,9 @@ import { isDirty } from '../../lib/isDirty.js';
 import { formatWindowTitle } from '../../lib/windowTitle.js';
 
 export type UnsavedChoice = 'save' | 'discard' | 'cancel';
+type ScriptDocument = Parameters<
+  NonNullable<ScriptEditorSurfaceProps['onDocumentChange']>
+>[0];
 
 type ScriptSessionContextValue = {
   script: FountainScript | null;
@@ -29,7 +32,7 @@ type ScriptSessionContextValue = {
   dirty: boolean;
   startNewScript: () => Promise<void>;
   openScriptFromDisk: () => Promise<void>;
-  updateDocument: (document: JSONContent) => void;
+  updateDocument: (document: ScriptDocument) => void;
   saveScript: () => Promise<boolean>;
   saveScriptAs: () => Promise<boolean>;
   confirmUnsavedChanges: () => Promise<UnsavedChoice>;
@@ -59,19 +62,20 @@ function fileNameFromPath(filePath: string | null): string {
 export function ScriptSessionProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const [script, setScript] = useState<FountainScript | null>(null);
-  const [savedText, setSavedText] = useState('');
+  const scriptRef = useRef<FountainScript | null>(null);
+  const savedTextRef = useRef('');
   const [filePath, setFilePath] = useState<string | null>(null);
-  const [currentText, setCurrentText] = useState('');
+  const [dirty, setDirty] = useState(false);
   const [openError, setOpenError] = useState<string | null>(null);
-
-  const dirty = script ? isDirty(savedText, currentText) : false;
   const fileName = useMemo(() => fileNameFromPath(filePath), [filePath]);
 
   const syncWindowTitle = useCallback(
     async (path: string | null, edited: boolean) => {
-      const fileName = path ? fileNameFromPath(path) : null;
       await window.lambda.setWindowTitle(
-        formatWindowTitle({ fileName, isDirty: edited }),
+        formatWindowTitle({
+          fileName: path ? fileNameFromPath(path) : null,
+          isDirty: edited,
+        }),
       );
     },
     [],
@@ -91,9 +95,10 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       nextSavedText: string,
       path: string | null,
     ) => {
+      scriptRef.current = nextScript;
+      savedTextRef.current = nextSavedText;
       setScript(nextScript);
-      setSavedText(nextSavedText);
-      setCurrentText(nextSavedText);
+      setDirty(false);
       setFilePath(path);
       navigate('/script');
     },
@@ -116,30 +121,33 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     });
   }, [dirty]);
 
-  const updateDocument = useCallback((document: JSONContent) => {
-    setScript((previous) => {
-      if (!previous) {
-        return previous;
-      }
+  const updateDocument = useCallback((document: ScriptDocument) => {
+    const previous = scriptRef.current;
 
-      const nextScript = { ...previous, document };
-      setCurrentText(stringifyFountain(nextScript));
+    if (!previous) {
+      return;
+    }
 
-      return nextScript;
-    });
+    const nextScript = { ...previous, document };
+    const nextText = stringifyFountain(nextScript);
+
+    scriptRef.current = nextScript;
+    setDirty(isDirty(savedTextRef.current, nextText));
   }, []);
 
   const persistToPath = useCallback(
     async (path: string): Promise<boolean> => {
-      if (!script) {
+      const latestScript = scriptRef.current;
+
+      if (!latestScript) {
         return false;
       }
 
-      const text = stringifyFountain(script);
+      const text = stringifyFountain(latestScript);
       const fileName = await window.lambda.writeFile(path, text);
-      setSavedText(text);
-      setCurrentText(text);
+      savedTextRef.current = text;
       setFilePath(path);
+      setDirty(false);
       await syncWindowTitle(path, false);
 
       if (fileName) {
@@ -148,11 +156,11 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
 
       return true;
     },
-    [script, syncWindowTitle],
+    [syncWindowTitle],
   );
 
   const saveScript = useCallback(async (): Promise<boolean> => {
-    if (!script) {
+    if (!scriptRef.current) {
       return false;
     }
 
@@ -167,10 +175,10 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     }
 
     return persistToPath(filePath);
-  }, [filePath, persistToPath, script]);
+  }, [filePath, persistToPath]);
 
   const saveScriptAs = useCallback(async (): Promise<boolean> => {
-    if (!script) {
+    if (!scriptRef.current) {
       return false;
     }
 
@@ -183,7 +191,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     }
 
     return persistToPath(path);
-  }, [filePath, persistToPath, script]);
+  }, [filePath, persistToPath]);
 
   const clearOpenError = useCallback(() => {
     setOpenError(null);

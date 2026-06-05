@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { ScriptEditor } from './ScriptEditor';
+import type { PaginationResult } from './pagination/types';
 
 describe('ScriptEditor', () => {
   it('renders scene heading content with the scene-heading utility class', () => {
@@ -42,5 +43,24 @@ describe('ScriptEditor', () => {
       .closest('[data-page-format]');
 
     expect(pageRoot).toHaveAttribute('data-page-format', 'a4');
+  });
+
+  it('does not render pagination chrome in the editor', () => {
+    const pagination: PaginationResult = {
+      pages: [{ number: 1, topOffsetPt: 0 }],
+      boundaries: [{ offsetPt: 648 }],
+      placements: [],
+      totalHeightPt: 1296,
+      pageFormat: 'us-letter',
+    };
+
+    render(
+      <ScriptEditor pagination={pagination}>
+        <p className="action">A line on the page.</p>
+      </ScriptEditor>,
+    );
+
+    expect(screen.queryByText('1.')).not.toBeInTheDocument();
+    expect(document.querySelector('.script-page-boundary')).toBeNull();
   });
 });

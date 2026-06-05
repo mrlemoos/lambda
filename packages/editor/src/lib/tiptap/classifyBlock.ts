@@ -93,6 +93,23 @@ export function classifyBlock(
     return 'dialogue';
   }
 
+  if (
+    previousNodeType === 'action' &&
+    typeof previousLine === 'string' &&
+    previousLine.trim().length > 0
+  ) {
+    const classified = classifyLine(text, previousLine);
+
+    if (
+      (classified === 'character' || classified === 'dialogue') &&
+      !trimmed.startsWith('@')
+    ) {
+      return 'action';
+    }
+
+    return classified;
+  }
+
   if (previousNodeType === 'dialogue') {
     if (isSceneHeading(text) || isTransition(text)) {
       return classifyLine(text, previousLine);

@@ -1,52 +1,20 @@
 import { Extension } from '@tiptap/core';
 import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
-import { Decoration, DecorationSet } from '@tiptap/pm/view';
+import { DecorationSet } from '@tiptap/pm/view';
 
 import type { BlockPlacement } from './types';
 
 export const paginationLayoutPluginKey = new PluginKey('paginationLayout');
 
-const SCRIPT_BLOCK_TYPES = new Set([
-  'action',
-  'sceneHeading',
-  'section',
-  'synopsis',
-  'note',
-  'character',
-  'parenthetical',
-  'dialogue',
-  'transition',
-]);
-
 export function buildPaginationDecorations(
   doc: ProseMirrorNode,
   placements: BlockPlacement[],
 ): DecorationSet {
-  const decorations: Decoration[] = [];
-  let blockIndex = 0;
+  void doc;
+  void placements;
 
-  doc.forEach((node, pos) => {
-    if (!node.isBlock || !SCRIPT_BLOCK_TYPES.has(node.type.name)) {
-      return;
-    }
-
-    const placement = placements[blockIndex];
-    blockIndex += 1;
-
-    if (!placement || placement.marginTopPt <= 0) {
-      return;
-    }
-
-    decorations.push(
-      Decoration.node(pos, pos + node.nodeSize, {
-        class: 'pagination-page-start',
-        style: `margin-top: ${placement.marginTopPt}pt !important`,
-      }),
-    );
-  });
-
-  return DecorationSet.create(doc, decorations);
+  return DecorationSet.empty;
 }
 
 function createPaginationLayoutPlugin(): Plugin {

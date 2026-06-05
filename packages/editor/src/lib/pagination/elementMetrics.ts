@@ -31,7 +31,7 @@ export const ELEMENT_METRICS: Record<ScriptElementType, ElementMetrics> = {
   action: {
     fontSizePt: 12,
     lineHeightPt: SCRIPT_LINE_HEIGHT_PT,
-    marginTopPt: emToPt(1, 12),
+    marginTopPt: 0,
     marginBottomPt: 0,
     contentWidthPt: 'full',
     countsTowardPageLines: true,
@@ -40,7 +40,7 @@ export const ELEMENT_METRICS: Record<ScriptElementType, ElementMetrics> = {
   centeredText: {
     fontSizePt: 12,
     lineHeightPt: SCRIPT_LINE_HEIGHT_PT,
-    marginTopPt: emToPt(1, 12),
+    marginTopPt: 0,
     marginBottomPt: 0,
     contentWidthPt: 'full',
     countsTowardPageLines: true,
@@ -49,16 +49,16 @@ export const ELEMENT_METRICS: Record<ScriptElementType, ElementMetrics> = {
   sceneHeading: {
     fontSizePt: 12,
     lineHeightPt: SCRIPT_LINE_HEIGHT_PT,
-    marginTopPt: emToPt(1.5, 12),
-    marginBottomPt: emToPt(0.5, 12),
+    marginTopPt: 0,
+    marginBottomPt: 0,
     contentWidthPt: 'full',
     countsTowardPageLines: true,
     countsTowardPageHeight: true,
   },
   character: {
     fontSizePt: 12,
-    lineHeightPt: SCRIPT_LINE_HEIGHT_PT * 2,
-    marginTopPt: emToPt(1, 12),
+    lineHeightPt: SCRIPT_LINE_HEIGHT_PT,
+    marginTopPt: 0,
     marginBottomPt: 0,
     contentWidthPt: 'full',
     countsTowardPageLines: true,
@@ -85,8 +85,8 @@ export const ELEMENT_METRICS: Record<ScriptElementType, ElementMetrics> = {
   transition: {
     fontSizePt: 12,
     lineHeightPt: SCRIPT_LINE_HEIGHT_PT,
-    marginTopPt: emToPt(1, 12),
-    marginBottomPt: emToPt(1, 12),
+    marginTopPt: 0,
+    marginBottomPt: 0,
     contentWidthPt: 'full',
     countsTowardPageLines: true,
     countsTowardPageHeight: true,
@@ -190,10 +190,54 @@ export function countTextLines(
   }, 0);
 }
 
+export type WrappedTextLine = {
+  startOffset: number;
+  endOffset: number;
+};
+
+export function wrapTextLines(
+  text: string,
+  charsPerLineCount: number,
+): WrappedTextLine[] {
+  if (text.length === 0) {
+    return [{ startOffset: 0, endOffset: 0 }];
+  }
+
+  const lines: WrappedTextLine[] = [];
+  let paragraphStart = 0;
+
+  for (const paragraph of text.split('\n')) {
+    if (paragraph.length === 0) {
+      lines.push({ startOffset: paragraphStart, endOffset: paragraphStart });
+    } else {
+      for (
+        let offset = 0;
+        offset < paragraph.length;
+        offset += charsPerLineCount
+      ) {
+        lines.push({
+          startOffset: paragraphStart + offset,
+          endOffset:
+            paragraphStart +
+            Math.min(offset + charsPerLineCount, paragraph.length),
+        });
+      }
+    }
+
+    paragraphStart += paragraph.length + 1;
+  }
+
+  return lines;
+}
+
 export type BlockMeasurement = {
   heightPt: number;
   paginationLines: number;
   marginBottomPt: number;
+  textLineCount: number;
+  textLines: WrappedTextLine[];
+  lineHeightPt: number;
+  collapsedMarginTopPt: number;
 };
 
 export function measureBlock(
@@ -206,10 +250,8 @@ export function measureBlock(
     metrics.marginTopPt,
     previousMarginBottomPt,
   );
-  const textLineCount = countTextLines(
-    block.text,
-    charsPerLine(metrics, layout),
-  );
+  const textLines = wrapTextLines(block.text, charsPerLine(metrics, layout));
+  const textLineCount = textLines.length;
   const lineHeightPt =
     metrics.lineHeightPt === SCRIPT_LINE_HEIGHT_PT
       ? metrics.fontSizePt
@@ -224,5 +266,9 @@ export function measureBlock(
     heightPt,
     paginationLines,
     marginBottomPt: metrics.marginBottomPt,
+    textLineCount,
+    textLines,
+    lineHeightPt,
+    collapsedMarginTopPt,
   };
 }

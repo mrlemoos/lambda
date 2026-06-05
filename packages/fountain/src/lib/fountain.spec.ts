@@ -2,6 +2,16 @@ import { describe, expect, it } from 'vitest';
 
 import { parseFountain, stringifyFountain } from './fountain.js';
 
+function nodeText(node: { content?: { text?: string }[] }): string {
+  return node.content?.map((child) => child.text ?? '').join('') ?? '';
+}
+
+function visibleTypes(document: ReturnType<typeof parseFountain>['document']) {
+  return (document.content ?? [])
+    .filter((node) => nodeText(node).trim().length > 0)
+    .map((node) => node.type);
+}
+
 describe('parseFountain / stringifyFountain', () => {
   it('round-trips a scene heading', () => {
     const source = 'INT. KITCHEN - DAY\n';
@@ -47,14 +57,40 @@ Hello?
   it('parses prose after a character cue as dialogue nodes', () => {
     const source = `INT. HOUSE - DAY
 Some action line goes here...
+
 CHARACTER NAME
 This is a line of dialogue.
 `;
 
     const { document } = parseFountain(source);
-    const types = (document.content ?? []).map((node) => node.type);
 
-    expect(types).toEqual(['sceneHeading', 'action', 'character', 'dialogue']);
+    expect(visibleTypes(document)).toEqual([
+      'sceneHeading',
+      'action',
+      'character',
+      'dialogue',
+    ]);
+    expect(
+      document.content?.map((node) => [node.type, nodeText(node)]),
+    ).toEqual([
+      ['sceneHeading', 'INT. HOUSE - DAY'],
+      ['action', 'Some action line goes here...'],
+      ['action', ''],
+      ['character', 'CHARACTER NAME'],
+      ['dialogue', 'This is a line of dialogue.'],
+    ]);
+  });
+
+  it('parses uppercase lines inside action paragraphs as action', () => {
+    const source = `The monitor flashes.
+A DIGITAL AD
+This ad shines on a billboard.
+`;
+
+    const { document } = parseFountain(source);
+
+    expect(visibleTypes(document)).toEqual(['action', 'action', 'action']);
+    expect(stringifyFountain(parseFountain(source))).toBe(source);
   });
 
   it('round-trips title page and body', () => {
@@ -99,10 +135,7 @@ Credit: Large letters plunge from above: HEXA Q4 PARTY.
 
     const { document } = parseFountain(source);
 
-    expect(document.content?.map((node) => node.type)).toEqual([
-      'sceneHeading',
-      'action',
-    ]);
+    expect(visibleTypes(document)).toEqual(['sceneHeading', 'action']);
     expect(stringifyFountain(parseFountain(source))).toBe(source);
   });
 
@@ -122,10 +155,7 @@ This ad shines on a billboard.
 
     const { document } = parseFountain(source);
 
-    expect(document.content?.map((node) => node.type)).toEqual([
-      'action',
-      'action',
-    ]);
+    expect(visibleTypes(document)).toEqual(['action', 'action']);
   });
 
   it('round-trips centred text as its own element', () => {
