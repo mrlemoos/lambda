@@ -7,6 +7,7 @@ export default [
   {
     ignores: [
       '**/dist',
+      '**/out',
       '**/out-tsc',
       '**/storybook-static',
       '**/.nx',

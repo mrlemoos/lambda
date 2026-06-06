@@ -9,7 +9,6 @@ import {
   dialog,
   ipcMain,
   nativeTheme,
-  type MenuItemConstructorOptions,
 } from 'electron';
 
 import {
@@ -17,6 +16,7 @@ import {
   getMacBrowserWindowOptions,
 } from '../lib/macWindowChrome.js';
 import { resolveWindowBackgroundColor } from '../lib/windowBackground.js';
+import { createApplicationMenuTemplate } from './menu.js';
 
 const mainDir = fileURLToPath(new URL('.', import.meta.url));
 
@@ -35,53 +35,13 @@ function sendFileCommand(command: 'new' | 'open' | 'save' | 'save-as'): void {
 }
 
 function buildMenu(): Menu {
-  const isMac = process.platform === 'darwin';
-
-  const template: MenuItemConstructorOptions[] = [
-    ...(isMac
-      ? [
-          {
-            label: app.name,
-            submenu: [
-              { role: 'about' as const },
-              { type: 'separator' as const },
-              { role: 'quit' as const },
-            ],
-          },
-        ]
-      : []),
-    {
-      label: 'File',
-      submenu: [
-        {
-          label: 'New',
-          accelerator: 'CmdOrCtrl+N',
-          click: () => sendFileCommand('new'),
-        },
-        {
-          label: 'Open…',
-          accelerator: 'CmdOrCtrl+O',
-          click: () => sendFileCommand('open'),
-        },
-        { type: 'separator' },
-        {
-          label: 'Save',
-          accelerator: 'CmdOrCtrl+S',
-          click: () => sendFileCommand('save'),
-        },
-        {
-          label: 'Save As…',
-          accelerator: 'CmdOrCtrl+Shift+S',
-          click: () => sendFileCommand('save-as'),
-        },
-        ...(isMac
-          ? []
-          : [{ type: 'separator' as const }, { role: 'quit' as const }]),
-      ],
-    },
-  ];
-
-  return Menu.buildFromTemplate(template);
+  return Menu.buildFromTemplate(
+    createApplicationMenuTemplate({
+      appName: app.name,
+      isMac,
+      sendFileCommand,
+    }),
+  );
 }
 
 const isMac = process.platform === 'darwin';
