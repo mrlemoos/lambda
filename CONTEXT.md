@@ -100,6 +100,14 @@ _Avoid_: Us letter paper, page wrapper (vague), canvas.
 Which standard page size the script page uses: US Letter or A4. Set via `<ScriptEditor pageFormat="…" />`; theme CSS defines measurements for each format (e.g. `data-page-format` on the editor root). Defaults to US Letter when omitted.
 _Avoid_: Paper size (alone), locale.
 
+**Export settings dialog**:
+The UI where an author chooses PDF preview/export settings such as **Page format** and **Typeface**. Not the same as screenplay **Dialogue**.
+_Avoid_: Dialogue (reserved for spoken text), page setup (too broad).
+
+**Slugline Document Settings**:
+A hidden trailing metadata block in a Fountain file, wrapped in double curly braces and headed `Slugline Document Settings`. It stores document-level choices such as scene heading styling, note colours, **Page format** (`Page Format: US Letter` or `Page Format: A4`), and **Typeface** (`Typeface: Courier Prime`, `Typeface: Courier New`, or `Typeface: Monospace`). Lambda must preserve unknown keys with the script and omit the settings block from the editor surface and standard screenplay output.
+_Avoid_: Title page metadata, Note, visible settings text.
+
 **Emphasis**:
 Inline character styling within an element — italic (`*…*`), bold (`**…**`), underline (`_…_`), combinable per Fountain. Shown with muted cue characters while editing, like Slugline.
 _Avoid_: Rich text (generic), formatting (vague).
@@ -129,11 +137,11 @@ The edge between two printable sheets on the writing surface. Shown while editin
 _Avoid_: Page break (Fountain/manual), page divider (vague).
 
 **Outline element**:
-A **Section**, **Synopsis**, or **Note** block — structural or author-only lines that use the outline typeface (`--font-outline`) and are omitted from standard screenplay print layout. Rendered **in flow** where the author typed. **Pagination** assigns them zero **screenplay line** weight (they do not consume the 54-line page budget) but their measured height and element gaps **do** count toward printable **Page height** — each outline block reduces remaining vertical space on the sheet like any body element.
+A **Section**, **Synopsis**, or **Note** block — structural or author-only lines that use the outline typeface (`--font-outline`) and are omitted from standard screenplay print layout and first-slice PDF preview/export. Rendered **in flow** where the author typed. **Pagination** assigns them zero **screenplay line** weight (they do not consume the 54-line page budget) but their measured text height **does** count toward printable **Page height** — each outline block reduces remaining vertical space on the sheet without adding automatic margins.
 _Avoid_: Outline Navigator (product feature, out of scope), outline view.
 
 **Page number**:
-The ordinal of a printable script sheet (`1.`, `2.`, …) shown on the writing surface. Format: numeral with trailing period (e.g. `2.`). Placed **top-right** of the page region's printable area — **below** the preceding **Page boundary** line (the numeral labels the page you are on; page 1 has no line above it). Numbering starts at **`1.`** on the first body page (first page after a title page, if present); the title page itself is unnumbered. Distinct from **Scene number** (`#1A#` on a scene heading). A separate editor status readout (current page / total pages, Slugline bottom-left) is **out of scope** for the first pagination tracer.
+The ordinal of a printable script sheet (`1.`, `2.`, …) shown on the writing surface and in PDF preview/export. Format: numeral with trailing period (e.g. `2.`). Placed **top-right** of the page region's printable area — **below** the preceding **Page boundary** line (the numeral labels the page you are on; page 1 has no line above it). Numbering starts at **`1.`** on the first body page (first page after a title page, if present); the title page itself is unnumbered. Distinct from **Scene number** (`#1A#` on a scene heading). A separate editor status readout (current page / total pages, Slugline bottom-left) is **out of scope** for the first pagination tracer.
 _Avoid_: Scene number, scene index, page count (alone — use when referring to total sheets).
 
 **Omission**:
