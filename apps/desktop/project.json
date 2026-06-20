@@ -5,13 +5,25 @@
   "projectType": "application",
   "tags": [],
   "targets": {
+    "generate-icons": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/desktop",
+        "command": "python3 scripts/generate-icons.py"
+      },
+      "outputs": [
+        "{projectRoot}/public/favicon.ico",
+        "{projectRoot}/public/icons",
+        "{projectRoot}/src/assets/icons"
+      ]
+    },
     "dev": {
       "continuous": true,
       "executor": "nx:run-commands",
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "generate-icons"],
       "options": {
         "cwd": "apps/desktop",
-        "command": "rm -rf node_modules/.vite && electron-vite dev"
+        "command": "rm -rf node_modules/.vite && env -u ELECTRON_RUN_AS_NODE electron-vite dev"
       }
     },
     "verify-editor-bundle": {
@@ -24,7 +36,7 @@
     },
     "build": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "generate-icons"],
       "options": {
         "cwd": "apps/desktop",
         "command": "electron-vite build"

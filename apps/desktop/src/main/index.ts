@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -46,6 +47,15 @@ function buildMenu(): Menu {
 
 const isMac = process.platform === 'darwin';
 
+function resolveWindowIconPath(): string | undefined {
+  if (isMac) {
+    return undefined;
+  }
+
+  const iconPath = join(mainDir, '../../src/assets/icons/icon-256.png');
+  return existsSync(iconPath) ? iconPath : undefined;
+}
+
 function syncWindowBackgroundColor(window: BrowserWindow): void {
   window.setBackgroundColor(
     resolveWindowBackgroundColor(nativeTheme.shouldUseDarkColors),
@@ -60,6 +70,7 @@ function createWindow(): void {
     backgroundColor: resolveWindowBackgroundColor(
       nativeTheme.shouldUseDarkColors,
     ),
+    icon: resolveWindowIconPath(),
     ...(isMac ? getMacBrowserWindowOptions() : {}),
     webPreferences: {
       preload: join(mainDir, '../preload/index.js'),

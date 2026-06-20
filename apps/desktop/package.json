@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "main": "./out/main/index.js",
+  "scripts": {
+    "generate-icons": "python3 scripts/generate-icons.py"
+  },
   "dependencies": {
     "@lambda/editor": "workspace:*",
     "@lambda/fountain": "workspace:*",
