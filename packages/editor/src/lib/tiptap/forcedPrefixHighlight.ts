@@ -3,6 +3,7 @@ import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
 
+import { getCenteredTextSuffixLength } from '../elements/CenteredText';
 import { getForcedPrefixLength } from '../elements/forcedPrefix';
 
 const forcedPrefixHighlightKey = new PluginKey('forcedPrefixHighlight');
@@ -17,14 +18,22 @@ function buildForcedPrefixDecorations(doc: ProseMirrorNode): Decoration[] {
 
     const prefixLength = getForcedPrefixLength(node.textContent);
 
-    if (prefixLength === 0) {
-      return;
+    if (prefixLength > 0) {
+      const from = pos + 1;
+      const to = from + prefixLength;
+
+      decorations.push(Decoration.inline(from, to, { class: 'forced-prefix' }));
     }
 
-    const from = pos + 1;
-    const to = from + prefixLength;
+    const suffixLength = getCenteredTextSuffixLength(node.textContent);
 
-    decorations.push(Decoration.inline(from, to, { class: 'forced-prefix' }));
+    if (suffixLength > 0) {
+      const trimmedEnd = node.textContent.trimEnd();
+      const from = pos + 1 + trimmedEnd.length - suffixLength;
+      const to = from + suffixLength;
+
+      decorations.push(Decoration.inline(from, to, { class: 'forced-prefix' }));
+    }
   });
 
   return decorations;

@@ -21,6 +21,10 @@ export const CutTo: Story = {
   render: () => <p className="transition">CUT TO:</p>,
 };
 
+export const FadeIn: Story = {
+  render: () => <p className="transition">FADE IN:</p>,
+};
+
 export const ForcedFade: Story = {
   render: () => <p className="transition">{'> FADE TO BLACK.'}</p>,
 };

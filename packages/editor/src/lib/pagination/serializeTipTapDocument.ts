@@ -1,5 +1,6 @@
 import type { JSONContent } from '@tiptap/core';
 
+import { centeredTextPrintText } from '../elements/CenteredText';
 import type { ScriptBlock, ScriptElementType } from './types';
 
 const NODE_TYPE_MAP: Record<string, ScriptElementType | undefined> = {
@@ -35,7 +36,10 @@ export function serializeTipTapDocument(doc: JSONContent): ScriptBlock[] {
 
     blocks.push({
       type,
-      text: nodeText(node),
+      text:
+        type === 'centeredText'
+          ? centeredTextPrintText(nodeText(node))
+          : nodeText(node),
     });
   }
 

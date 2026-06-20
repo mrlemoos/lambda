@@ -36,6 +36,8 @@ describe('isCharacter', () => {
   it.each([
     '!SCANNING THE AISLES…',
     'They drink long and well from the beers.',
+    '> FADE TO BLACK.',
+    'FADE OUT.',
   ])('returns false for forced action and non-character lines', (line) => {
     const input = line;
 

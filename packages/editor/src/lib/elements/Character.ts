@@ -9,6 +9,10 @@ export function isCharacter(text: string): boolean {
     return false;
   }
 
+  if (trimmed.startsWith('>') || trimmed.endsWith('.')) {
+    return false;
+  }
+
   if (trimmed.startsWith('@')) {
     return true;
   }

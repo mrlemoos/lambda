@@ -36,4 +36,22 @@ describe('forcedPrefixHighlight', () => {
 
     editor.destroy();
   });
+
+  it('greys the closing bracket on centred text', () => {
+    const editor = createScriptEditor();
+
+    render(<EditorContent editor={editor} />);
+
+    editor.commands.setContent(
+      '<p class="centered-text">&gt; THE END &lt;</p>',
+    );
+
+    const prefixes = document.querySelectorAll('.forced-prefix');
+
+    expect(prefixes).toHaveLength(2);
+    expect(prefixes[0]).toHaveTextContent('>');
+    expect(prefixes[1]).toHaveTextContent('<');
+
+    editor.destroy();
+  });
 });

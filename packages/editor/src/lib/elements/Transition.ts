@@ -1,24 +1,17 @@
-const KNOWN_TRANSITIONS = [
-  'FADE OUT.',
-  'FADE OUT',
-  'FADE OUT:',
-  'CUT TO BLACK.',
-] as const;
-
 export function isTransition(text: string): boolean {
   const trimmed = text.trim();
+
+  if (trimmed.length === 0) {
+    return false;
+  }
 
   if (trimmed.startsWith('>') && trimmed.endsWith('<')) {
     return false;
   }
 
   if (trimmed.startsWith('>')) {
-    return true;
+    return trimmed === trimmed.toUpperCase();
   }
 
-  if (/TO:\s*$/i.test(trimmed)) {
-    return true;
-  }
-
-  return KNOWN_TRANSITIONS.some((value) => text === value);
+  return trimmed.endsWith(':') && trimmed === trimmed.toUpperCase();
 }
