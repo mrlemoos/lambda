@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://lambda-studio.uk
+      url: https://editor.lambda-studio.uk
     steps:
       - uses: actions/checkout@v4
 
