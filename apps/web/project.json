@@ -4,5 +4,23 @@
   "sourceRoot": "apps/web/src",
   "projectType": "application",
   "tags": [],
-  "targets": {}
+  "targets": {
+    "deploy": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/web",
+        "command": "wrangler pages deploy"
+      }
+    },
+    "pages-dev": {
+      "dependsOn": ["build"],
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/web",
+        "command": "wrangler pages dev"
+      }
+    }
+  }
 }

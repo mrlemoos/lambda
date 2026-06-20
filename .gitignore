@@ -3,8 +3,10 @@
 # compiled output
 dist
 tmp
+.wrangler
 out
 out-tsc
+test-output
 .scratch
 
 # dependencies
