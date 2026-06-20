@@ -12,6 +12,7 @@
   --glass-surface: rgb(255 255 255 / 0.58);
   --glass-border: rgb(255 255 255 / 0.42);
   --glass-blur: 18px;
+  --titlebar-filename-blur: 36px;
   --glass-mesh-1: rgb(99 102 241 / 0.14);
   --glass-mesh-2: rgb(14 165 233 / 0.1);
   --link-fg: #0c4a6e;
@@ -112,11 +113,17 @@ html[data-platform='darwin'] body::before {
 .window-drag-region-filename {
   max-width: min(42rem, 55vw);
   overflow: hidden;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: var(--glass-surface);
   color: var(--text-muted);
   font-size: 0.8125rem;
   line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
+  backdrop-filter: blur(var(--titlebar-filename-blur));
+  -webkit-backdrop-filter: blur(var(--titlebar-filename-blur));
 }
 
 html[data-platform='darwin'] .window-drag-region {
