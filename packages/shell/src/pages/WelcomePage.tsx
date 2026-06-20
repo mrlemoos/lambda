@@ -50,7 +50,14 @@ export function WelcomePage() {
   return (
     <main className="app-shell welcome">
       <div className="welcome-hero">
-        <p className="ui-kicker">Offline screenwriting</p>
+        <img
+          src="/icons/favicon.svg"
+          alt=""
+          className="welcome-logo"
+          width={64}
+          height={64}
+          aria-hidden
+        />
         <h1 className="ui-heading">Lambda</h1>
         <p className="ui-body welcome-tagline">
           Write in Fountain. Save locally. Nothing leaves your machine.

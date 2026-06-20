@@ -176,6 +176,12 @@ html[data-platform='darwin'] .app-shell.script-workspace {
   max-width: 28rem;
 }
 
+.welcome-logo {
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 0.25rem;
+}
+
 .welcome-tagline {
   max-width: 22rem;
 }

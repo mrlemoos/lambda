@@ -30,8 +30,10 @@ describe('WelcomePage', () => {
   });
 
   it('renders primary actions and keyboard hints', () => {
-    render(<WelcomePage />);
+    const { container } = render(<WelcomePage />);
 
+    expect(container.querySelector('.welcome-logo')).not.toBeNull();
+    expect(screen.queryByText('Offline screenwriting')).toBeNull();
     expect(screen.getByRole('heading', { name: 'Lambda' })).not.toBeNull();
     expect(screen.getByRole('button', { name: 'New script' })).not.toBeNull();
     expect(screen.getByRole('button', { name: 'Open…' })).not.toBeNull();
