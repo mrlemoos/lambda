@@ -33,10 +33,12 @@ type ScriptSessionContextValue = {
   dirty: boolean;
   startNewScript: () => Promise<void>;
   openScriptFromDisk: () => Promise<void>;
+  loadScriptFromText: (text: string, path?: string | null) => void;
   updateDocument: (document: ScriptDocument) => void;
   saveScript: () => Promise<boolean>;
   saveScriptAs: () => Promise<boolean>;
   confirmUnsavedChanges: () => Promise<UnsavedChoice>;
+  getSerializedFountainText: () => string | null;
   openError: string | null;
   clearOpenError: () => void;
 };
@@ -243,6 +245,24 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     applySession(session.script, session.savedText, session.filePath);
   }, [applySession, confirmUnsavedChanges]);
 
+  const loadScriptFromText = useCallback(
+    (text: string, path: string | null = null) => {
+      const session = createSessionFromText(text, path);
+      applySession(session.script, session.savedText, session.filePath);
+    },
+    [applySession],
+  );
+
+  const getSerializedFountainText = useCallback((): string | null => {
+    const latest = scriptRef.current;
+
+    if (!latest) {
+      return null;
+    }
+
+    return stringifyFountain(latest);
+  }, []);
+
   const resolveUnsavedPrompt = useCallback(
     async (choice: UnsavedChoice) => {
       const resolve = unsavedResolverRef.current;
@@ -325,10 +345,12 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       dirty,
       startNewScript,
       openScriptFromDisk,
+      loadScriptFromText,
       updateDocument,
       saveScript,
       saveScriptAs,
       confirmUnsavedChanges,
+      getSerializedFountainText,
       openError,
       clearOpenError,
     }),
@@ -339,10 +361,12 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       dirty,
       startNewScript,
       openScriptFromDisk,
+      loadScriptFromText,
       updateDocument,
       saveScript,
       saveScriptAs,
       confirmUnsavedChanges,
+      getSerializedFountainText,
       openError,
       clearOpenError,
     ],

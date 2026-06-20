@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react';
+import { render, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -27,6 +27,33 @@ describe('useScriptEditorCommands', () => {
 
     expect(typeof result.current?.undo).toBe('function');
     expect(typeof result.current?.selectAll).toBe('function');
+
+    editor.destroy();
+  });
+
+  it('exposes active commands to hooks outside the provider tree', () => {
+    const editor = createScriptEditor();
+
+    const { unmount } = render(
+      <ScriptEditorCommandsProvider editor={editor}>
+        <div />
+      </ScriptEditorCommandsProvider>,
+    );
+
+    const { result, unmount: unmountHook } = renderHook(() =>
+      useScriptEditorCommands(),
+    );
+
+    expect(typeof result.current?.undo).toBe('function');
+
+    unmount();
+    unmountHook();
+
+    const { result: afterUnmount } = renderHook(() =>
+      useScriptEditorCommands(),
+    );
+
+    expect(afterUnmount.current).toBeNull();
 
     editor.destroy();
   });

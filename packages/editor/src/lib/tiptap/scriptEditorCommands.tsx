@@ -1,5 +1,12 @@
 import type { Editor } from '@tiptap/core';
-import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useSyncExternalStore,
+  type ReactNode,
+} from 'react';
 
 export type ScriptEditorCommands = {
   undo: () => void;
@@ -13,6 +20,29 @@ export type ScriptEditorCommands = {
 const ScriptEditorCommandsContext = createContext<ScriptEditorCommands | null>(
   null,
 );
+
+let activeScriptEditorCommands: ScriptEditorCommands | null = null;
+const activeScriptEditorCommandListeners = new Set<() => void>();
+
+function subscribeToActiveScriptEditorCommands(
+  listener: () => void,
+): () => void {
+  activeScriptEditorCommandListeners.add(listener);
+
+  return () => {
+    activeScriptEditorCommandListeners.delete(listener);
+  };
+}
+
+function setActiveScriptEditorCommands(
+  commands: ScriptEditorCommands | null,
+): void {
+  activeScriptEditorCommands = commands;
+
+  for (const listener of activeScriptEditorCommandListeners) {
+    listener();
+  }
+}
 
 export function ScriptEditorCommandsProvider({
   editor,
@@ -45,6 +75,16 @@ export function ScriptEditorCommandsProvider({
     [editor],
   );
 
+  useEffect(() => {
+    setActiveScriptEditorCommands(commands);
+
+    return () => {
+      if (activeScriptEditorCommands === commands) {
+        setActiveScriptEditorCommands(null);
+      }
+    };
+  }, [commands]);
+
   return (
     <ScriptEditorCommandsContext.Provider value={commands}>
       {children}
@@ -53,5 +93,12 @@ export function ScriptEditorCommandsProvider({
 }
 
 export function useScriptEditorCommands(): ScriptEditorCommands | null {
-  return useContext(ScriptEditorCommandsContext);
+  const contextCommands = useContext(ScriptEditorCommandsContext);
+  const registryCommands = useSyncExternalStore(
+    subscribeToActiveScriptEditorCommands,
+    () => activeScriptEditorCommands,
+    () => null,
+  );
+
+  return contextCommands ?? registryCommands;
 }

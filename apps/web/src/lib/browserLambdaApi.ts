@@ -8,6 +8,8 @@ type FileCommandListener = (command: FileCommand) => void;
 
 export type BrowserLambdaApi = LambdaApi & {
   dispatchFileCommand: (command: FileCommand) => void;
+  getLastWrittenContents: () => string | null;
+  clearLastWrittenContents: () => void;
 };
 
 // Web uses file names as path keys — there are no native filesystem paths in the browser.
@@ -15,6 +17,7 @@ export function createBrowserLambdaApi(): BrowserLambdaApi {
   const fileHandles = new Map<string, FileSystemFileHandle>();
   const fallbackFiles = new Map<string, File>();
   const listeners = new Set<FileCommandListener>();
+  let lastWrittenContents: string | null = null;
 
   let openInput: HTMLInputElement | null = null;
 
@@ -105,6 +108,8 @@ export function createBrowserLambdaApi(): BrowserLambdaApi {
     },
 
     async writeFile(filePath, contents) {
+      lastWrittenContents = contents;
+
       const handle = fileHandles.get(filePath);
 
       if (handle) {
@@ -170,6 +175,14 @@ export function createBrowserLambdaApi(): BrowserLambdaApi {
     },
 
     dispatchFileCommand,
+
+    getLastWrittenContents() {
+      return lastWrittenContents;
+    },
+
+    clearLastWrittenContents() {
+      lastWrittenContents = null;
+    },
   };
 }
 
