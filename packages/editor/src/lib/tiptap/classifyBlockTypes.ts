@@ -27,6 +27,23 @@ export function classifiedToNodeType(
   }
 }
 
+/** Empty action blocks inserted before the next block when Enter is pressed. */
+export function enterActionSpacerCount(
+  classified: ClassifiedElement | null,
+): number {
+  switch (classified) {
+    case 'scene-heading':
+    case 'action':
+    case 'dialogue':
+    case 'transition':
+      return 2;
+    case 'character':
+    case 'parenthetical':
+    default:
+      return 0;
+  }
+}
+
 /** Fountain block that typically follows the line the user just finished. */
 export function classifiedToNextBlockType(
   classified: ClassifiedElement | null,

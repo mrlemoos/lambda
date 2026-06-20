@@ -10,6 +10,7 @@ import {
 import {
   classifiedToNextBlockType,
   classifiedToNodeType,
+  enterActionSpacerCount,
 } from './classifyBlockTypes';
 
 export const ClassifyOnEnter = Extension.create({
@@ -31,6 +32,8 @@ export const ClassifyOnEnter = Extension.create({
         const classifiedType = schema.nodes[classifiedToNodeType(classified)];
         const nextBlockType =
           schema.nodes[classifiedToNextBlockType(classified)];
+        const spacerCount = enterActionSpacerCount(classified);
+        const actionType = schema.nodes.action;
         const depth = textblockDepth($from);
         const currentBlockPos = $from.before(depth);
         const currentNode = $from.parent;
@@ -44,7 +47,15 @@ export const ClassifyOnEnter = Extension.create({
 
             tr.setNodeMarkup(currentBlockPos, classifiedType);
 
-            const insertPos = currentBlockPos + currentNode.nodeSize;
+            let insertPos = currentBlockPos + currentNode.nodeSize;
+
+            for (let index = 0; index < spacerCount; index += 1) {
+              const spacer = actionType.create();
+
+              tr.insert(insertPos, spacer);
+              insertPos += spacer.nodeSize;
+            }
+
             const newNode = nextBlockType.create();
 
             tr.insert(insertPos, newNode);

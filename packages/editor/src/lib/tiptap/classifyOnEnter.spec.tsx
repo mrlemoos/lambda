@@ -24,6 +24,40 @@ function pressEnter(editor: ReturnType<typeof createScriptEditor>) {
 }
 
 describe('classifyOnEnter keyboard shortcut', () => {
+  it('inserts two blank action lines after Enter on an action line', () => {
+    const editor = createScriptEditor();
+
+    render(<EditorContent editor={editor} />);
+
+    editor.commands.setContent('<p class="action">He crosses the room.</p>');
+    editor.commands.focus('end');
+
+    pressEnter(editor);
+
+    const blockTypes = editor.getJSON().content?.map((node) => node.type);
+
+    expect(blockTypes).toEqual(['action', 'action', 'action', 'action']);
+
+    editor.destroy();
+  });
+
+  it('inserts two blank action lines after Enter on a transition', () => {
+    const editor = createScriptEditor();
+
+    render(<EditorContent editor={editor} />);
+
+    editor.commands.setContent('<p class="transition">CUT TO:</p>');
+    editor.commands.focus('end');
+
+    pressEnter(editor);
+
+    const blockTypes = editor.getJSON().content?.map((node) => node.type);
+
+    expect(blockTypes).toEqual(['transition', 'action', 'action', 'action']);
+
+    editor.destroy();
+  });
+
   it('opens a dialogue block after Enter on a character cue', () => {
     const editor = createScriptEditor();
 
@@ -36,8 +70,47 @@ describe('classifyOnEnter keyboard shortcut', () => {
 
     pressEnter(editor);
 
-    expect(editor.getHTML()).toContain('class="character"');
-    expect(editor.getHTML()).toContain('class="dialogue"');
+    const blockTypes = editor.getJSON().content?.map((node) => node.type);
+
+    expect(blockTypes).toEqual(['sceneHeading', 'character', 'dialogue']);
+
+    editor.destroy();
+  });
+
+  it('opens a dialogue block after Enter on a parenthetical', () => {
+    const editor = createScriptEditor();
+
+    render(<EditorContent editor={editor} />);
+
+    editor.commands.setContent(
+      '<p class="character">STEEL</p><p class="parenthetical">(quietly)</p>',
+    );
+    editor.commands.focus('end');
+
+    pressEnter(editor);
+
+    const blockTypes = editor.getJSON().content?.map((node) => node.type);
+
+    expect(blockTypes).toEqual(['character', 'parenthetical', 'dialogue']);
+
+    editor.destroy();
+  });
+
+  it('inserts two blank action lines after Enter on a scene heading', () => {
+    const editor = createScriptEditor();
+
+    render(<EditorContent editor={editor} />);
+
+    editor.commands.setContent(
+      '<p class="scene-heading">INT. KITCHEN - DAY</p>',
+    );
+    editor.commands.focus('end');
+
+    pressEnter(editor);
+
+    const blockTypes = editor.getJSON().content?.map((node) => node.type);
+
+    expect(blockTypes).toEqual(['sceneHeading', 'action', 'action', 'action']);
 
     editor.destroy();
   });
@@ -54,8 +127,15 @@ describe('classifyOnEnter keyboard shortcut', () => {
 
     pressEnter(editor);
 
-    expect(editor.getHTML()).toMatch(/class="dialogue"[^>]*>[^<]*Hello\?/);
-    expect(editor.getHTML()).toMatch(/class="action"[^>]*>\s*<\/p>/);
+    const blockTypes = editor.getJSON().content?.map((node) => node.type);
+
+    expect(blockTypes).toEqual([
+      'character',
+      'dialogue',
+      'action',
+      'action',
+      'action',
+    ]);
 
     editor.destroy();
   });

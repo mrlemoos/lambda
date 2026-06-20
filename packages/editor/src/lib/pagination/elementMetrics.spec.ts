@@ -21,6 +21,15 @@ describe('measureBlock', () => {
     expect(ELEMENT_METRICS.transition.marginBottomPt).toBe(0);
   });
 
+  it('does not add automatic vertical margins to outline elements', () => {
+    expect(ELEMENT_METRICS.section.marginTopPt).toBe(0);
+    expect(ELEMENT_METRICS.section.marginBottomPt).toBe(0);
+    expect(ELEMENT_METRICS.synopsis.marginTopPt).toBe(0);
+    expect(ELEMENT_METRICS.synopsis.marginBottomPt).toBe(0);
+    expect(ELEMENT_METRICS.note.marginTopPt).toBe(0);
+    expect(ELEMENT_METRICS.note.marginBottomPt).toBe(0);
+  });
+
   it('measures empty action blocks as typed blank lines', () => {
     const layout = getPageLayout('us-letter');
     const block = { type: 'action' as const, text: '' };
@@ -31,7 +40,7 @@ describe('measureBlock', () => {
     expect(measurement.paginationLines).toBe(1);
   });
 
-  it('predicts a page break using typed blank lines instead of body margins', () => {
+  it('predicts a page break using typed block heights instead of outline margins', () => {
     const layout = getPageLayout('us-letter');
     const blocks = [
       { type: 'section' as const, text: '# Act I' },
@@ -70,10 +79,10 @@ describe('measureBlock', () => {
       previousMarginBottomPt = measurement.marginBottomPt;
     }
 
-    const beatBlockIndex = blocks.findIndex(
-      (block) => block.text === beatText(25),
+    const firstOverflowingBeatIndex = blocks.findIndex(
+      (block) => block.text === beatText(26),
     );
 
-    expect(firstBreakBeat).toBe(beatBlockIndex);
+    expect(firstBreakBeat).toBe(firstOverflowingBeatIndex);
   });
 });

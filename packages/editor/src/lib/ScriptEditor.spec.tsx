@@ -45,7 +45,7 @@ describe('ScriptEditor', () => {
     expect(pageRoot).toHaveAttribute('data-page-format', 'a4');
   });
 
-  it('does not render pagination chrome in the editor', () => {
+  it('renders pagination chrome in the editor', () => {
     const pagination: PaginationResult = {
       pages: [{ number: 1, topOffsetPt: 0 }],
       boundaries: [{ offsetPt: 648 }],
@@ -60,7 +60,7 @@ describe('ScriptEditor', () => {
       </ScriptEditor>,
     );
 
-    expect(screen.queryByText('1.')).not.toBeInTheDocument();
-    expect(document.querySelector('.script-page-boundary')).toBeNull();
+    expect(screen.getByText('1.')).toHaveClass('script-page-number');
+    expect(document.querySelector('.script-page-boundary')).not.toBeNull();
   });
 });

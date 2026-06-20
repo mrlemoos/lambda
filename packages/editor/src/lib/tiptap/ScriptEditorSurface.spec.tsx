@@ -35,7 +35,7 @@ function StatefulExistingScript({
 }
 
 describe('ScriptEditorSurface', () => {
-  it('does not show pagination chrome in the editable surface', async () => {
+  it('shows the first page number in the editable surface', async () => {
     render(<ScriptEditorSurface />);
 
     await waitFor(() => {
@@ -46,8 +46,7 @@ describe('ScriptEditorSurface', () => {
       }
     });
 
-    expect(screen.queryByText('1.')).not.toBeInTheDocument();
-    expect(document.querySelector('.script-page-boundary')).toBeNull();
+    expect(screen.getByText('1.')).toHaveClass('script-page-number');
   });
 
   it('classifies a scene heading when the user presses Enter', async () => {

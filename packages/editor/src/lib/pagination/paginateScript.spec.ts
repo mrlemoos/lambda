@@ -72,7 +72,7 @@ describe('paginateScript', () => {
     expect(result.pages).toEqual([{ number: 1, topOffsetPt: 0 }]);
   });
 
-  it('counts outline height and margins toward page boundaries', () => {
+  it('counts outline text height toward page boundaries', () => {
     const beatText = (n: number) =>
       `Beat ${n}. The camera holds on the warehouse — dust, silence, then movement.`;
     const body: ScriptBlock[] = [
@@ -145,16 +145,18 @@ describe('paginateScript', () => {
 
     const result = paginateScript(blocks);
     const pageTwoStart = layout.contentHeightPt;
-    const beat16Index = blocks.findIndex(
-      (block) => block.text === beatText(25),
+    const firstPageTwoBeatIndex = blocks.findIndex(
+      (block) => block.text === beatText(26),
     );
     const firstOnPageTwo = result.placements.findIndex(
       (placement) => placement.topOffsetPt >= pageTwoStart,
     );
 
-    expect(firstOnPageTwo).toBe(beat16Index);
-    expect(result.placements[beat16Index].marginTopPt).toBeGreaterThan(0);
-    expect(result.placements[beat16Index].topOffsetPt).toBe(
+    expect(firstOnPageTwo).toBe(firstPageTwoBeatIndex);
+    expect(
+      result.placements[firstPageTwoBeatIndex].marginTopPt,
+    ).toBeGreaterThan(0);
+    expect(result.placements[firstPageTwoBeatIndex].topOffsetPt).toBe(
       pageTwoStart + PAGE_TOP_GUTTER_PT,
     );
   });

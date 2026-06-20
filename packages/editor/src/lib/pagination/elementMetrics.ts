@@ -23,10 +23,6 @@ export type ElementMetrics = {
   countsTowardPageHeight: boolean;
 };
 
-function emToPt(em: number, fontSizePt: number): number {
-  return em * fontSizePt;
-}
-
 export const ELEMENT_METRICS: Record<ScriptElementType, ElementMetrics> = {
   action: {
     fontSizePt: 12,
@@ -94,8 +90,8 @@ export const ELEMENT_METRICS: Record<ScriptElementType, ElementMetrics> = {
   section: {
     fontSizePt: 12,
     lineHeightPt: SCRIPT_LINE_HEIGHT_PT,
-    marginTopPt: emToPt(1.25, 12),
-    marginBottomPt: emToPt(0.25, 12),
+    marginTopPt: 0,
+    marginBottomPt: 0,
     contentWidthPt: 'full',
     countsTowardPageLines: false,
     countsTowardPageHeight: true,
@@ -103,8 +99,8 @@ export const ELEMENT_METRICS: Record<ScriptElementType, ElementMetrics> = {
   synopsis: {
     fontSizePt: 11,
     lineHeightPt: 11,
-    marginTopPt: emToPt(0.5, 11),
-    marginBottomPt: emToPt(0.5, 11),
+    marginTopPt: 0,
+    marginBottomPt: 0,
     contentWidthPt: 'full',
     countsTowardPageLines: false,
     countsTowardPageHeight: true,
@@ -112,8 +108,8 @@ export const ELEMENT_METRICS: Record<ScriptElementType, ElementMetrics> = {
   note: {
     fontSizePt: 11,
     lineHeightPt: 11,
-    marginTopPt: emToPt(0.5, 11),
-    marginBottomPt: emToPt(0.5, 11),
+    marginTopPt: 0,
+    marginBottomPt: 0,
     contentWidthPt: 'full',
     countsTowardPageLines: false,
     countsTowardPageHeight: true,

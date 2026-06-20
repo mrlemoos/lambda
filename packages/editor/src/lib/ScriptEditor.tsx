@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { ScriptPageChrome } from './pagination/ScriptPageChrome';
 import type { PaginationResult } from './pagination/types';
 
 import './styles.css';
@@ -15,13 +16,12 @@ export type ScriptEditorProps = {
 export function ScriptEditor({
   children,
   pageFormat = 'us-letter',
-  pagination: _pagination,
+  pagination,
 }: ScriptEditorProps) {
-  void _pagination;
-
   return (
     <div data-page-format={pageFormat}>
       <div className="script-page">
+        {pagination ? <ScriptPageChrome pagination={pagination} /> : null}
         <div className="script-page-body">{children}</div>
       </div>
     </div>
