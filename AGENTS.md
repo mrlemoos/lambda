@@ -50,9 +50,12 @@ Tests must follow **Arrange–Act–Assert** (see `.cursor/rules/test-aaa-format
 
 - Planned web app (`apps/web`) should target full desktop parity: welcome/script workspace, keyboard shortcuts, export settings, and desktop-style chrome.
 - Web app file I/O should use progressive enhancement: File System Access API where supported, pick-and-download fallback elsewhere.
-- When committing, if `CONTEXT.md` changes do not relate to the code change, commit them separately rather than amending.
+- When committing, put unrelated changes (e.g. `CONTEXT.md`, IDE settings, `.cursor/plans`, hooks, lockfile) in separate commits rather than bundling with feature work or amending.
+- Playwright e2e runs as a separate required PR check, not in the local `typecheck,lint,test` quality gate.
 
 ## Learned Workspace Facts
 
 - `apps/web` and `apps/desktop` compose `@lambda/shell`; root `pnpm dev` serves web, `pnpm desktop` serves desktop.
 - `@lambda/desktop` dev unsets `ELECTRON_RUN_AS_NODE` in its Nx command; Electron startup fails if this env var is set in the shell.
+- `apps/web` deploys to Cloudflare Pages via wrangler (`pnpm nx deploy @lambda/web`); static build output is `apps/web/dist/`.
+- Playwright e2e lives in `@lambda/web-e2e`; bootstrap routes and APIs are gated with `VITE_E2E=1` and excluded from production builds.
