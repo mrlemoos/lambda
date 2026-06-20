@@ -1,9 +1,25 @@
+import { useEffect, useMemo, useState } from 'react';
+
+import { formatLibraryEntryLabel } from '../lib/formatLibraryEntryLabel.js';
 import { useScriptSession } from '../session/ScriptSessionContext.js';
 import { formatPlatformShortcut } from '../lib/platformShortcuts.js';
 
 export function WelcomePage() {
-  const { startNewScript, openScriptFromDisk, openError, clearOpenError } =
-    useScriptSession();
+  const {
+    startNewScript,
+    openScriptFromDisk,
+    openScriptFromLibrary,
+    deleteLibraryScript,
+    libraryEntries,
+    refreshLibrary,
+    openError,
+    clearOpenError,
+  } = useScriptSession();
+  const [nowMs] = useState(() => Date.now());
+
+  useEffect(() => {
+    void refreshLibrary();
+  }, [refreshLibrary]);
 
   const shortcuts = [
     { accelerator: 'CmdOrCtrl+N', label: 'new' },
@@ -17,6 +33,19 @@ export function WelcomePage() {
         `${formatPlatformShortcut(accelerator)} ${label}`,
     )
     .join(' · ');
+
+  const libraryItems = useMemo(
+    () =>
+      libraryEntries.map((entry) => ({
+        ...entry,
+        label: formatLibraryEntryLabel(
+          entry.displayName,
+          entry.updatedAtMs,
+          nowMs,
+        ),
+      })),
+    [libraryEntries, nowMs],
+  );
 
   return (
     <main className="app-shell welcome">
@@ -55,6 +84,40 @@ export function WelcomePage() {
           Open…
         </button>
       </div>
+      {libraryItems.length > 0 ? (
+        <section className="welcome-library" aria-label="Local script library">
+          <h2 className="ui-kicker welcome-library-heading">Your scripts</h2>
+          <ul className="welcome-library-list">
+            {libraryItems.map((entry) => (
+              <li key={entry.id} className="welcome-library-item">
+                <button
+                  type="button"
+                  className="welcome-library-open"
+                  onClick={() => void openScriptFromLibrary(entry.id)}
+                >
+                  {entry.label}
+                </button>
+                <button
+                  type="button"
+                  className="ui-button ui-button-ghost welcome-library-delete"
+                  aria-label={`Delete ${entry.displayName}`}
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        `Delete “${entry.displayName}” from your local library?`,
+                      )
+                    ) {
+                      void deleteLibraryScript(entry.id);
+                    }
+                  }}
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       <p className="ui-hint welcome-shortcuts">{shortcutHint}</p>
     </main>
   );

@@ -6,6 +6,14 @@ import { WelcomePage } from './WelcomePage.js';
 const session = vi.hoisted(() => ({
   startNewScript: vi.fn(async () => undefined),
   openScriptFromDisk: vi.fn(async () => undefined),
+  openScriptFromLibrary: vi.fn(async () => undefined),
+  deleteLibraryScript: vi.fn(async () => undefined),
+  refreshLibrary: vi.fn(async () => undefined),
+  libraryEntries: [] as Array<{
+    id: string;
+    displayName: string;
+    updatedAtMs: number;
+  }>,
   openError: null as string | null,
   clearOpenError: vi.fn(),
 }));
@@ -17,6 +25,7 @@ vi.mock('../session/ScriptSessionContext.js', () => ({
 describe('WelcomePage', () => {
   beforeEach(() => {
     session.openError = null;
+    session.libraryEntries = [];
     vi.clearAllMocks();
   });
 
@@ -42,5 +51,23 @@ describe('WelcomePage', () => {
 
     expect(session.clearOpenError).toHaveBeenCalled();
     session.openError = null;
+  });
+
+  it('lists local library entries when present', () => {
+    session.libraryEntries = [
+      {
+        id: 'abc',
+        displayName: 'JULIE',
+        updatedAtMs: Date.parse('2026-06-20T10:00:00.000Z'),
+      },
+    ];
+
+    render(<WelcomePage />);
+
+    expect(
+      screen.getByRole('region', { name: 'Local script library' }),
+    ).not.toBeNull();
+    expect(screen.getByRole('button', { name: /JULIE ·/i })).not.toBeNull();
+    session.libraryEntries = [];
   });
 });

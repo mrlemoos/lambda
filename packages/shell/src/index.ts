@@ -2,6 +2,9 @@ export type {
   FileCommand,
   LambdaApi,
   LambdaPlatform,
+  PersistScriptResult,
+  ScriptLibraryEntry,
+  ScriptPersistenceApi,
   ViewCommand,
 } from './lib/api.js';
 export {

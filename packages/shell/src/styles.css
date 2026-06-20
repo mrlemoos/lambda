@@ -214,6 +214,53 @@ html[data-platform='darwin'] .app-shell.script-workspace {
   text-align: center;
 }
 
+.welcome-library {
+  width: min(100%, 28rem);
+}
+
+.welcome-library-heading {
+  margin: 0 0 0.75rem;
+  text-align: center;
+}
+
+.welcome-library-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.welcome-library-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.welcome-library-open {
+  flex: 1;
+  min-width: 0;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.welcome-library-open:hover {
+  border-color: var(--border-strong);
+}
+
+.welcome-library-delete {
+  flex-shrink: 0;
+  padding-inline: 0.65rem;
+  font-size: 0.8125rem;
+}
+
 .script-workspace {
   display: flex;
   flex-direction: column;

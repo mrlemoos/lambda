@@ -1,5 +1,7 @@
 import type { FileCommand, LambdaApi, ViewCommand } from '@lambda/shell';
 
+import { createWebScriptLibraryPersistence } from './scriptLibrary/index.js';
+
 const FOUNTAIN_ACCEPT = {
   'text/plain': ['.fountain', '.txt'],
 };
@@ -15,7 +17,9 @@ export type BrowserLambdaApi = LambdaApi & {
 };
 
 // Web uses file names as path keys — there are no native filesystem paths in the browser.
-export function createBrowserLambdaApi(): BrowserLambdaApi {
+export function createBrowserLambdaApi(
+  scriptPersistence = createWebScriptLibraryPersistence(),
+): BrowserLambdaApi {
   const fileHandles = new Map<string, FileSystemFileHandle>();
   const fallbackFiles = new Map<string, File>();
   const listeners = new Set<FileCommandListener>();
@@ -90,6 +94,7 @@ export function createBrowserLambdaApi(): BrowserLambdaApi {
 
   return {
     platform: 'web',
+    scriptPersistence,
 
     onFileCommand(listener) {
       listeners.add(listener);

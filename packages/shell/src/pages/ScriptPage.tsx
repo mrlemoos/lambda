@@ -10,6 +10,7 @@ export function ScriptPage() {
   const {
     script,
     filePath,
+    libraryId,
     fileName,
     dirty,
     updateDocument,
@@ -30,7 +31,7 @@ export function ScriptPage() {
       />
       <EditorZoomSurface level={level}>
         <ScriptEditorSurface
-          key={filePath ?? 'untitled'}
+          key={libraryId ?? filePath ?? 'untitled'}
           initialDocument={script.document}
           onDocumentChange={updateDocument}
         />

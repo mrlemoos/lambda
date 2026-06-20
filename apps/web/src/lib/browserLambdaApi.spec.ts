@@ -61,7 +61,7 @@ describe('createBrowserLambdaApi', () => {
     expect(close).toHaveBeenCalled();
   });
 
-  it('falls back to file input and download when FSAA is unavailable', async () => {
+  it('writes exports via download fallback without using Save for library persistence', async () => {
     Reflect.deleteProperty(window, 'showOpenFilePicker');
     Reflect.deleteProperty(window, 'showSaveFilePicker');
 
