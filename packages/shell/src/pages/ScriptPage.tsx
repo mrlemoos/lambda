@@ -1,7 +1,9 @@
 import { ScriptEditorSurface } from '@lambda/editor';
 import { Navigate } from 'react-router-dom';
 
+import { EditorZoomSurface } from '../components/EditorZoomSurface.js';
 import { ScriptToolbar } from '../components/ScriptToolbar.js';
+import { useEditorZoom } from '../session/EditorZoomContext.js';
 import { useScriptSession } from '../session/ScriptSessionContext.js';
 
 export function ScriptPage() {
@@ -13,6 +15,7 @@ export function ScriptPage() {
     updateDocument,
     confirmUnsavedChanges,
   } = useScriptSession();
+  const { level } = useEditorZoom();
 
   if (!script) {
     return <Navigate to="/" replace />;
@@ -25,11 +28,13 @@ export function ScriptPage() {
         dirty={dirty}
         onBack={confirmUnsavedChanges}
       />
-      <ScriptEditorSurface
-        key={filePath ?? 'untitled'}
-        initialDocument={script.document}
-        onDocumentChange={updateDocument}
-      />
+      <EditorZoomSurface level={level}>
+        <ScriptEditorSurface
+          key={filePath ?? 'untitled'}
+          initialDocument={script.document}
+          onDocumentChange={updateDocument}
+        />
+      </EditorZoomSurface>
     </main>
   );
 }

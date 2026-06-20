@@ -2,7 +2,11 @@ import {
   EDIT_MENU_NATIVE_ROLES,
   FILE_MENU_ITEMS,
   formatPlatformShortcut,
+  matchesAccelerator,
+  useEditorZoom,
+  VIEW_MENU_ITEMS,
   type FileCommand,
+  type ViewCommand,
 } from '@lambda/shell';
 import { useScriptEditorCommands } from '@lambda/editor';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
@@ -21,27 +25,6 @@ const EDIT_MENU_LABELS: Record<
   paste: { label: 'Paste', accelerator: 'CmdOrCtrl+V' },
   selectAll: { label: 'Select All', accelerator: 'CmdOrCtrl+A' },
 };
-
-function matchesAccelerator(
-  event: KeyboardEvent,
-  accelerator: string,
-): boolean {
-  const parts = accelerator.split('+');
-  const key = parts[parts.length - 1]?.toLowerCase() ?? '';
-  const needsShift = parts.includes('Shift');
-  const needsMeta = parts.includes('CmdOrCtrl') || parts.includes('Cmd');
-  const metaPressed = event.metaKey || event.ctrlKey;
-
-  if (needsMeta !== metaPressed) {
-    return false;
-  }
-
-  if (needsShift !== event.shiftKey) {
-    return false;
-  }
-
-  return event.key.toLowerCase() === key.toLowerCase();
-}
 
 function MenuDropdown({
   label,
@@ -93,6 +76,7 @@ function MenuDropdown({
 
 export function ApplicationMenuBar() {
   const editorCommands = useScriptEditorCommands();
+  const { canAdjust, applyAction } = useEditorZoom();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -140,6 +124,10 @@ export function ApplicationMenuBar() {
     editorCommands?.[role]();
   };
 
+  const runView = (command: ViewCommand) => {
+    applyAction(command);
+  };
+
   return (
     <nav className="application-menu-bar" aria-label="Application menu">
       <div className="application-menu-bar-leading">
@@ -173,7 +161,7 @@ export function ApplicationMenuBar() {
           })}
         </MenuDropdown>
         <MenuDropdown label="Edit">
-          {EDIT_MENU_NATIVE_ROLES.map((role, index) => {
+          {EDIT_MENU_NATIVE_ROLES.map((role) => {
             const { label, accelerator } = EDIT_MENU_LABELS[role];
             const showSeparator = role === 'redo';
 
@@ -197,6 +185,36 @@ export function ApplicationMenuBar() {
                     role="separator"
                   />
                 ) : null}
+              </li>
+            );
+          })}
+        </MenuDropdown>
+        <MenuDropdown label="View">
+          {VIEW_MENU_ITEMS.map((item, index) => {
+            if ('type' in item) {
+              return (
+                <li
+                  key={`view-separator-${index}`}
+                  className="application-menu-separator"
+                  role="separator"
+                />
+              );
+            }
+
+            return (
+              <li key={item.command} role="none">
+                <button
+                  type="button"
+                  className="application-menu-item"
+                  role="menuitem"
+                  disabled={!canAdjust}
+                  onClick={() => runView(item.command)}
+                >
+                  <span>{item.label}</span>
+                  <span className="application-menu-shortcut">
+                    {formatPlatformShortcut(item.accelerator)}
+                  </span>
+                </button>
               </li>
             );
           })}

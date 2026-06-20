@@ -1,6 +1,11 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
-import type { FileCommand, LambdaApi, LambdaPlatform } from './api.js';
+import type {
+  FileCommand,
+  LambdaApi,
+  LambdaPlatform,
+  ViewCommand,
+} from './api.js';
 
 const api: LambdaApi = {
   platform: process.platform as LambdaPlatform,
@@ -13,6 +18,17 @@ const api: LambdaApi = {
 
     return () => {
       ipcRenderer.removeListener('file:command', handler);
+    };
+  },
+  onViewCommand(listener) {
+    const handler = (_event: Electron.IpcRendererEvent, command: string) => {
+      listener(command as ViewCommand);
+    };
+
+    ipcRenderer.on('view:command', handler);
+
+    return () => {
+      ipcRenderer.removeListener('view:command', handler);
     };
   },
   readFile(filePath) {

@@ -45,8 +45,20 @@ The screenplay document the author works on — one Fountain source, one narrati
 _Avoid_: Document, file, project (unless you mean a separate product concept like a folder of scripts).
 
 **Application menu**:
-The File and Edit command surface — New, Open, Save, Save As; undo, redo, cut, copy, paste. On desktop, the native OS menu bar; on Lambda Web, an in-app menu bar with the same labels and keyboard shortcuts.
+The File, Edit, and View command surface — New, Open, Save, Save As; undo, redo, cut, copy, paste; **Editor zoom** (Zoom In, Zoom Out, Actual Size). On desktop, the native OS menu bar; on Lambda Web, an in-app menu bar with the same labels and keyboard shortcuts.
 _Avoid_: Toolbar (alone), hamburger menu, command palette.
+
+**Editor zoom**:
+Visual scaling of page sheets on the writing surface — the **Title page** (when present), the **Script page** (TipTap content, **Page boundary** dividers, and **Page number** labels), and any future page-shaped sheets scale together as one unit at the same level. Does not change **Writing shell** chrome, typographic point sizes, or **Pagination** line budgets; export and print use canonical layout. The author's chosen level is a global user preference remembered across sessions and scripts. Default is 100% (**Actual size**); adjustable in 10% steps from 50% to 200%. Zoom commands apply only on the script workspace while a **Script** is open. The current level is shown in a persistent **Zoom readout** on the script workspace. When the level changes, scroll adjusts to keep the viewport centre stable.
+_Avoid_: Browser zoom, font size (when meaning on-screen magnification), per-script zoom.
+
+**Zoom readout**:
+A live label of the current **Editor zoom** level (e.g. `125%`) on the script workspace **Script toolbar**. Updates as the author zooms; hidden on the welcome screen.
+_Avoid_: Page count (reserved for future pagination status), browser zoom indicator.
+
+**Actual size**:
+100% **Editor zoom** — the canonical on-screen scale matching real script page dimensions. Restored with ⌘0 (Actual Size). Zoom In and Zoom Out use the platform's standard accelerator keys (including numpad +/− where supported).
+_Avoid_: Reset zoom (vague), fit to window.
 
 ### Fountain structure
 

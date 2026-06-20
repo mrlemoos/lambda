@@ -7,12 +7,14 @@ vi.mock('../lib/browserLambdaApi.js', () => ({
   browserLambdaApi: {
     platform: 'web',
     onFileCommand: vi.fn(() => () => undefined),
+    onViewCommand: vi.fn(() => () => undefined),
     readFile: vi.fn(async () => ''),
     writeFile: vi.fn(async (filePath: string) => filePath),
     showOpenDialog: vi.fn(async () => null),
     showSaveDialog: vi.fn(async () => null),
     setWindowTitle: vi.fn(async () => undefined),
     dispatchFileCommand: vi.fn(),
+    dispatchViewCommand: vi.fn(),
   },
 }));
 

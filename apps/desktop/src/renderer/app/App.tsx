@@ -1,5 +1,6 @@
 import { HashRouter } from 'react-router-dom';
 import {
+  EditorZoomProvider,
   LambdaApiProvider,
   ScriptSessionProvider,
   ShellRoutes,
@@ -17,10 +18,12 @@ export function App() {
   return (
     <HashRouter>
       <LambdaApiProvider api={window.lambda}>
-        <ScriptSessionProvider>
-          <ScriptWindowDragRegion />
-          <ShellRoutes />
-        </ScriptSessionProvider>
+        <EditorZoomProvider>
+          <ScriptSessionProvider>
+            <ScriptWindowDragRegion />
+            <ShellRoutes />
+          </ScriptSessionProvider>
+        </EditorZoomProvider>
       </LambdaApiProvider>
     </HashRouter>
   );

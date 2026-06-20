@@ -1,5 +1,6 @@
 import { BrowserRouter } from 'react-router-dom';
 import {
+  EditorZoomProvider,
   LambdaApiProvider,
   ScriptSessionProvider,
   ShellRoutes,
@@ -16,11 +17,13 @@ export function App() {
   return (
     <BrowserRouter>
       <LambdaApiProvider api={browserLambdaApi}>
-        <ScriptSessionProvider>
-          {e2eEnabled ? <E2eWindowApi /> : null}
-          <ApplicationMenuBar />
-          {e2eEnabled ? <E2eRoutes /> : <ShellRoutes />}
-        </ScriptSessionProvider>
+        <EditorZoomProvider>
+          <ScriptSessionProvider>
+            {e2eEnabled ? <E2eWindowApi /> : null}
+            <ApplicationMenuBar />
+            {e2eEnabled ? <E2eRoutes /> : <ShellRoutes />}
+          </ScriptSessionProvider>
+        </EditorZoomProvider>
       </LambdaApiProvider>
     </BrowserRouter>
   );

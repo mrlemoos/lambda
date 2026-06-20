@@ -215,7 +215,39 @@ html[data-platform='darwin'] .app-shell.script-workspace {
 }
 
 .script-workspace {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   padding: 1rem 1rem 3rem;
+  box-sizing: border-box;
+}
+
+.editor-zoom-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.editor-zoom-spacer {
+  position: relative;
+}
+
+.editor-zoom-scale {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.editor-zoom-content {
+  width: fit-content;
+  margin-inline: auto;
+}
+
+.script-toolbar-zoom {
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
 }
 
 .script-toolbar {

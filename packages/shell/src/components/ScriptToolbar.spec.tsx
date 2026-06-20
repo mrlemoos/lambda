@@ -2,34 +2,59 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
+import type { LambdaApi } from '../lib/api.js';
+import { LambdaApiProvider } from '../session/LambdaApiContext.js';
+import { EditorZoomProvider } from '../session/EditorZoomContext.js';
 import { ScriptToolbar } from './ScriptToolbar.js';
+
+function renderToolbar(props: {
+  fileName: string;
+  dirty: boolean;
+  onBack?: () => Promise<'discard' | 'cancel'>;
+}) {
+  const onBack = props.onBack ?? vi.fn(async () => 'discard' as const);
+  const api: LambdaApi = {
+    platform: 'web',
+    onFileCommand: () => () => undefined,
+    onViewCommand: () => () => undefined,
+    readFile: vi.fn(),
+    writeFile: vi.fn(),
+    showOpenDialog: vi.fn(),
+    showSaveDialog: vi.fn(),
+    setWindowTitle: vi.fn(),
+  };
+
+  return render(
+    <MemoryRouter initialEntries={['/script']}>
+      <LambdaApiProvider api={api}>
+        <EditorZoomProvider>
+          <ScriptToolbar
+            fileName={props.fileName}
+            dirty={props.dirty}
+            onBack={onBack}
+          />
+        </EditorZoomProvider>
+      </LambdaApiProvider>
+    </MemoryRouter>,
+  );
+}
 
 describe('ScriptToolbar', () => {
   it('shows the filename and edited badge when dirty', () => {
-    const onBack = vi.fn(async () => 'discard' as const);
-
-    render(
-      <MemoryRouter>
-        <ScriptToolbar fileName="night-shift.fountain" dirty onBack={onBack} />
-      </MemoryRouter>,
-    );
+    renderToolbar({ fileName: 'night-shift.fountain', dirty: true });
 
     expect(screen.getByText('night-shift.fountain')).not.toBeNull();
     expect(screen.getByText('Edited')).not.toBeNull();
   });
 
-  it('hides the edited badge when the script is saved', () => {
-    const onBack = vi.fn(async () => 'discard' as const);
+  it('shows the editor zoom readout', () => {
+    renderToolbar({ fileName: 'night-shift.fountain', dirty: false });
 
-    render(
-      <MemoryRouter>
-        <ScriptToolbar
-          fileName="night-shift.fountain"
-          dirty={false}
-          onBack={onBack}
-        />
-      </MemoryRouter>,
-    );
+    expect(screen.getByLabelText('Editor zoom')).toHaveTextContent('100%');
+  });
+
+  it('hides the edited badge when the script is saved', () => {
+    renderToolbar({ fileName: 'night-shift.fountain', dirty: false });
 
     expect(screen.queryByText('Edited')).toBeNull();
   });
@@ -37,11 +62,11 @@ describe('ScriptToolbar', () => {
   it('calls onBack when the welcome link is clicked', async () => {
     const onBack = vi.fn(async () => 'cancel' as const);
 
-    render(
-      <MemoryRouter>
-        <ScriptToolbar fileName="night-shift.fountain" dirty onBack={onBack} />
-      </MemoryRouter>,
-    );
+    renderToolbar({
+      fileName: 'night-shift.fountain',
+      dirty: true,
+      onBack,
+    });
 
     fireEvent.click(screen.getByRole('link', { name: /welcome/i }));
 

@@ -35,12 +35,17 @@ function sendFileCommand(command: 'new' | 'open' | 'save' | 'save-as'): void {
   getMainWindow().webContents.send('file:command', command);
 }
 
+function sendViewCommand(command: 'in' | 'out' | 'actual-size'): void {
+  getMainWindow().webContents.send('view:command', command);
+}
+
 function buildMenu(): Menu {
   return Menu.buildFromTemplate(
     createApplicationMenuTemplate({
       appName: app.name,
       isMac,
       sendFileCommand,
+      sendViewCommand,
     }),
   );
 }

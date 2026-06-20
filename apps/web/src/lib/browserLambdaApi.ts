@@ -1,13 +1,15 @@
-import type { FileCommand, LambdaApi } from '@lambda/shell';
+import type { FileCommand, LambdaApi, ViewCommand } from '@lambda/shell';
 
 const FOUNTAIN_ACCEPT = {
   'text/plain': ['.fountain', '.txt'],
 };
 
 type FileCommandListener = (command: FileCommand) => void;
+type ViewCommandListener = (command: ViewCommand) => void;
 
 export type BrowserLambdaApi = LambdaApi & {
   dispatchFileCommand: (command: FileCommand) => void;
+  dispatchViewCommand: (command: ViewCommand) => void;
   getLastWrittenContents: () => string | null;
   clearLastWrittenContents: () => void;
 };
@@ -17,6 +19,7 @@ export function createBrowserLambdaApi(): BrowserLambdaApi {
   const fileHandles = new Map<string, FileSystemFileHandle>();
   const fallbackFiles = new Map<string, File>();
   const listeners = new Set<FileCommandListener>();
+  const viewListeners = new Set<ViewCommandListener>();
   let lastWrittenContents: string | null = null;
 
   let openInput: HTMLInputElement | null = null;
@@ -27,6 +30,12 @@ export function createBrowserLambdaApi(): BrowserLambdaApi {
 
   function dispatchFileCommand(command: FileCommand): void {
     for (const listener of listeners) {
+      listener(command);
+    }
+  }
+
+  function dispatchViewCommand(command: ViewCommand): void {
+    for (const listener of viewListeners) {
       listener(command);
     }
   }
@@ -87,6 +96,14 @@ export function createBrowserLambdaApi(): BrowserLambdaApi {
 
       return () => {
         listeners.delete(listener);
+      };
+    },
+
+    onViewCommand(listener) {
+      viewListeners.add(listener);
+
+      return () => {
+        viewListeners.delete(listener);
       };
     },
 
@@ -175,6 +192,8 @@ export function createBrowserLambdaApi(): BrowserLambdaApi {
     },
 
     dispatchFileCommand,
+
+    dispatchViewCommand,
 
     getLastWrittenContents() {
       return lastWrittenContents;

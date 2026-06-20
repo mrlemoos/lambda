@@ -3,19 +3,23 @@ import type { MenuItemConstructorOptions } from 'electron';
 import {
   EDIT_MENU_NATIVE_ROLES,
   FILE_MENU_ITEMS,
+  VIEW_MENU_ITEMS,
   type FileCommand,
+  type ViewCommand,
 } from '@lambda/shell';
 
 type CreateApplicationMenuTemplateOptions = {
   appName: string;
   isMac: boolean;
   sendFileCommand: (command: FileCommand) => void;
+  sendViewCommand: (command: ViewCommand) => void;
 };
 
 export function createApplicationMenuTemplate({
   appName,
   isMac,
   sendFileCommand,
+  sendViewCommand,
 }: CreateApplicationMenuTemplateOptions): MenuItemConstructorOptions[] {
   const fileSubmenu: MenuItemConstructorOptions[] = FILE_MENU_ITEMS.map(
     (item) => {
@@ -45,6 +49,20 @@ export function createApplicationMenuTemplate({
     { role: EDIT_MENU_NATIVE_ROLES[5] },
   ];
 
+  const viewSubmenu: MenuItemConstructorOptions[] = VIEW_MENU_ITEMS.map(
+    (item) => {
+      if ('type' in item) {
+        return { type: 'separator' };
+      }
+
+      return {
+        label: item.label,
+        accelerator: item.accelerator,
+        click: () => sendViewCommand(item.command),
+      };
+    },
+  );
+
   return [
     ...(isMac
       ? [
@@ -65,6 +83,10 @@ export function createApplicationMenuTemplate({
     {
       label: 'Edit',
       submenu: editSubmenu,
+    },
+    {
+      label: 'View',
+      submenu: viewSubmenu,
     },
   ];
 }

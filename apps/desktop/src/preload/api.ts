@@ -1,3 +1,8 @@
-import type { FileCommand, LambdaApi, LambdaPlatform } from '@lambda/shell';
+import type {
+  FileCommand,
+  LambdaApi,
+  LambdaPlatform,
+  ViewCommand,
+} from '@lambda/shell';
 
-export type { FileCommand, LambdaApi, LambdaPlatform };
+export type { FileCommand, LambdaApi, LambdaPlatform, ViewCommand };

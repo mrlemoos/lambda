@@ -2,6 +2,7 @@ import type { MouseEvent } from 'react';
 
 import { Link } from 'react-router-dom';
 
+import { useEditorZoom } from '../session/EditorZoomContext.js';
 import type { UnsavedChoice } from '../session/ScriptSessionContext.js';
 
 export type ScriptToolbarProps = {
@@ -11,6 +12,8 @@ export type ScriptToolbarProps = {
 };
 
 export function ScriptToolbar({ fileName, dirty, onBack }: ScriptToolbarProps) {
+  const { readout } = useEditorZoom();
+
   const handleBack = async (event: MouseEvent<HTMLAnchorElement>) => {
     const choice = await onBack();
 
@@ -38,6 +41,9 @@ export function ScriptToolbar({ fileName, dirty, onBack }: ScriptToolbarProps) {
             Edited
           </span>
         ) : null}
+        <span className="script-toolbar-zoom" aria-label="Editor zoom">
+          {readout}
+        </span>
       </div>
     </header>
   );

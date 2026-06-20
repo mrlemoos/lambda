@@ -49,6 +49,7 @@ describe('ScriptSessionProvider', () => {
     api = {
       platform: 'linux',
       onFileCommand: vi.fn(() => () => undefined),
+      onViewCommand: vi.fn(() => () => undefined),
       readFile: vi.fn(async () => 'Existing line\n'),
       writeFile: vi.fn(async (filePath) => filePath),
       showOpenDialog: vi.fn(async () => '/tmp/existing.fountain'),

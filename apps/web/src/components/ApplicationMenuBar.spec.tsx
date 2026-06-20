@@ -3,41 +3,44 @@ import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LambdaApi } from '@lambda/shell';
-import { LambdaApiProvider, ScriptSessionProvider } from '@lambda/shell';
+import {
+  EditorZoomProvider,
+  LambdaApiProvider,
+  ScriptSessionProvider,
+} from '@lambda/shell';
 
 import { ApplicationMenuBar } from './ApplicationMenuBar.js';
 import { browserLambdaApi } from '../lib/browserLambdaApi.js';
+
+function renderMenuBar(initialPath = '/') {
+  return render(
+    <MemoryRouter initialEntries={[initialPath]}>
+      <LambdaApiProvider api={browserLambdaApi as LambdaApi}>
+        <EditorZoomProvider>
+          <ScriptSessionProvider>
+            <ApplicationMenuBar />
+          </ScriptSessionProvider>
+        </EditorZoomProvider>
+      </LambdaApiProvider>
+    </MemoryRouter>,
+  );
+}
 
 describe('ApplicationMenuBar', () => {
   beforeEach(() => {
     vi.spyOn(browserLambdaApi, 'dispatchFileCommand');
   });
 
-  it('renders File and Edit menus', () => {
-    render(
-      <MemoryRouter>
-        <LambdaApiProvider api={browserLambdaApi as LambdaApi}>
-          <ScriptSessionProvider>
-            <ApplicationMenuBar />
-          </ScriptSessionProvider>
-        </LambdaApiProvider>
-      </MemoryRouter>,
-    );
+  it('renders File, Edit, and View menus', () => {
+    renderMenuBar();
 
     expect(screen.getByRole('button', { name: 'File' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'View' })).toBeInTheDocument();
   });
 
   it('dispatches a new file command from the File menu', () => {
-    render(
-      <MemoryRouter>
-        <LambdaApiProvider api={browserLambdaApi as LambdaApi}>
-          <ScriptSessionProvider>
-            <ApplicationMenuBar />
-          </ScriptSessionProvider>
-        </LambdaApiProvider>
-      </MemoryRouter>,
-    );
+    renderMenuBar();
 
     fireEvent.click(screen.getByRole('button', { name: 'File' }));
     fireEvent.click(screen.getByRole('menuitem', { name: /New/i }));
@@ -46,18 +49,18 @@ describe('ApplicationMenuBar', () => {
   });
 
   it('dispatches new on CmdOrCtrl+N', () => {
-    render(
-      <MemoryRouter>
-        <LambdaApiProvider api={browserLambdaApi as LambdaApi}>
-          <ScriptSessionProvider>
-            <ApplicationMenuBar />
-          </ScriptSessionProvider>
-        </LambdaApiProvider>
-      </MemoryRouter>,
-    );
+    renderMenuBar();
 
     fireEvent.keyDown(document, { key: 'n', metaKey: true });
 
     expect(browserLambdaApi.dispatchFileCommand).toHaveBeenCalledWith('new');
+  });
+
+  it('disables view zoom commands on the welcome screen', () => {
+    renderMenuBar('/');
+
+    fireEvent.click(screen.getByRole('button', { name: 'View' }));
+
+    expect(screen.getByRole('menuitem', { name: /Zoom In/i })).toBeDisabled();
   });
 });
