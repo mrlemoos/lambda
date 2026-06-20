@@ -2,11 +2,13 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { LambdaApi } from '../lib/api.js';
+import { WindowDragRegion } from '../components/WindowDragRegion.js';
+import { LambdaApiProvider } from '../session/LambdaApiContext.js';
 import {
   ScriptSessionProvider,
   useScriptSession,
-} from './ScriptSessionContext';
-import { WindowDragRegion } from '../components/WindowDragRegion';
+} from '../session/ScriptSessionContext.js';
 
 function SessionHarness() {
   const session = useScriptSession();
@@ -41,8 +43,10 @@ function SessionHarness() {
 }
 
 describe('ScriptSessionProvider', () => {
+  let api: LambdaApi;
+
   beforeEach(() => {
-    window.lambda = {
+    api = {
       platform: 'linux',
       onFileCommand: vi.fn(() => () => undefined),
       readFile: vi.fn(async () => 'Existing line\n'),
@@ -56,25 +60,25 @@ describe('ScriptSessionProvider', () => {
   it('saves the latest document after an immediate edit', async () => {
     render(
       <MemoryRouter>
-        <ScriptSessionProvider>
-          <SessionHarness />
-        </ScriptSessionProvider>
+        <LambdaApiProvider api={api}>
+          <ScriptSessionProvider>
+            <SessionHarness />
+          </ScriptSessionProvider>
+        </LambdaApiProvider>
       </MemoryRouter>,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Open' }));
 
     await waitFor(() => {
-      expect(window.lambda.readFile).toHaveBeenCalledWith(
-        '/tmp/existing.fountain',
-      );
+      expect(api.readFile).toHaveBeenCalledWith('/tmp/existing.fountain');
     });
 
     fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
     fireEvent.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => {
-      expect(window.lambda.writeFile).toHaveBeenCalledWith(
+      expect(api.writeFile).toHaveBeenCalledWith(
         '/tmp/existing.fountain',
         'Existing line plus more\n',
       );
@@ -82,13 +86,15 @@ describe('ScriptSessionProvider', () => {
   });
 
   it('shows the opened filename in the window drag region', async () => {
-    window.lambda.platform = 'darwin';
+    api.platform = 'darwin';
 
     render(
       <MemoryRouter>
-        <ScriptSessionProvider>
-          <SessionHarness />
-        </ScriptSessionProvider>
+        <LambdaApiProvider api={api}>
+          <ScriptSessionProvider>
+            <SessionHarness />
+          </ScriptSessionProvider>
+        </LambdaApiProvider>
       </MemoryRouter>,
     );
 

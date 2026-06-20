@@ -39,13 +39,18 @@
     "src/**/*.spec.js",
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
-    "**/*.stories.ts",
-    "**/*.stories.js",
-    "**/*.stories.jsx",
-    "**/*.stories.tsx"
+    "eslint.config.js",
+    "eslint.config.cjs",
+    "eslint.config.mjs"
   ],
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
   "references": [
+    {
+      "path": "../editor/tsconfig.lib.json"
+    },
+    {
+      "path": "../fountain/tsconfig.lib.json"
+    },
     {
       "path": "../theme/tsconfig.lib.json"
     }

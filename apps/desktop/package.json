@@ -9,6 +9,7 @@
   "dependencies": {
     "@lambda/editor": "workspace:*",
     "@lambda/fountain": "workspace:*",
+    "@lambda/shell": "workspace:*",
     "@lambda/theme": "workspace:*"
   },
   "devDependencies": {

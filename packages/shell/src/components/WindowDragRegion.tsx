@@ -1,5 +1,9 @@
+import { useLambdaApi } from '../session/LambdaApiContext.js';
+
 export function WindowDragRegion({ fileName }: { fileName?: string | null }) {
-  if (window.lambda.platform !== 'darwin') {
+  const { platform } = useLambdaApi();
+
+  if (platform !== 'darwin') {
     return null;
   }
 

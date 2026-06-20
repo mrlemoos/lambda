@@ -14,6 +14,12 @@
     },
     {
       "path": "./apps/desktop"
+    },
+    {
+      "path": "./packages/shell"
+    },
+    {
+      "path": "./apps/web"
     }
   ]
 }

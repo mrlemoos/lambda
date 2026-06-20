@@ -45,3 +45,14 @@ Use **red–green–refactor** TDD when adding or changing behaviour (see the `t
 Work in **vertical slices** (one test → one implementation), not horizontal batches of tests then code.
 
 Tests must follow **Arrange–Act–Assert** (see `.cursor/rules/test-aaa-format.mdc`): separate Arrange, Act, and Assert blocks with a blank line between each; one Act per test; name the outcome (`result`, `output`, etc.) before asserting.
+
+## Learned User Preferences
+
+- Planned web app (`apps/web`) should target full desktop parity: welcome/script workspace, keyboard shortcuts, export settings, and desktop-style chrome.
+- Web app file I/O should use progressive enhancement: File System Access API where supported, pick-and-download fallback elsewhere.
+- When committing, if `CONTEXT.md` changes do not relate to the code change, commit them separately rather than amending.
+
+## Learned Workspace Facts
+
+- `apps/web` and `apps/desktop` compose `@lambda/shell`; root `pnpm dev` serves web, `pnpm desktop` serves desktop.
+- `@lambda/desktop` dev unsets `ELECTRON_RUN_AS_NODE` in its Nx command; Electron startup fails if this env var is set in the shell.

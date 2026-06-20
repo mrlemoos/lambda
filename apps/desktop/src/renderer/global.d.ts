@@ -1,4 +1,4 @@
-import type { LambdaApi } from '../preload/api.js';
+import type { LambdaApi } from '@lambda/shell';
 
 declare global {
   interface Window {

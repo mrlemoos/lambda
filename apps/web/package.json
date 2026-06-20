@@ -1,0 +1,15 @@
+{
+  "name": "@lambda/web",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@lambda/editor": "workspace:*",
+    "@lambda/shell": "workspace:*",
+    "@lambda/theme": "workspace:*"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "@testing-library/jest-dom": "^6.9.1",
+    "tailwindcss": "^4.1.13"
+  }
+}

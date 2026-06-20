@@ -1,11 +1,3 @@
-export type FileCommand = 'new' | 'open' | 'save' | 'save-as';
+import type { FileCommand, LambdaApi, LambdaPlatform } from '@lambda/shell';
 
-export type LambdaApi = {
-  platform: NodeJS.Platform;
-  onFileCommand: (listener: (command: FileCommand) => void) => () => void;
-  readFile: (filePath: string) => Promise<string>;
-  writeFile: (filePath: string, contents: string) => Promise<string>;
-  showOpenDialog: () => Promise<string | null>;
-  showSaveDialog: (defaultName?: string) => Promise<string | null>;
-  setWindowTitle: (title: string) => Promise<void>;
-};
+export type { FileCommand, LambdaApi, LambdaPlatform };

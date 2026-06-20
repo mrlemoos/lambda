@@ -17,8 +17,9 @@ import {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { isDirty } from '../../lib/isDirty.js';
-import { formatWindowTitle } from '../../lib/windowTitle.js';
+import { formatWindowTitle } from '../lib/formatWindowTitle.js';
+import { isDirty } from '../lib/isDirty.js';
+import { useLambdaApi } from './LambdaApiContext.js';
 
 export type UnsavedChoice = 'save' | 'discard' | 'cancel';
 type ScriptDocument = Parameters<
@@ -60,6 +61,7 @@ function fileNameFromPath(filePath: string | null): string {
 }
 
 export function ScriptSessionProvider({ children }: { children: ReactNode }) {
+  const api = useLambdaApi();
   const navigate = useNavigate();
   const [script, setScript] = useState<FountainScript | null>(null);
   const scriptRef = useRef<FountainScript | null>(null);
@@ -71,14 +73,14 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
 
   const syncWindowTitle = useCallback(
     async (path: string | null, edited: boolean) => {
-      await window.lambda.setWindowTitle(
+      await api.setWindowTitle(
         formatWindowTitle({
           fileName: path ? fileNameFromPath(path) : null,
           isDirty: edited,
         }),
       );
     },
-    [],
+    [api],
   );
 
   useEffect(() => {
@@ -144,7 +146,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       }
 
       const text = stringifyFountain(latestScript);
-      const fileName = await window.lambda.writeFile(path, text);
+      const fileName = await api.writeFile(path, text);
       savedTextRef.current = text;
       setFilePath(path);
       setDirty(false);
@@ -156,7 +158,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
 
       return true;
     },
-    [syncWindowTitle],
+    [api, syncWindowTitle],
   );
 
   const saveScript = useCallback(async (): Promise<boolean> => {
@@ -165,7 +167,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     }
 
     if (!filePath) {
-      const path = await window.lambda.showSaveDialog('Untitled.fountain');
+      const path = await api.showSaveDialog('Untitled.fountain');
 
       if (!path) {
         return false;
@@ -175,14 +177,14 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     }
 
     return persistToPath(filePath);
-  }, [filePath, persistToPath]);
+  }, [api, filePath, persistToPath]);
 
   const saveScriptAs = useCallback(async (): Promise<boolean> => {
     if (!scriptRef.current) {
       return false;
     }
 
-    const path = await window.lambda.showSaveDialog(
+    const path = await api.showSaveDialog(
       filePath?.split('/').pop() ?? 'Untitled.fountain',
     );
 
@@ -191,7 +193,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     }
 
     return persistToPath(path);
-  }, [filePath, persistToPath]);
+  }, [api, filePath, persistToPath]);
 
   const clearOpenError = useCallback(() => {
     setOpenError(null);
@@ -200,14 +202,14 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
   const openScriptFromDiskWithoutConfirm = useCallback(async () => {
     setOpenError(null);
 
-    const path = await window.lambda.showOpenDialog();
+    const path = await api.showOpenDialog();
 
     if (!path) {
       return;
     }
 
     try {
-      const text = await window.lambda.readFile(path);
+      const text = await api.readFile(path);
       const session = createSessionFromText(text, path);
       applySession(session.script, session.savedText, session.filePath);
     } catch (error) {
@@ -217,7 +219,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       setOpenError(message);
       navigate('/');
     }
-  }, [applySession, navigate]);
+  }, [api, applySession, navigate]);
 
   const openScriptFromDisk = useCallback(async () => {
     const choice = await confirmUnsavedChanges();
@@ -263,7 +265,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
-    const unsubscribe = window.lambda.onFileCommand(async (command) => {
+    const unsubscribe = api.onFileCommand(async (command) => {
       if (command === 'new') {
         const choice = await confirmUnsavedChanges();
 
@@ -292,6 +294,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
 
     return unsubscribe;
   }, [
+    api,
     confirmUnsavedChanges,
     openScriptFromDisk,
     saveScript,

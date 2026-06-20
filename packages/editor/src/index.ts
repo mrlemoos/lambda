@@ -8,6 +8,11 @@ export {
   type ScriptEditorSurfaceProps,
 } from './lib/tiptap/ScriptEditorSurface';
 export {
+  ScriptEditorCommandsProvider,
+  useScriptEditorCommands,
+  type ScriptEditorCommands,
+} from './lib/tiptap/scriptEditorCommands';
+export {
   createScriptEditor,
   getEditorRuntimeMarker,
   useScriptEditor,

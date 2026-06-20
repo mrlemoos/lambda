@@ -32,9 +32,21 @@ Implementation order still follows TDD: per-element `is*` predicates first, then
 The product name. Use “Lambda” in prose; the glyph **ƛ** is acceptable in branding or UI where space is tight.
 _Avoid_: λ (lowercase lambda), “the app”, “the editor” when you mean the product as a whole.
 
+**Lambda Web**:
+The browser-hosted deployment of Lambda — the same writing experience as the desktop app, adapted for browser file APIs and in-app chrome rather than native OS menus and dialogs.
+_Avoid_: Web app (alone), PWA, online version.
+
+**Writing shell**:
+The app chrome around the editor — welcome screen, script workspace, session and file I/O, application menu, and unsaved-change flows. Shared across desktop and Lambda Web; distinct from the TipTap writing surface (`@lambda/editor`).
+_Avoid_: Renderer (Electron jargon), app wrapper, shell app.
+
 **Script**:
 The screenplay document the author works on — one Fountain source, one narrative work in progress.
 _Avoid_: Document, file, project (unless you mean a separate product concept like a folder of scripts).
+
+**Application menu**:
+The File and Edit command surface — New, Open, Save, Save As; undo, redo, cut, copy, paste. On desktop, the native OS menu bar; on Lambda Web, an in-app menu bar with the same labels and keyboard shortcuts.
+_Avoid_: Toolbar (alone), hamburger menu, command palette.
 
 ### Fountain structure
 

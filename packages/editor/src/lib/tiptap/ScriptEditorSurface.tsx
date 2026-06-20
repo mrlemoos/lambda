@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 
 import type { PageFormat } from '../ScriptEditor';
 import { ScriptEditorContent } from './ScriptEditorContent';
+import { ScriptEditorCommandsProvider } from './scriptEditorCommands.js';
 import { useScriptEditor } from './useScriptEditor';
 
 export type ScriptEditorSurfaceProps = {
@@ -38,5 +39,9 @@ export function ScriptEditorSurface({
     return null;
   }
 
-  return <ScriptEditorContent editor={editor} pageFormat={pageFormat} />;
+  return (
+    <ScriptEditorCommandsProvider editor={editor}>
+      <ScriptEditorContent editor={editor} pageFormat={pageFormat} />
+    </ScriptEditorCommandsProvider>
+  );
 }

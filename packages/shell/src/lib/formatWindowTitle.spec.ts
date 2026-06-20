@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatWindowTitle } from './windowTitle.js';
+import { formatWindowTitle } from './formatWindowTitle.js';
 
 describe('formatWindowTitle', () => {
   it('shows Untitled for a new script', () => {

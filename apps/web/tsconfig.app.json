@@ -32,21 +32,25 @@
     "vitest.config.mts",
     "eslint.config.js",
     "eslint.config.cjs",
-    "eslint.config.mjs"
+    "eslint.config.mjs",
+    "src/test-setup.ts"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
+  "include": [
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts"
+  ],
   "references": [
     {
       "path": "../../packages/theme/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/fountain/tsconfig.lib.json"
+      "path": "../../packages/shell/tsconfig.lib.json"
     },
     {
       "path": "../../packages/editor/tsconfig.lib.json"
-    },
-    {
-      "path": "../../packages/shell/tsconfig.lib.json"
     }
   ]
 }

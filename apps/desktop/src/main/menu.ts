@@ -1,6 +1,10 @@
 import type { MenuItemConstructorOptions } from 'electron';
 
-type FileCommand = 'new' | 'open' | 'save' | 'save-as';
+import {
+  EDIT_MENU_NATIVE_ROLES,
+  FILE_MENU_ITEMS,
+  type FileCommand,
+} from '@lambda/shell';
 
 type CreateApplicationMenuTemplateOptions = {
   appName: string;
@@ -13,6 +17,34 @@ export function createApplicationMenuTemplate({
   isMac,
   sendFileCommand,
 }: CreateApplicationMenuTemplateOptions): MenuItemConstructorOptions[] {
+  const fileSubmenu: MenuItemConstructorOptions[] = FILE_MENU_ITEMS.map(
+    (item) => {
+      if ('type' in item) {
+        return { type: 'separator' };
+      }
+
+      return {
+        label: item.label,
+        accelerator: item.accelerator,
+        click: () => sendFileCommand(item.command),
+      };
+    },
+  );
+
+  if (!isMac) {
+    fileSubmenu.push({ type: 'separator' }, { role: 'quit' });
+  }
+
+  const editSubmenu: MenuItemConstructorOptions[] = [
+    { role: EDIT_MENU_NATIVE_ROLES[0] },
+    { role: EDIT_MENU_NATIVE_ROLES[1] },
+    { type: 'separator' },
+    { role: EDIT_MENU_NATIVE_ROLES[2] },
+    { role: EDIT_MENU_NATIVE_ROLES[3] },
+    { role: EDIT_MENU_NATIVE_ROLES[4] },
+    { role: EDIT_MENU_NATIVE_ROLES[5] },
+  ];
+
   return [
     ...(isMac
       ? [
@@ -28,44 +60,11 @@ export function createApplicationMenuTemplate({
       : []),
     {
       label: 'File',
-      submenu: [
-        {
-          label: 'New',
-          accelerator: 'CmdOrCtrl+N',
-          click: () => sendFileCommand('new'),
-        },
-        {
-          label: 'Open…',
-          accelerator: 'CmdOrCtrl+O',
-          click: () => sendFileCommand('open'),
-        },
-        { type: 'separator' },
-        {
-          label: 'Save',
-          accelerator: 'CmdOrCtrl+S',
-          click: () => sendFileCommand('save'),
-        },
-        {
-          label: 'Save As…',
-          accelerator: 'CmdOrCtrl+Shift+S',
-          click: () => sendFileCommand('save-as'),
-        },
-        ...(isMac
-          ? []
-          : [{ type: 'separator' as const }, { role: 'quit' as const }]),
-      ],
+      submenu: fileSubmenu,
     },
     {
       label: 'Edit',
-      submenu: [
-        { role: 'undo' },
-        { role: 'redo' },
-        { type: 'separator' },
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' },
-        { role: 'selectAll' },
-      ],
+      submenu: editSubmenu,
     },
   ];
 }
