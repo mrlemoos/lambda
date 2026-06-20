@@ -3,8 +3,14 @@
     "cssmodule",
     "fontsource",
     "iconset",
+    "libpeerconnection",
     "runde",
     "Slugline",
-    "Textblock"
+    "testem",
+    "Textblock",
+    "unsets",
+    "vite",
+    "vitest",
+    "worktrees"
   ]
 }
