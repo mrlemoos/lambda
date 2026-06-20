@@ -5,6 +5,12 @@
   "projectType": "application",
   "tags": [],
   "targets": {
+    "dev": {
+      "dependsOn": ["@lambda/desktop:generate-icons"]
+    },
+    "build": {
+      "dependsOn": ["@lambda/desktop:generate-icons", "^build"]
+    },
     "deploy": {
       "dependsOn": ["build"],
       "executor": "nx:run-commands",

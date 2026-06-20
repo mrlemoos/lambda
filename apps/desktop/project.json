@@ -14,7 +14,9 @@
       "outputs": [
         "{projectRoot}/public/favicon.ico",
         "{projectRoot}/public/icons",
-        "{projectRoot}/src/assets/icons"
+        "{projectRoot}/src/assets/icons",
+        "{projectRoot}/../web/public/favicon.ico",
+        "{projectRoot}/../web/public/icons"
       ]
     },
     "dev": {

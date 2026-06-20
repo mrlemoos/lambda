@@ -10,6 +10,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+WEB_PUBLIC = ROOT.parent / "web" / "public"
+WEB_PUBLIC_ICONS = WEB_PUBLIC / "icons"
 SRC_ASSETS = ROOT / "src" / "assets"
 PUBLIC = ROOT / "public"
 PUBLIC_ICONS = PUBLIC / "icons"
@@ -316,7 +318,7 @@ def main() -> None:
     write_png(PUBLIC_ICONS / "apple-touch-icon.png", 180, resize_rgba_square(master_rgba, MASTER_SIZE, 180))
     write_png(PUBLIC_ICONS / "android-chrome-192x192.png", 192, resize_rgba_square(master_rgba, MASTER_SIZE, 192))
     write_png(PUBLIC_ICONS / "android-chrome-512x512.png", 512, resize_rgba_square(master_rgba, MASTER_SIZE, 512))
-    shutil.copy2(SRC_ASSETS / "icon.svg", PUBLIC_ICONS / "favicon.svg")
+    write_favicon_svg(PUBLIC_ICONS / "favicon.svg")
 
     write_ico(
         [
@@ -328,10 +330,39 @@ def main() -> None:
     )
     shutil.copy2(PUBLIC / "favicon.ico", APP_ICONS / "icon.ico")
 
+    sync_web_icons()
+
     if ICONSET.exists():
         shutil.rmtree(ICONSET)
 
     print("icons done")
+
+
+def write_favicon_svg(path: Path) -> None:
+    # Flat fills read reliably at 16–32px tab sizes; gradients often degrade to a grey tile.
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <rect x="80" y="80" width="864" height="864" rx="212" fill="#1A1E28" />
+  <path
+    d="M360 300h304l-34 80h-108l117 355h-92l-88-269-112 269h-92l146-355h-75z"
+    fill="#F8FAFF"
+  />
+  <rect x="606" y="348" width="70" height="70" rx="18" fill="#34E4FF" />
+</svg>
+""",
+        encoding="utf-8",
+    )
+
+
+def sync_web_icons() -> None:
+    WEB_PUBLIC.mkdir(parents=True, exist_ok=True)
+    WEB_PUBLIC_ICONS.mkdir(parents=True, exist_ok=True)
+
+    shutil.copy2(PUBLIC / "favicon.ico", WEB_PUBLIC / "favicon.ico")
+    for icon_path in PUBLIC_ICONS.iterdir():
+        if icon_path.is_file():
+            shutil.copy2(icon_path, WEB_PUBLIC_ICONS / icon_path.name)
 
 
 if __name__ == "__main__":
