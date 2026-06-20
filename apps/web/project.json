@@ -10,7 +10,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "apps/web",
-        "command": "wrangler pages deploy"
+        "command": "wrangler pages deploy --branch=main"
       }
     },
     "pages-dev": {
