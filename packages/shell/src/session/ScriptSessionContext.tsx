@@ -377,23 +377,36 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       {children}
       {unsavedPromptOpen ? (
         <div className="unsaved-modal-backdrop" role="presentation">
-          <dialog className="unsaved-modal" open>
-            <p>Save changes to this script before continuing?</p>
+          <dialog
+            className="unsaved-modal"
+            open
+            aria-modal="true"
+            aria-labelledby="unsaved-modal-title"
+          >
+            <h2 id="unsaved-modal-title" className="unsaved-modal-title">
+              Save changes?
+            </h2>
+            <p className="unsaved-modal-body">
+              Save changes to this script before continuing?
+            </p>
             <div className="unsaved-modal-actions">
               <button
                 type="button"
+                className="ui-button ui-button-primary"
                 onClick={() => void resolveUnsavedPrompt('save')}
               >
                 Save
               </button>
               <button
                 type="button"
+                className="ui-button"
                 onClick={() => void resolveUnsavedPrompt('discard')}
               >
                 Don&apos;t save
               </button>
               <button
                 type="button"
+                className="ui-button ui-button-ghost"
                 onClick={() => void resolveUnsavedPrompt('cancel')}
               >
                 Cancel

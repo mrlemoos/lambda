@@ -5,6 +5,7 @@ export {
   type FileMenuItem,
 } from './lib/applicationMenu.js';
 export { formatWindowTitle } from './lib/formatWindowTitle.js';
+export { formatPlatformShortcut } from './lib/platformShortcuts.js';
 export { isDirty } from './lib/isDirty.js';
 export { WindowDragRegion } from './components/WindowDragRegion.js';
 export { ScriptPage } from './pages/ScriptPage.js';

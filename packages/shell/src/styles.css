@@ -1,4 +1,7 @@
 @import '@lambda/editor/styles.css';
+@import '@lambda/theme/app-ui.css';
+
+@source './**/*.{ts,tsx}';
 
 @theme {
   --color-black-900: #000000;
@@ -56,10 +59,7 @@ html[data-platform='darwin'] {
 body {
   margin: 0;
   min-height: 100vh;
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: var(--font-ui, system-ui, -apple-system, sans-serif);
   color: var(--app-fg);
   background-color: transparent;
 }
@@ -149,9 +149,9 @@ html[data-platform='darwin'] .app-shell.script-workspace {
   -webkit-backdrop-filter: none;
 }
 
-.app-shell :is(button, a),
-.app-shell :is(button, a):focus,
-.app-shell :is(button, a):focus-visible {
+.app-shell :is(button, a):not(.ui-button),
+.app-shell :is(button, a):not(.ui-button):focus,
+.app-shell :is(button, a):not(.ui-button):focus-visible {
   outline-color: var(--outline-color);
   outline-style: solid;
   outline-width: 0;
@@ -163,46 +163,90 @@ html[data-platform='darwin'] .app-shell.script-workspace {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 1.25rem;
+  padding: 2rem 1.5rem;
 }
 
-.welcome-error {
-  max-width: 28rem;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  border: 1px solid var(--glass-border);
-  background: var(--error-bg);
-  color: var(--error-fg);
+.welcome-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
   text-align: center;
+  max-width: 28rem;
+}
+
+.welcome-tagline {
+  max-width: 22rem;
+}
+
+.welcome-error-dismiss {
+  margin-top: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8125rem;
 }
 
 .welcome-actions {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 0.75rem;
 }
 
-.welcome-actions button {
-  font-size: 1rem;
-  padding: 0.6rem 1.2rem;
-  cursor: pointer;
-  color: inherit;
-  background: var(--button-bg);
-  border: 1px solid var(--button-border);
-  border-radius: 6px;
+@media (prefers-reduced-motion: no-preference) {
+  .welcome-actions .ui-button {
+    animation: ui-welcome-button-enter 260ms var(--ease-out) backwards;
+  }
+
+  .welcome-actions .ui-button:nth-child(2) {
+    animation-delay: 50ms;
+  }
+}
+
+@keyframes ui-welcome-button-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+.welcome-shortcuts {
+  text-align: center;
 }
 
 .script-workspace {
-  padding: 2rem 1rem 3rem;
+  padding: 1rem 1rem 3rem;
 }
 
 .script-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   max-width: 8.5in;
   margin: 0 auto 1rem;
   padding: 0 0.25rem;
 }
 
-.script-toolbar a {
-  color: var(--link-fg);
+.script-toolbar-back {
+  flex-shrink: 0;
+}
+
+.script-toolbar-doc {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.script-toolbar-filename {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
 .script-empty {
@@ -234,21 +278,33 @@ html[data-platform='darwin'] .app-shell.script-workspace {
   background: var(--modal-bg);
   color: inherit;
   max-width: 28rem;
+  margin: 0;
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 
+.unsaved-modal-title {
+  font-family: var(--font-ui, inherit);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+}
+
+.unsaved-modal-body {
+  font-family: var(--font-ui, inherit);
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
 .unsaved-modal-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 1rem;
 }
 
-.unsaved-modal-actions button {
-  cursor: pointer;
-  color: inherit;
-  background: var(--button-bg);
-  border: 1px solid var(--button-border);
-  border-radius: 6px;
-  padding: 0.4rem 0.75rem;
+.unsaved-modal-actions .ui-button {
+  padding: 0.45rem 0.85rem;
+  font-size: 0.875rem;
 }

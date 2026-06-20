@@ -6,6 +6,7 @@
   "exports": {
     "./package.json": "./package.json",
     "./styles.css": "./src/styles.css",
+    "./app-ui.css": "./src/app-ui.css",
     ".": {
       "@org/source": "./src/index.ts",
       "types": "./src/index.ts",

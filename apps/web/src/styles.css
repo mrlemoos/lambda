@@ -1,14 +1,45 @@
+@source './**/*.{ts,tsx}';
+
 [data-platform='web'] .application-menu-bar {
   position: sticky;
   top: 0;
   z-index: 10;
   display: flex;
-  gap: 0.25rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
   padding: 0.35rem 0.75rem;
   border-bottom: 1px solid var(--glass-border);
   background: var(--glass-surface);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+[data-platform='web'] .application-menu-bar-leading {
+  display: flex;
+  gap: 0.25rem;
+}
+
+[data-platform='web'] .document-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  margin-left: auto;
+}
+
+[data-platform='web'] .document-status-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: min(16rem, 32vw);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+[data-platform='web'] .document-status-dirty {
+  flex-shrink: 0;
 }
 
 [data-platform='web'] .application-menu {

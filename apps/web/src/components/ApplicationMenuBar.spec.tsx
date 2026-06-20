@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LambdaApi } from '@lambda/shell';
-import { LambdaApiProvider } from '@lambda/shell';
+import { LambdaApiProvider, ScriptSessionProvider } from '@lambda/shell';
 
 import { ApplicationMenuBar } from './ApplicationMenuBar.js';
 import { browserLambdaApi } from '../lib/browserLambdaApi.js';
@@ -17,7 +17,9 @@ describe('ApplicationMenuBar', () => {
     render(
       <MemoryRouter>
         <LambdaApiProvider api={browserLambdaApi as LambdaApi}>
-          <ApplicationMenuBar />
+          <ScriptSessionProvider>
+            <ApplicationMenuBar />
+          </ScriptSessionProvider>
         </LambdaApiProvider>
       </MemoryRouter>,
     );
@@ -30,7 +32,9 @@ describe('ApplicationMenuBar', () => {
     render(
       <MemoryRouter>
         <LambdaApiProvider api={browserLambdaApi as LambdaApi}>
-          <ApplicationMenuBar />
+          <ScriptSessionProvider>
+            <ApplicationMenuBar />
+          </ScriptSessionProvider>
         </LambdaApiProvider>
       </MemoryRouter>,
     );
@@ -45,7 +49,9 @@ describe('ApplicationMenuBar', () => {
     render(
       <MemoryRouter>
         <LambdaApiProvider api={browserLambdaApi as LambdaApi}>
-          <ApplicationMenuBar />
+          <ScriptSessionProvider>
+            <ApplicationMenuBar />
+          </ScriptSessionProvider>
         </LambdaApiProvider>
       </MemoryRouter>,
     );

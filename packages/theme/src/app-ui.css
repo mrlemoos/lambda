@@ -1,0 +1,176 @@
+@source '../../shell/src/**/*.{ts,tsx}';
+@source '../../../apps/web/src/**/*.{ts,tsx}';
+
+@theme {
+  --font-ui: 'Open Runde', system-ui, sans-serif;
+  --color-accent: #0c4a6e;
+  --color-accent-fg: #ffffff;
+  --color-text-muted: rgb(17 17 17 / 0.62);
+  --color-text-subtle: rgb(17 17 17 / 0.45);
+  --radius-ui-sm: 6px;
+  --radius-ui-pill: 999px;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --duration-ui-press: 160ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-accent: #38bdf8;
+    --color-accent-fg: #000000;
+    --color-text-muted: rgb(255 255 255 / 0.62);
+    --color-text-subtle: rgb(255 255 255 / 0.45);
+  }
+}
+
+:root {
+  --text-muted: var(--color-text-muted);
+  --text-subtle: var(--color-text-subtle);
+}
+
+@utility ui-kicker {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+@utility ui-heading {
+  font-family: var(--font-ui);
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin: 0;
+}
+
+@utility ui-body {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+@utility ui-button {
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  color: inherit;
+  background: var(--button-bg);
+  border: 1px solid var(--button-border);
+  border-radius: var(--radius-ui-sm);
+  padding: 0.625rem 1.125rem;
+  transform: scale(1);
+  transition:
+    transform var(--duration-ui-press) var(--ease-out),
+    background-color var(--duration-ui-press) var(--ease-out),
+    border-color var(--duration-ui-press) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ui-button:hover {
+    background: color-mix(in srgb, var(--button-bg) 82%, var(--app-fg) 18%);
+  }
+}
+
+.ui-button:active {
+  transform: scale(0.97);
+  transition-duration: 100ms;
+}
+
+.ui-button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-button {
+    transition:
+      background-color var(--duration-ui-press) ease,
+      border-color var(--duration-ui-press) ease;
+  }
+
+  .ui-button:active {
+    transform: none;
+  }
+}
+
+@utility ui-button-primary {
+  color: var(--color-accent-fg);
+  background: var(--color-accent);
+  border-color: transparent;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ui-button-primary:hover {
+    background: color-mix(in srgb, var(--color-accent) 88%, white 12%);
+  }
+}
+
+@media (prefers-color-scheme: dark) and (hover: hover) and (pointer: fine) {
+  .ui-button-primary:hover {
+    background: color-mix(in srgb, var(--color-accent) 88%, black 12%);
+  }
+}
+
+@utility ui-button-ghost {
+  background: transparent;
+  border-color: transparent;
+  font-weight: 500;
+  padding-inline: 0.5rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ui-button-ghost:hover {
+    background: var(--button-bg);
+    border-color: var(--button-border);
+  }
+}
+
+@utility ui-alert {
+  font-family: var(--font-ui);
+  max-width: 28rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-ui-sm);
+  border: 1px solid var(--glass-border);
+  text-align: center;
+}
+
+@utility ui-alert-error {
+  background: var(--error-bg);
+  color: var(--error-fg);
+}
+
+@utility ui-badge {
+  font-family: var(--font-ui);
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 0.2rem 0.45rem;
+  border-radius: var(--radius-ui-pill);
+  border: 1px solid var(--button-border);
+  background: var(--button-bg);
+  color: var(--text-muted);
+}
+
+@utility ui-badge-dirty {
+  color: var(--error-fg);
+  background: var(--error-bg);
+  border-color: transparent;
+}
+
+@utility ui-hint {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--text-subtle);
+  margin: 0;
+}
