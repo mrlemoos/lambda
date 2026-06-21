@@ -1,8 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseTitlePage } from './parseTitlePage';
+import { parseTitlePage, parseTitlePageBlock } from './parseTitlePage';
 
 describe('parseTitlePage', () => {
+  it('parses an extracted title page block without re-scanning the script', () => {
+    const titlePage = ['Title: BRICK & STEEL', 'Credit: Written by'];
+
+    const result = parseTitlePageBlock(titlePage);
+
+    expect(result.title).toEqual(['BRICK & STEEL']);
+    expect(result.credit).toBe('Written by');
+  });
+
   it('parses inline title page keys without labels in output fields', () => {
     const lines = [
       'Title: BRICK & STEEL',
@@ -68,6 +77,23 @@ describe('parseTitlePage', () => {
 
     expect(result.title).toEqual(['MY SCRIPT']);
     expect(result.credit).toBe('by');
+    expect(result.author).toEqual(['Jane Doe']);
+  });
+
+  it('extracts a title page after leading blank lines', () => {
+    const lines = [
+      '',
+      'Title: Port of Ambitions',
+      'Credit: Written by',
+      'Author: Jane Doe',
+      '',
+      'INT. SUBURBIA - NIGHT',
+    ];
+
+    const result = parseTitlePage(lines);
+
+    expect(result.title).toEqual(['Port of Ambitions']);
+    expect(result.credit).toBe('Written by');
     expect(result.author).toEqual(['Jane Doe']);
   });
 });

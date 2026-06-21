@@ -1,7 +1,7 @@
 import type { JSONContent } from '@tiptap/core';
 import {
   classifyBlock,
-  extractTitlePageLines,
+  extractTitlePageSection,
   type ClassifiedElement,
 } from '@lambda/editor';
 
@@ -27,8 +27,8 @@ const BODY_NODE_TYPE: Partial<Record<ClassifiedElement, string>> = {
 
 export function parseFountain(source: string): FountainScript {
   const lines = source.replace(/\r\n/g, '\n').split('\n');
-  const titlePage = extractTitlePageLines(lines);
-  const bodyLines = lines.slice(titlePage.length);
+  const { titlePage, bodyStartIndex } = extractTitlePageSection(lines);
+  const bodyLines = lines.slice(bodyStartIndex);
 
   const content: JSONContent[] = [];
   let previousLine: string | undefined;

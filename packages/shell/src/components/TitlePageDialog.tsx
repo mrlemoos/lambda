@@ -1,5 +1,4 @@
 import type { TitlePageData } from '@lambda/editor';
-import { useState } from 'react';
 
 import { ModalDialog, ModalDialogTitle } from './ModalDialog.js';
 
@@ -80,45 +79,43 @@ type TitlePageDialogFormProps = {
   onCancel: () => void;
 };
 
+function titlePageFormKey(data: TitlePageData): string {
+  return JSON.stringify(data);
+}
+
+function readFormField(formData: FormData, name: string): string {
+  const value = formData.get(name);
+
+  return typeof value === 'string' ? value : '';
+}
+
 function TitlePageDialogForm({
   initialData,
   onSave,
   onCancel,
 }: TitlePageDialogFormProps) {
-  const [title, setTitle] = useState(() =>
-    textareaFromLines(initialData.title),
-  );
-  const [credit, setCredit] = useState(() => initialData.credit ?? '');
-  const [author, setAuthor] = useState(() =>
-    textareaFromLines(initialData.author),
-  );
-  const [source, setSource] = useState(() => initialData.source ?? '');
-  const [draftDate, setDraftDate] = useState(() => initialData.draftDate ?? '');
-  const [contact, setContact] = useState(() =>
-    textareaFromLines(initialData.contact),
-  );
-  const [copyright, setCopyright] = useState(() => initialData.copyright ?? '');
-  const [notes, setNotes] = useState(() => initialData.notes ?? '');
-
   return (
     <>
       <ModalDialogTitle className="title-page-modal-title">
         Title Page
       </ModalDialogTitle>
       <form
+        key={titlePageFormKey(initialData)}
         className="title-page-form"
         onSubmit={(event) => {
           event.preventDefault();
+          const formData = new FormData(event.currentTarget);
+
           onSave(
             buildTitlePageData({
-              title,
-              credit,
-              author,
-              source,
-              draftDate,
-              contact,
-              copyright,
-              notes,
+              title: readFormField(formData, 'title'),
+              credit: readFormField(formData, 'credit'),
+              author: readFormField(formData, 'author'),
+              source: readFormField(formData, 'source'),
+              draftDate: readFormField(formData, 'draftDate'),
+              contact: readFormField(formData, 'contact'),
+              copyright: readFormField(formData, 'copyright'),
+              notes: readFormField(formData, 'notes'),
             }),
           );
         }}
@@ -126,68 +123,68 @@ function TitlePageDialogForm({
         <label className="title-page-field">
           <span>Title</span>
           <textarea
+            name="title"
             aria-label="Title"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
+            defaultValue={textareaFromLines(initialData.title)}
             rows={3}
           />
         </label>
         <label className="title-page-field">
           <span>Credit</span>
           <input
+            name="credit"
             aria-label="Credit"
-            value={credit}
-            onChange={(event) => setCredit(event.target.value)}
+            defaultValue={initialData.credit ?? ''}
           />
         </label>
         <label className="title-page-field">
           <span>Author</span>
           <textarea
+            name="author"
             aria-label="Author"
-            value={author}
-            onChange={(event) => setAuthor(event.target.value)}
+            defaultValue={textareaFromLines(initialData.author)}
             rows={2}
           />
         </label>
         <label className="title-page-field">
           <span>Source</span>
           <input
+            name="source"
             aria-label="Source"
-            value={source}
-            onChange={(event) => setSource(event.target.value)}
+            defaultValue={initialData.source ?? ''}
           />
         </label>
         <label className="title-page-field">
           <span>Draft date</span>
           <input
+            name="draftDate"
             aria-label="Draft date"
-            value={draftDate}
-            onChange={(event) => setDraftDate(event.target.value)}
+            defaultValue={initialData.draftDate ?? ''}
           />
         </label>
         <label className="title-page-field">
           <span>Contact</span>
           <textarea
+            name="contact"
             aria-label="Contact"
-            value={contact}
-            onChange={(event) => setContact(event.target.value)}
+            defaultValue={textareaFromLines(initialData.contact)}
             rows={3}
           />
         </label>
         <label className="title-page-field">
           <span>Copyright</span>
           <input
+            name="copyright"
             aria-label="Copyright"
-            value={copyright}
-            onChange={(event) => setCopyright(event.target.value)}
+            defaultValue={initialData.copyright ?? ''}
           />
         </label>
         <label className="title-page-field">
           <span>Notes</span>
           <textarea
+            name="notes"
             aria-label="Notes"
-            value={notes}
-            onChange={(event) => setNotes(event.target.value)}
+            defaultValue={initialData.notes ?? ''}
             rows={2}
           />
         </label>

@@ -1,6 +1,6 @@
 import type { PageFormat } from '../ScriptEditor';
 
-import { parseTitlePage } from './parseTitlePage';
+import { parseTitlePageBlock } from './parseTitlePage';
 
 export type TitlePageViewProps = {
   lines: string[];
@@ -11,7 +11,7 @@ export function TitlePageView({
   lines,
   pageFormat = 'us-letter',
 }: TitlePageViewProps) {
-  const data = parseTitlePage(lines);
+  const data = parseTitlePageBlock(lines);
 
   return (
     <div className="title-page-sheet" data-page-format={pageFormat}>

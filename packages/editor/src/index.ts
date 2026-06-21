@@ -23,8 +23,11 @@ export {
 } from './lib/elements/TitlePageView';
 export {
   parseTitlePage,
+  parseTitlePageBlock,
   extractTitlePageLines,
+  extractTitlePageSection,
   type TitlePageData,
+  type TitlePageSection,
 } from './lib/elements/parseTitlePage';
 export { stringifyTitlePage } from './lib/elements/stringifyTitlePage';
 export { classifyLine, type ClassifiedElement } from './lib/ClassifyLine';

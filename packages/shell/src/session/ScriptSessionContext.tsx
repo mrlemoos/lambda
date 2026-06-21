@@ -6,11 +6,7 @@ import {
   type FountainScript,
 } from '@lambda/fountain';
 import type { ScriptEditorSurfaceProps } from '@lambda/editor';
-import {
-  parseTitlePage,
-  stringifyTitlePage,
-  type TitlePageData,
-} from '@lambda/editor';
+import { stringifyTitlePage, type TitlePageData } from '@lambda/editor';
 import {
   createContext,
   useCallback,
@@ -33,6 +29,7 @@ import {
 import { TitlePageDialog } from '../components/TitlePageDialog.js';
 import { formatWindowTitle } from '../lib/formatWindowTitle.js';
 import { isDirty } from '../lib/isDirty.js';
+import { resolveTitlePageDialogInitialData } from '../lib/resolveTitlePageDialogInitialData.js';
 import { useLambdaApi } from './LambdaApiContext.js';
 
 export type UnsavedChoice = 'save' | 'discard' | 'cancel';
@@ -90,6 +87,8 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
   const [script, setScript] = useState<FountainScript | null>(null);
   const [editorSessionKey, setEditorSessionKey] = useState(0);
   const [titlePageDialogOpen, setTitlePageDialogOpen] = useState(false);
+  const [titlePageDialogInitialData, setTitlePageDialogInitialData] =
+    useState<TitlePageData | null>(null);
   const scriptRef = useRef<FountainScript | null>(null);
   const savedTextRef = useRef('');
   const [filePath, setFilePath] = useState<string | null>(null);
@@ -259,12 +258,22 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
   );
 
   const openTitlePageDialog = useCallback(() => {
-    if (!scriptRef.current) {
+    const current = scriptRef.current;
+
+    if (!current) {
       return;
     }
 
+    setTitlePageDialogInitialData(
+      resolveTitlePageDialogInitialData({
+        script: current,
+        savedText: savedTextRef.current,
+        displayName: sessionDisplayName,
+        filePath,
+      }),
+    );
     setTitlePageDialogOpen(true);
-  }, []);
+  }, [sessionDisplayName, filePath]);
 
   const updateTitlePage = useCallback(
     (titlePage: string[]) => {
@@ -310,6 +319,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     (data: TitlePageData) => {
       updateTitlePage(stringifyTitlePage(data));
       setTitlePageDialogOpen(false);
+      setTitlePageDialogInitialData(null);
     },
     [updateTitlePage],
   );
@@ -708,12 +718,15 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     <ScriptSessionContext.Provider value={value}>
       <CommandPaletteHost />
       {children}
-      {titlePageDialogOpen && script ? (
+      {titlePageDialogOpen && script && titlePageDialogInitialData ? (
         <TitlePageDialog
           open
-          initialData={parseTitlePage(script.titlePage)}
+          initialData={titlePageDialogInitialData}
           onSave={saveTitlePage}
-          onCancel={() => setTitlePageDialogOpen(false)}
+          onCancel={() => {
+            setTitlePageDialogOpen(false);
+            setTitlePageDialogInitialData(null);
+          }}
         />
       ) : null}
       {unsavedPromptOpen ? (

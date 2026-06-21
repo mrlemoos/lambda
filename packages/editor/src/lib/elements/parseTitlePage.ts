@@ -27,7 +27,7 @@ function stripInlineMarkup(text: string): string {
 }
 
 function normaliseKey(key: string): string {
-  return key.toLowerCase();
+  return key.trim().toLowerCase();
 }
 
 function nextNonEmptyLineIndex(lines: string[], fromIndex: number): number {
@@ -40,19 +40,36 @@ function nextNonEmptyLineIndex(lines: string[], fromIndex: number): number {
   return -1;
 }
 
-export function extractTitlePageLines(lines: string[]): string[] {
+export type TitlePageSection = {
+  titlePage: string[];
+  bodyStartIndex: number;
+};
+
+export function extractTitlePageSection(lines: string[]): TitlePageSection {
+  let startIndex = 0;
+
+  while (startIndex < lines.length && lines[startIndex].trim() === '') {
+    startIndex += 1;
+  }
+
+  if (startIndex >= lines.length) {
+    return { titlePage: [], bodyStartIndex: lines.length };
+  }
+
   const result: string[] = [];
   let inTitlePage = false;
+  let bodyStartIndex = startIndex;
 
-  for (let index = 0; index < lines.length; index += 1) {
+  for (let index = startIndex; index < lines.length; index += 1) {
     const line = lines[index];
     const trimmed = line.trim();
-    const previousLine = index > 0 ? lines[index - 1] : undefined;
+    const previousLine = index > startIndex ? lines[index - 1] : undefined;
 
     if (!inTitlePage) {
-      if (index === 0 && isTitlePage(line, previousLine)) {
+      if (isTitlePage(line, previousLine)) {
         inTitlePage = true;
         result.push(line);
+        bodyStartIndex = index + 1;
         continue;
       }
 
@@ -64,39 +81,48 @@ export function extractTitlePageLines(lines: string[]): string[] {
 
       if (nextIndex === -1) {
         result.push(line);
+        bodyStartIndex = index + 1;
         continue;
       }
 
       const nextTrimmed = lines[nextIndex].trim();
 
       if (isSceneHeading(nextTrimmed)) {
+        bodyStartIndex = nextIndex;
         break;
       }
 
       if (isTitlePageKeyLine(nextTrimmed)) {
         result.push(line);
+        bodyStartIndex = index + 1;
         continue;
       }
 
+      bodyStartIndex = index;
       break;
     }
 
     if (isSceneHeading(trimmed)) {
+      bodyStartIndex = index;
       break;
     }
 
     result.push(line);
+    bodyStartIndex = index + 1;
   }
 
-  return result;
+  return { titlePage: result, bodyStartIndex };
 }
 
-export function parseTitlePage(lines: string[]): TitlePageData {
-  const block = extractTitlePageLines(lines);
+export function extractTitlePageLines(lines: string[]): string[] {
+  return extractTitlePageSection(lines).titlePage;
+}
+
+export function parseTitlePageBlock(lines: string[]): TitlePageData {
   const data: TitlePageData = { title: [] };
   let currentKey: string | null = null;
 
-  for (const line of block) {
+  for (const line of lines) {
     const trimmed = line.trim();
     const keyMatch = trimmed.match(TITLE_PAGE_KEY);
 
@@ -117,6 +143,10 @@ export function parseTitlePage(lines: string[]): TitlePageData {
   }
 
   return data;
+}
+
+export function parseTitlePage(lines: string[]): TitlePageData {
+  return parseTitlePageBlock(extractTitlePageLines(lines));
 }
 
 function appendValue(data: TitlePageData, key: string, value: string): void {

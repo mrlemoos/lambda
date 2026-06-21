@@ -140,6 +140,26 @@ They enter.
     ]);
   });
 
+  it('parses title pages that begin after leading blank lines', () => {
+    const source = `
+Title: Port of Ambitions
+Credit: Written by
+Author: Jane Doe
+
+INT. SUBURBIA - NIGHT
+MARIO enters.
+`;
+
+    const { titlePage, document } = parseFountain(source);
+
+    expect(titlePage).toEqual([
+      'Title: Port of Ambitions',
+      'Credit: Written by',
+      'Author: Jane Doe',
+    ]);
+    expect(visibleTypes(document)).toEqual(['sceneHeading', 'action']);
+  });
+
   it('round-trips title-page-looking prose in the script body as action', () => {
     const source = `Title: HEXA Q4 PARTY
 
