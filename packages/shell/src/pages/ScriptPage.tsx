@@ -36,6 +36,7 @@ export function ScriptPage() {
       <ScriptEditorSurface
         key={filePath ?? 'untitled'}
         initialDocument={script.document}
+        pageFormat={script.pageFormat ?? 'us-letter'}
         onDocumentChange={updateDocument}
       />
     </main>

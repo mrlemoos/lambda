@@ -213,4 +213,22 @@ _*They*_ enter.
     ]);
     expect(stringifyFountain(parseFountain(source))).toBe(source);
   });
+
+  it('omits slugline document settings from the editor document', () => {
+    const source = `INT. KITCHEN - DAY
+
+Action.
+
+{{Slugline Document Settings
+Page Format: A4
+}}
+`;
+
+    const script = parseFountain(source);
+
+    expect(script.sluglineSettings).toEqual(['Page Format: A4']);
+    expect(script.pageFormat).toBe('a4');
+    expect(visibleTypes(script.document)).toEqual(['sceneHeading', 'action']);
+    expect(stringifyFountain(script)).toBe(source);
+  });
 });
