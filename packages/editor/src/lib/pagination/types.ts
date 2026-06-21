@@ -57,4 +57,5 @@ export type PaginationResult = {
   placements: BlockPlacement[];
   totalHeightPt: number;
   pageFormat: PageFormat;
+  hasTitlePage?: boolean;
 };

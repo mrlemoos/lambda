@@ -18,6 +18,7 @@ import {
 } from '../lib/macWindowChrome.js';
 import { resolveWindowBackgroundColor } from '../lib/windowBackground.js';
 import { createApplicationMenuTemplate } from './menu.js';
+import type { FileCommand } from '@lambda/shell';
 
 const mainDir = fileURLToPath(new URL('.', import.meta.url));
 
@@ -31,7 +32,7 @@ function getMainWindow(): BrowserWindow {
   return mainWindow;
 }
 
-function sendFileCommand(command: 'new' | 'open' | 'save' | 'save-as'): void {
+function sendFileCommand(command: FileCommand): void {
   getMainWindow().webContents.send('file:command', command);
 }
 

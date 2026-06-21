@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { formatLibraryEntryLabel } from '../lib/formatLibraryEntryLabel.js';
 import { useScriptSession } from '../session/ScriptSessionContext.js';
-import { formatPlatformShortcut } from '../lib/platformShortcuts.js';
 
 export function WelcomePage() {
   const {
@@ -20,19 +19,6 @@ export function WelcomePage() {
   useEffect(() => {
     void refreshLibrary();
   }, [refreshLibrary]);
-
-  const shortcuts = [
-    { accelerator: 'CmdOrCtrl+N', label: 'new' },
-    { accelerator: 'CmdOrCtrl+O', label: 'open' },
-    { accelerator: 'CmdOrCtrl+S', label: 'save' },
-  ] as const;
-
-  const shortcutHint = shortcuts
-    .map(
-      ({ accelerator, label }) =>
-        `${formatPlatformShortcut(accelerator)} ${label}`,
-    )
-    .join(' · ');
 
   const libraryItems = useMemo(
     () =>
@@ -125,7 +111,6 @@ export function WelcomePage() {
           </ul>
         </section>
       ) : null}
-      <p className="ui-hint welcome-shortcuts">{shortcutHint}</p>
     </main>
   );
 }

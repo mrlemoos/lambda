@@ -3,7 +3,7 @@ import type { FileCommand, ViewCommand } from './api.js';
 export type FileMenuItem =
   | {
       label: string;
-      accelerator: string;
+      accelerator?: string;
       command: FileCommand;
     }
   | { type: 'separator' };
@@ -22,6 +22,8 @@ export const FILE_MENU_ITEMS: FileMenuItem[] = [
   { type: 'separator' },
   { label: 'Save', accelerator: 'CmdOrCtrl+S', command: 'save' },
   { label: 'Save As…', accelerator: 'CmdOrCtrl+Shift+S', command: 'save-as' },
+  { type: 'separator' },
+  { label: 'Title Page…', command: 'title-page' },
 ];
 
 export const VIEW_MENU_ITEMS: ViewMenuItem[] = [

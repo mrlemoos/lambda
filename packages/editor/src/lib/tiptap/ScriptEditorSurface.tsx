@@ -1,30 +1,48 @@
 import type { JSONContent } from '@tiptap/core';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { PageFormat } from '../ScriptEditor';
 import { ScriptEditorContent } from './ScriptEditorContent';
 import { ScriptEditorCommandsProvider } from './scriptEditorCommands.js';
 import { useScriptEditor } from './useScriptEditor';
 
+const EMPTY_TITLE_PAGE_LINES: string[] = [];
+
 export type ScriptEditorSurfaceProps = {
   pageFormat?: PageFormat;
   initialDocument?: JSONContent;
+  titlePageLines?: string[];
   onDocumentChange?: (document: JSONContent) => void;
 };
 
 export function ScriptEditorSurface({
   pageFormat = 'us-letter',
   initialDocument,
+  titlePageLines = EMPTY_TITLE_PAGE_LINES,
   onDocumentChange,
 }: ScriptEditorSurfaceProps) {
   const editor = useScriptEditor(initialDocument);
+  const [paginationTitlePageLines, setPaginationTitlePageLines] =
+    useState(titlePageLines);
+
+  useEffect(() => {
+    setPaginationTitlePageLines(titlePageLines);
+  }, [titlePageLines]);
 
   useEffect(() => {
     if (!editor || !onDocumentChange) {
       return;
     }
 
-    const handleUpdate = () => {
+    const handleUpdate = ({
+      transaction,
+    }: {
+      transaction: { docChanged: boolean };
+    }) => {
+      if (!transaction.docChanged) {
+        return;
+      }
+
       onDocumentChange(editor.getJSON());
     };
 
@@ -41,7 +59,11 @@ export function ScriptEditorSurface({
 
   return (
     <ScriptEditorCommandsProvider editor={editor}>
-      <ScriptEditorContent editor={editor} pageFormat={pageFormat} />
+      <ScriptEditorContent
+        editor={editor}
+        pageFormat={pageFormat}
+        titlePageLines={paginationTitlePageLines}
+      />
     </ScriptEditorCommandsProvider>
   );
 }

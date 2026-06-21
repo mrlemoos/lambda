@@ -11,6 +11,7 @@ function renderToolbar(props: {
   fileName: string;
   dirty: boolean;
   onBack?: () => Promise<'discard' | 'cancel'>;
+  onTitlePage?: () => void;
 }) {
   const onBack = props.onBack ?? vi.fn(async () => 'discard' as const);
   const api: LambdaApi = {
@@ -32,6 +33,7 @@ function renderToolbar(props: {
             fileName={props.fileName}
             dirty={props.dirty}
             onBack={onBack}
+            onTitlePage={props.onTitlePage}
           />
         </EditorZoomProvider>
       </LambdaApiProvider>
@@ -73,5 +75,19 @@ describe('ScriptToolbar', () => {
     await waitFor(() => {
       expect(onBack).toHaveBeenCalledOnce();
     });
+  });
+
+  it('shows a title page button when onTitlePage is provided', () => {
+    const onTitlePage = vi.fn();
+
+    renderToolbar({
+      fileName: 'night-shift.fountain',
+      dirty: false,
+      onTitlePage,
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Title Page…' }));
+
+    expect(onTitlePage).toHaveBeenCalledOnce();
   });
 });

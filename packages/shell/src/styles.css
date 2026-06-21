@@ -216,10 +216,6 @@ html[data-platform='darwin'] .app-shell.script-workspace {
   }
 }
 
-.welcome-shortcuts {
-  text-align: center;
-}
-
 .welcome-library {
   width: min(100%, 28rem);
 }
@@ -392,4 +388,178 @@ html[data-platform='darwin'] .app-shell.script-workspace {
 .unsaved-modal-actions .ui-button {
   padding: 0.45rem 0.85rem;
   font-size: 0.875rem;
+}
+
+.title-page-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-backdrop);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+}
+
+.title-page-modal {
+  border: 1px solid var(--modal-border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  background: var(--modal-bg);
+  color: inherit;
+  width: min(32rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  margin: 0;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.title-page-modal-title {
+  font-family: var(--font-ui, inherit);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+}
+
+.title-page-form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.title-page-field {
+  display: grid;
+  gap: 0.35rem;
+  font-family: var(--font-ui, inherit);
+  font-size: 0.875rem;
+}
+
+.title-page-field span {
+  color: var(--text-muted);
+}
+
+.title-page-field :is(input, textarea) {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--modal-border);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  outline-color: var(--outline-color);
+  outline-style: solid;
+  outline-width: 0;
+  box-shadow: none;
+}
+
+.title-page-field :is(input, textarea):focus,
+.title-page-field :is(input, textarea):focus-visible {
+  outline-color: var(--outline-color);
+  outline-style: solid;
+  outline-width: 0;
+  box-shadow: none;
+}
+
+.title-page-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.command-palette-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-backdrop);
+  z-index: 1100;
+}
+
+.command-palette-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 1101;
+  width: min(calc(100vw - 2rem), 32rem);
+  max-width: none;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--modal-border);
+  border-radius: 10px;
+  background: var(--modal-bg);
+  color: inherit;
+  overflow: hidden;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 0 18px 48px rgb(0 0 0 / 0.18);
+}
+
+.command-palette-drag-handle {
+  height: 0.75rem;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.command-palette-drag-handle:active {
+  cursor: grabbing;
+}
+
+.command-palette-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.9rem 1rem;
+  border: 0;
+  border-bottom: 1px solid var(--modal-border);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.9375rem;
+  outline-color: transparent;
+}
+
+.command-palette-input::placeholder {
+  color: var(--text-muted);
+}
+
+.command-palette-list {
+  max-height: min(50vh, 18rem);
+  overflow: auto;
+  padding: 0.35rem;
+}
+
+.command-palette-empty {
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.command-palette-group [cmdk-group-heading] {
+  padding: 0.45rem 0.65rem 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.command-palette-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: var(--radius-ui-sm);
+  cursor: pointer;
+  font-size: 0.9375rem;
+}
+
+.command-palette-item[aria-selected='true'] {
+  background: color-mix(in srgb, var(--button-bg) 72%, var(--app-fg) 28%);
+}
+
+.command-palette-shortcut {
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
 }

@@ -117,7 +117,7 @@ A Fountain comment in `[[double brackets]]`; production or author notes, not par
 _Avoid_: Comment, annotation.
 
 **Title page**:
-Fountain metadata at the top of a file (`Title:`, `Author:`, `Draft date:`, etc.) before the first scene. In scope for the editor (own element type and TipTap node). **Pagination** treats the title page as a full first sheet — it consumes a page slot but is **unnumbered**; a **Page boundary** appears below it and body content begins on the next sheet with **`1.`** (Slugline: automatic page break below title page).
+Fountain metadata at the top of a file (`Title:`, `Author:`, `Draft date:`, etc.) before the first scene. Edited through **File → Title Page…** as structured fields; saved back to Fountain on disk. **Pagination** treats the title page as a full first sheet — it consumes a page slot but is **unnumbered**; a **Page boundary** appears below it and body content begins on the next sheet with **`1.`** (Slugline: automatic page break below title page). Formatted layout — centred title block, footer contact/meta — applies only in PDF preview and PDF export (`TitlePageView`).
 _Avoid_: Front matter, metadata block.
 
 **Script page**:

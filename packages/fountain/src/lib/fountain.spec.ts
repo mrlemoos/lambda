@@ -107,6 +107,20 @@ They enter.
     expect(stringifyFountain(document)).toBe(source);
   });
 
+  it('keeps title page metadata out of the editable document body', () => {
+    const source = `Title: BRICK & STEEL
+Credit: Written by
+
+INT. KITCHEN - DAY
+They enter.
+`;
+
+    const { titlePage, document } = parseFountain(source);
+
+    expect(titlePage).toEqual(['Title: BRICK & STEEL', 'Credit: Written by']);
+    expect(visibleTypes(document)).toEqual(['sceneHeading', 'action']);
+  });
+
   it('parses title pages with unindented title text before other keys', () => {
     const source = `Title:
 MY SCRIPT

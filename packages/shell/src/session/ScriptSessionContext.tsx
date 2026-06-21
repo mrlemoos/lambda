@@ -2,9 +2,15 @@ import {
   newScriptStub,
   parseFountain,
   stringifyFountain,
+  stripTitlePageFromDocument,
   type FountainScript,
 } from '@lambda/fountain';
 import type { ScriptEditorSurfaceProps } from '@lambda/editor';
+import {
+  parseTitlePage,
+  stringifyTitlePage,
+  type TitlePageData,
+} from '@lambda/editor';
 import {
   createContext,
   useCallback,
@@ -18,6 +24,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import type { ScriptLibraryEntry } from '../lib/api.js';
+import { CommandPaletteHost } from '../components/CommandPalette.js';
+import { TitlePageDialog } from '../components/TitlePageDialog.js';
 import { formatWindowTitle } from '../lib/formatWindowTitle.js';
 import { isDirty } from '../lib/isDirty.js';
 import { useLambdaApi } from './LambdaApiContext.js';
@@ -29,6 +37,7 @@ type ScriptDocument = Parameters<
 
 type ScriptSessionContextValue = {
   script: FountainScript | null;
+  editorSessionKey: number;
   filePath: string | null;
   libraryId: string | null;
   fileName: string;
@@ -45,6 +54,7 @@ type ScriptSessionContextValue = {
   saveScriptAs: () => Promise<boolean>;
   confirmUnsavedChanges: () => Promise<UnsavedChoice>;
   getSerializedFountainText: () => string | null;
+  openTitlePageDialog: () => void;
   openError: string | null;
   clearOpenError: () => void;
 };
@@ -73,6 +83,8 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
   const persistence = api.scriptPersistence;
   const navigate = useNavigate();
   const [script, setScript] = useState<FountainScript | null>(null);
+  const [editorSessionKey, setEditorSessionKey] = useState(0);
+  const [titlePageDialogOpen, setTitlePageDialogOpen] = useState(false);
   const scriptRef = useRef<FountainScript | null>(null);
   const savedTextRef = useRef('');
   const [filePath, setFilePath] = useState<string | null>(null);
@@ -136,6 +148,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       libraryIdRef.current = nextLibraryId;
       importFileNameRef.current = nextImportFileName;
       setScript(nextScript);
+      setEditorSessionKey((key) => key + 1);
       setDirty(false);
       setFilePath(path);
       setLibraryId(nextLibraryId);
@@ -238,6 +251,62 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       });
     },
     [applyPersistResult, persistence, refreshLibrary],
+  );
+
+  const openTitlePageDialog = useCallback(() => {
+    if (!scriptRef.current) {
+      return;
+    }
+
+    setTitlePageDialogOpen(true);
+  }, []);
+
+  const updateTitlePage = useCallback(
+    (titlePage: string[]) => {
+      const previous = scriptRef.current;
+
+      if (!previous) {
+        return;
+      }
+
+      const nextScript = {
+        ...previous,
+        titlePage,
+        document: stripTitlePageFromDocument(previous.document, titlePage),
+      };
+      const nextText = stringifyFountain(nextScript);
+
+      scriptRef.current = nextScript;
+      setScript(nextScript);
+      setEditorSessionKey((key) => key + 1);
+      setDirty(isDirty(savedTextRef.current, nextText));
+
+      if (!persistence) {
+        return;
+      }
+
+      persistence.scheduleAutosave({
+        id: libraryIdRef.current,
+        text: nextText,
+        importFileName: importFileNameRef.current,
+        onPendingChange: (pending) => {
+          setDirty(pending || isDirty(savedTextRef.current, nextText));
+        },
+        onPersisted: (result) => {
+          applyPersistResult(nextText, result);
+          void refreshLibrary();
+        },
+      });
+    },
+    [applyPersistResult, persistence, refreshLibrary],
+  );
+
+  const saveTitlePage = useCallback(
+    (data: TitlePageData) => {
+      updateTitlePage(stringifyTitlePage(data));
+      setTitlePageDialogOpen(false);
+    },
+    [updateTitlePage],
   );
 
   const persistToPath = useCallback(
@@ -547,6 +616,11 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
 
       if (command === 'save-as') {
         await saveScriptAs();
+        return;
+      }
+
+      if (command === 'title-page') {
+        openTitlePageDialog();
       }
     });
 
@@ -558,6 +632,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     saveScript,
     saveScriptAs,
     startNewScript,
+    openTitlePageDialog,
   ]);
 
   useEffect(() => {
@@ -578,6 +653,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     () => ({
       script,
+      editorSessionKey,
       filePath,
       libraryId,
       fileName,
@@ -594,11 +670,13 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       saveScriptAs,
       confirmUnsavedChanges,
       getSerializedFountainText,
+      openTitlePageDialog,
       openError,
       clearOpenError,
     }),
     [
       script,
+      editorSessionKey,
       filePath,
       libraryId,
       fileName,
@@ -615,6 +693,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       saveScriptAs,
       confirmUnsavedChanges,
       getSerializedFountainText,
+      openTitlePageDialog,
       openError,
       clearOpenError,
     ],
@@ -622,7 +701,16 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
 
   return (
     <ScriptSessionContext.Provider value={value}>
+      <CommandPaletteHost />
       {children}
+      {titlePageDialogOpen && script ? (
+        <TitlePageDialog
+          open
+          initialData={parseTitlePage(script.titlePage)}
+          onSave={saveTitlePage}
+          onCancel={() => setTitlePageDialogOpen(false)}
+        />
+      ) : null}
       {unsavedPromptOpen ? (
         <div className="unsaved-modal-backdrop" role="presentation">
           <dialog

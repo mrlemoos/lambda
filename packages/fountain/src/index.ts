@@ -5,3 +5,4 @@ export {
   type FountainScript,
 } from './lib/fountain.js';
 export { newScriptStub } from './lib/newScriptStub.js';
+export { stripTitlePageFromDocument } from './lib/stripTitlePageFromDocument.js';

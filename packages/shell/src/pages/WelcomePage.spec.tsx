@@ -29,7 +29,7 @@ describe('WelcomePage', () => {
     vi.clearAllMocks();
   });
 
-  it('renders primary actions and keyboard hints', () => {
+  it('renders primary actions without footer shortcut hints', () => {
     const { container } = render(<WelcomePage />);
 
     expect(container.querySelector('.welcome-logo')).not.toBeNull();
@@ -37,7 +37,7 @@ describe('WelcomePage', () => {
     expect(screen.getByRole('heading', { name: 'Lambda' })).not.toBeNull();
     expect(screen.getByRole('button', { name: 'New script' })).not.toBeNull();
     expect(screen.getByRole('button', { name: 'Open…' })).not.toBeNull();
-    expect(screen.getByText(/new · .* open · .* save/i)).not.toBeNull();
+    expect(container.querySelector('.welcome-shortcuts')).toBeNull();
   });
 
   it('shows open errors with dismiss control', () => {

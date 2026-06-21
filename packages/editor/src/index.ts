@@ -26,6 +26,7 @@ export {
   extractTitlePageLines,
   type TitlePageData,
 } from './lib/elements/parseTitlePage';
+export { stringifyTitlePage } from './lib/elements/stringifyTitlePage';
 export { classifyLine, type ClassifiedElement } from './lib/ClassifyLine';
 export {
   classifyBlock,

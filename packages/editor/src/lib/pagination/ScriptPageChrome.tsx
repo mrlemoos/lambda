@@ -1,5 +1,6 @@
 import type { PaginationResult } from './types';
 import { getPageLayout, PT_PER_INCH } from './pageLayout';
+import { resolvePageNumberTopPt } from './resolvePageNumberTopPt';
 import { resolveScriptSheetHeightPt } from './scriptSheetHeight';
 
 export type ScriptPageChromeProps = {
@@ -26,7 +27,13 @@ export function ScriptPageChrome({ pagination }: ScriptPageChromeProps) {
           key={page.number}
           className="script-page-number"
           style={{
-            top: ptToInches(layout.paddingTopPt + page.topOffsetPt),
+            top: ptToInches(
+              resolvePageNumberTopPt(
+                page,
+                pagination.pageFormat,
+                pagination.hasTitlePage ?? false,
+              ),
+            ),
           }}
         >
           {page.number}.

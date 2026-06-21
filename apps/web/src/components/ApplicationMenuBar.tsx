@@ -85,6 +85,10 @@ export function ApplicationMenuBar() {
           continue;
         }
 
+        if (!item.accelerator) {
+          continue;
+        }
+
         if (matchesAccelerator(event, item.accelerator)) {
           event.preventDefault();
           browserLambdaApi.dispatchFileCommand(item.command);
@@ -152,9 +156,11 @@ export function ApplicationMenuBar() {
                   onClick={() => dispatchFile(item.command)}
                 >
                   <span>{item.label}</span>
-                  <span className="application-menu-shortcut">
-                    {formatPlatformShortcut(item.accelerator)}
-                  </span>
+                  {item.accelerator ? (
+                    <span className="application-menu-shortcut">
+                      {formatPlatformShortcut(item.accelerator)}
+                    </span>
+                  ) : null}
                 </button>
               </li>
             );

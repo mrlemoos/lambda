@@ -5,6 +5,8 @@ import {
   type ClassifiedElement,
 } from '@lambda/editor';
 
+import { stripTitlePageFromDocument } from './stripTitlePageFromDocument.js';
+
 export type FountainScript = {
   titlePage: string[];
   document: JSONContent;
@@ -87,10 +89,13 @@ export function parseFountain(source: string): FountainScript {
 
   return {
     titlePage,
-    document: ensureEditableDocument({
-      type: 'doc',
-      content,
-    }),
+    document: stripTitlePageFromDocument(
+      ensureEditableDocument({
+        type: 'doc',
+        content,
+      }),
+      titlePage,
+    ),
   };
 }
 

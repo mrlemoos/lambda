@@ -1,4 +1,4 @@
-export type FileCommand = 'new' | 'open' | 'save' | 'save-as';
+export type FileCommand = 'new' | 'open' | 'save' | 'save-as' | 'title-page';
 
 export type ViewCommand = 'in' | 'out' | 'actual-size';
 

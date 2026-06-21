@@ -9,12 +9,12 @@ import { useScriptSession } from '../session/ScriptSessionContext.js';
 export function ScriptPage() {
   const {
     script,
-    filePath,
-    libraryId,
+    editorSessionKey,
     fileName,
     dirty,
     updateDocument,
     confirmUnsavedChanges,
+    openTitlePageDialog,
   } = useScriptSession();
   const { level } = useEditorZoom();
 
@@ -28,11 +28,13 @@ export function ScriptPage() {
         fileName={fileName}
         dirty={dirty}
         onBack={confirmUnsavedChanges}
+        onTitlePage={openTitlePageDialog}
       />
       <EditorZoomSurface level={level}>
         <ScriptEditorSurface
-          key={libraryId ?? filePath ?? 'untitled'}
+          key={editorSessionKey}
           initialDocument={script.document}
+          titlePageLines={script.titlePage}
           onDocumentChange={updateDocument}
         />
       </EditorZoomSurface>

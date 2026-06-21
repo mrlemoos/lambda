@@ -29,7 +29,7 @@ export function createApplicationMenuTemplate({
 
       return {
         label: item.label,
-        accelerator: item.accelerator,
+        ...(item.accelerator ? { accelerator: item.accelerator } : {}),
         click: () => sendFileCommand(item.command),
       };
     },
