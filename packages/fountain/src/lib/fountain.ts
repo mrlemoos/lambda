@@ -5,9 +5,19 @@ import {
   type ClassifiedElement,
 } from '@lambda/editor';
 
+import {
+  extractSluglineDocumentSettings,
+  formatSluglineDocumentSettingsBlock,
+  type FountainPageFormat,
+} from './sluglineDocumentSettings.js';
+
+export type { FountainPageFormat };
+
 export type FountainScript = {
   titlePage: string[];
   document: JSONContent;
+  sluglineSettings?: string[];
+  pageFormat?: FountainPageFormat;
 };
 
 const BODY_NODE_TYPE: Partial<Record<ClassifiedElement, string>> = {
@@ -26,7 +36,8 @@ const BODY_NODE_TYPE: Partial<Record<ClassifiedElement, string>> = {
 export function parseFountain(source: string): FountainScript {
   const lines = source.replace(/\r\n/g, '\n').split('\n');
   const titlePage = extractTitlePageLines(lines);
-  const bodyLines = lines.slice(titlePage.length);
+  const { bodyLines, sluglineSettings, pageFormat } =
+    extractSluglineDocumentSettings(lines.slice(titlePage.length));
 
   const content: JSONContent[] = [];
   let previousLine: string | undefined;
@@ -91,6 +102,8 @@ export function parseFountain(source: string): FountainScript {
       type: 'doc',
       content,
     }),
+    sluglineSettings,
+    pageFormat: sluglineSettings ? pageFormat : undefined,
   };
 }
 
@@ -135,6 +148,26 @@ function stringifyBodyNodes(nodes: JSONContent[]): string[] {
   return bodyLines;
 }
 
+function appendSluglineSettings(
+  text: string,
+  settingsLines: string[] | undefined,
+): string {
+  if (!settingsLines || settingsLines.length === 0) {
+    return text;
+  }
+
+  const settingsBlock = `${formatSluglineDocumentSettingsBlock(settingsLines).join('\n')}\n`;
+
+  if (text.length === 0) {
+    return settingsBlock;
+  }
+
+  const normalized = text.endsWith('\n') ? text : `${text}\n`;
+  const separator = normalized.endsWith('\n\n') ? '' : '\n';
+
+  return `${normalized}${separator}${settingsBlock}`;
+}
+
 export function stringifyFountain(script: FountainScript): string {
   const bodyLines = stringifyBodyNodes(script.document.content ?? []);
   const hasTitlePage = script.titlePage.length > 0;
@@ -142,22 +175,25 @@ export function stringifyFountain(script: FountainScript): string {
 
   if (!hasTitlePage) {
     const hasBodyLines = bodyLines.length > 0;
+    const bodyText = `${bodyLines.join('\n')}${hasBodyLines ? '\n' : ''}`;
 
-    return `${bodyLines.join('\n')}${hasBodyLines ? '\n' : ''}`;
+    return appendSluglineSettings(bodyText, script.sluglineSettings);
   }
 
   if (!hasBody) {
     const titleText = script.titlePage.join('\n');
     const lastLine = script.titlePage.at(-1) ?? '';
+    const base = lastLine.trim() === '' ? titleText : `${titleText}\n`;
 
-    return lastLine.trim() === '' ? titleText : `${titleText}\n`;
+    return appendSluglineSettings(base, script.sluglineSettings);
   }
 
   const titleText = script.titlePage.join('\n');
   const bodyText = bodyLines.join('\n');
   const separator = bodyLines[0] === '' ? '\n' : '\n\n';
+  const base = `${titleText}${separator}${bodyText}\n`;
 
-  return `${titleText}${separator}${bodyText}\n`;
+  return appendSluglineSettings(base, script.sluglineSettings);
 }
 
 function textNode(type: string, text: string): JSONContent {
