@@ -1,8 +1,10 @@
 import type { Editor } from '@tiptap/core';
 import { useEffect, useRef, useState } from 'react';
 
-import type { PageFormat } from '../ScriptEditor';
+import type { PageFormat, ScriptTypeface } from '../ScriptEditor';
+import { DEFAULT_SCRIPT_TYPEFACE } from './elementMetrics';
 import { getPageLayout } from './pageLayout';
+import { collapseEnrichedPlacements, enrichBlocks } from './enrichBlocks';
 import { paginateScript } from './paginateScript';
 import { paginationLayoutPluginKey } from './paginationLayoutExtension';
 import { serializeTipTapDocument } from './serializeTipTapDocument';
@@ -41,6 +43,7 @@ function placementsEqual(
 export function useScriptPagination(
   editor: Editor | null,
   pageFormat: PageFormat,
+  typeface: ScriptTypeface = DEFAULT_SCRIPT_TYPEFACE,
   titlePageLines: string[] = EMPTY_TITLE_PAGE_LINES,
 ): PaginationResult {
   const [pagination, setPagination] = useState<PaginationResult>(() =>
@@ -58,7 +61,17 @@ export function useScriptPagination(
         ...titlePageBlocks(titlePageLines),
         ...serializeTipTapDocument(editor.getJSON()),
       ];
-      const result = paginateScript(blocks, pageFormat);
+      const firstPass = paginateScript(blocks, pageFormat, typeface);
+      const enrichedBlocks = enrichBlocks(blocks, firstPass);
+      const finalPass = paginateScript(enrichedBlocks, pageFormat, typeface);
+      const placements = collapseEnrichedPlacements(
+        enrichedBlocks,
+        finalPass.placements,
+      );
+      const result = {
+        ...finalPass,
+        placements,
+      };
 
       setPagination({
         ...result,
@@ -98,7 +111,7 @@ export function useScriptPagination(
       editor.off('update', handleUpdate);
       lastPlacementsRef.current = null;
     };
-  }, [editor, pageFormat, titlePageLines]);
+  }, [editor, pageFormat, typeface, titlePageLines]);
 
   return pagination;
 }

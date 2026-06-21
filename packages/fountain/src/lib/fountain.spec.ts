@@ -247,4 +247,84 @@ _*They*_ enter.
     ]);
     expect(stringifyFountain(parseFountain(source))).toBe(source);
   });
+
+  it('parses slugline document settings for page format and typeface', () => {
+    const source = `INT. KITCHEN - DAY
+
+Action.
+
+{{Slugline Document Settings
+Page Format: A4
+Typeface: Courier New
+}}
+`;
+
+    const result = parseFountain(source);
+
+    expect(result.pageFormat).toBe('a4');
+    expect(result.typeface).toBe('courier-new');
+    expect(visibleTypes(result.document)).toEqual(['sceneHeading', 'action']);
+  });
+
+  it('omits slugline document settings from the editable document body', () => {
+    const source = `INT. KITCHEN - DAY
+
+Action.
+
+{{Slugline Document Settings
+Page Format: A4
+}}
+`;
+
+    const { document } = parseFountain(source);
+
+    expect(visibleTypes(document)).toEqual(['sceneHeading', 'action']);
+    expect(
+      (document.content ?? []).some((node) =>
+        nodeText(node).includes('Slugline Document Settings'),
+      ),
+    ).toBe(false);
+  });
+
+  it('round-trips slugline document settings and preserves unknown keys', () => {
+    const source = `INT. KITCHEN - DAY
+
+Action.
+
+{{Slugline Document Settings
+Scene Numbers: On
+Page Format: A4
+Typeface: Monospace
+}}
+`;
+
+    const parsed = parseFountain(source);
+
+    expect(stringifyFountain(parsed)).toBe(source);
+  });
+
+  it('defaults page format and typeface when settings are absent', () => {
+    const source = 'INT. KITCHEN - DAY\n';
+
+    const result = parseFountain(source);
+
+    expect(result.pageFormat).toBe('us-letter');
+    expect(result.typeface).toBe('courier-prime');
+  });
+
+  it('persists document settings on save stringify', () => {
+    const source = 'INT. KITCHEN - DAY\n';
+
+    const parsed = parseFountain(source);
+
+    const saved = stringifyFountain(parsed, { persistDocumentSettings: true });
+
+    expect(saved).toBe(`INT. KITCHEN - DAY
+
+{{Slugline Document Settings
+Page Format: US Letter
+Typeface: Courier Prime
+}}
+`);
+  });
 });

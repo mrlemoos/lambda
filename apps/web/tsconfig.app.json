@@ -50,6 +50,9 @@
       "path": "../../packages/shell/tsconfig.lib.json"
     },
     {
+      "path": "../../packages/print/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/editor/tsconfig.lib.json"
     }
   ]

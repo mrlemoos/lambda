@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getForcedPrefixLength } from './forcedPrefix';
+import { getForcedPrefixLength, fountainPrintText } from './forcedPrefix';
 
 describe('getForcedPrefixLength', () => {
   it.each([
@@ -30,5 +30,19 @@ describe('getForcedPrefixLength', () => {
     const result = getForcedPrefixLength(line);
 
     expect(result).toBe(expected);
+  });
+});
+
+describe('fountainPrintText', () => {
+  it.each([
+    ['!OUTSIDE THE WINDSHIELD', 'OUTSIDE THE WINDSHIELD'],
+    ['@McCLANE', 'McCLANE'],
+    ['>Burn to White.', 'Burn to White.'],
+    ['.SNIPER SCOPE POV', 'SNIPER SCOPE POV'],
+    ['~Will I tell the world', 'Will I tell the world'],
+    ['>FADE IN<', 'FADE IN'],
+    ['INT. KITCHEN - DAY', 'INT. KITCHEN - DAY'],
+  ])('omits force-syntax markers from %s', (input, expected) => {
+    expect(fountainPrintText(input)).toBe(expected);
   });
 });

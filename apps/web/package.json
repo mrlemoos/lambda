@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@lambda/editor": "workspace:*",
+    "@lambda/print": "workspace:*",
     "@lambda/shell": "workspace:*",
     "@lambda/theme": "workspace:*"
   },

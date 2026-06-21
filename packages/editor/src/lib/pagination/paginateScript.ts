@@ -1,5 +1,9 @@
-import type { PageFormat } from '../ScriptEditor';
-import { blockCountsTowardPageHeight, measureBlock } from './elementMetrics';
+import type { PageFormat, ScriptTypeface } from '../ScriptEditor';
+import {
+  DEFAULT_SCRIPT_TYPEFACE,
+  blockCountsTowardPageHeight,
+  measureBlock,
+} from './elementMetrics';
 import {
   getPageLayout,
   linesBudgetForBodyPage,
@@ -131,6 +135,7 @@ function measureKeepCluster(
   blockIndex: number,
   layout: PageLayout,
   previousMarginBottomPt: number,
+  typeface: ScriptTypeface,
 ): { heightPt: number; paginationLines: number } | null {
   const endIndex = keepClusterEndIndex(blocks, blockIndex);
 
@@ -153,6 +158,7 @@ function measureKeepCluster(
       block,
       layout,
       localPreviousMarginBottomPt,
+      typeface,
     );
     const keepOnlyOpeningLines = index > blockIndex && canSplitBlock(block);
     const keptTextLines = keepOnlyOpeningLines
@@ -177,6 +183,7 @@ function measureKeepCluster(
 export function paginateScript(
   blocks: ScriptBlock[],
   pageFormat: PageFormat = 'us-letter',
+  typeface: ScriptTypeface = DEFAULT_SCRIPT_TYPEFACE,
 ): PaginationResult {
   const layout = getPageLayout(pageFormat);
   const pages: ScriptPage[] = [];
@@ -216,7 +223,12 @@ export function paginateScript(
   for (let blockIndex = 0; blockIndex < blocks.length; blockIndex += 1) {
     const block = blocks[blockIndex];
     let marginTopPt = 0;
-    const measurement = measureBlock(block, layout, previousMarginBottomPt);
+    const measurement = measureBlock(
+      block,
+      layout,
+      previousMarginBottomPt,
+      typeface,
+    );
     const { heightPt, paginationLines } = measurement;
 
     if (block.type === 'titlePage') {
@@ -260,8 +272,6 @@ export function paginateScript(
     if (block.type === 'splitDialogueCharacter') {
       ensureFirstBodyPage();
       placements.push({ marginTopPt: 0, topOffsetPt: contentOffsetPt });
-      contentOffsetPt += heightPt;
-      previousMarginBottomPt = measurement.marginBottomPt;
       continue;
     }
 
@@ -276,6 +286,7 @@ export function paginateScript(
       blockIndex,
       layout,
       previousMarginBottomPt,
+      typeface,
     );
 
     if (
@@ -328,11 +339,30 @@ export function paginateScript(
         canSplitBlock(block) &&
         measurement.textLineCount >= MIN_SPLIT_LINES * 2
       ) {
+        const splitDialogueCharacterIndex =
+          block.type === 'dialogue' &&
+          blocks[blockIndex - 1]?.type === 'splitDialogueCharacter'
+            ? blockIndex - 1
+            : undefined;
         let splitLineIndex = 0;
         let blockTopOffsetPt = contentOffsetPt;
         let blockMarginTopPt = 0;
         const pageStarts: NonNullable<BlockPlacement['pageStarts']> = [];
         let isFirstFragment = true;
+
+        const placeSplitDialogueCharacter = (
+          marginTopPt: number,
+          topOffsetPt: number,
+        ) => {
+          if (splitDialogueCharacterIndex === undefined) {
+            return;
+          }
+
+          placements[splitDialogueCharacterIndex] = {
+            marginTopPt,
+            topOffsetPt,
+          };
+        };
 
         while (splitLineIndex < measurement.textLineCount) {
           const linesRemaining = measurement.textLineCount - splitLineIndex;
@@ -377,18 +407,23 @@ export function paginateScript(
               blockTopOffsetPt = advance.nextContentTopPt;
             } else {
               const splitLine = measurement.textLines[splitLineIndex - 1];
+              const continuationMarginTopPt = pageBreakMarginTop(
+                advance,
+                contentOffsetPt,
+                advance.marginTopPt,
+              );
 
               pageStarts.push({
                 textOffset: splitLine.endOffset,
-                marginTopPt: pageBreakMarginTop(
-                  advance,
-                  contentOffsetPt,
-                  advance.marginTopPt,
-                ),
+                marginTopPt: continuationMarginTopPt,
                 topOffsetPt: advance.nextContentTopPt,
                 linesBefore: splitLineIndex,
                 linesAfter: linesRemaining,
               });
+              placeSplitDialogueCharacter(
+                continuationMarginTopPt,
+                advance.nextContentTopPt,
+              );
             }
 
             contentOffsetPt = advance.nextContentTopPt;
@@ -433,18 +468,23 @@ export function paginateScript(
             contentOffsetPt,
           );
           const splitLine = measurement.textLines[splitLineIndex - 1];
+          const continuationMarginTopPt = pageBreakMarginTop(
+            advance,
+            contentOffsetPt,
+            advance.marginTopPt,
+          );
 
           pageStarts.push({
             textOffset: splitLine.endOffset,
-            marginTopPt: pageBreakMarginTop(
-              advance,
-              contentOffsetPt,
-              advance.marginTopPt,
-            ),
+            marginTopPt: continuationMarginTopPt,
             topOffsetPt: advance.nextContentTopPt,
             linesBefore: splitLineIndex,
             linesAfter: measurement.textLineCount - splitLineIndex,
           });
+          placeSplitDialogueCharacter(
+            continuationMarginTopPt,
+            advance.nextContentTopPt,
+          );
           contentOffsetPt = advance.nextContentTopPt;
           pushBoundary(advance.boundaryOffsetPt);
           startBodyPage(advance.boundaryOffsetPt);

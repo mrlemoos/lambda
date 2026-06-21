@@ -1,4 +1,10 @@
-import type { FileCommand, LambdaApi, ViewCommand } from '@lambda/shell';
+import type {
+  ExportPdfOptions,
+  FileCommand,
+  LambdaApi,
+  ViewCommand,
+} from '@lambda/shell';
+import { printPreview } from '@lambda/print';
 
 import { createWebScriptLibraryPersistence } from './scriptLibrary/index.js';
 
@@ -194,6 +200,10 @@ export function createBrowserLambdaApi(
 
     async setWindowTitle(title) {
       document.title = title;
+    },
+
+    async exportPdf(options: ExportPdfOptions) {
+      printPreview(options.pageFormat);
     },
 
     dispatchFileCommand,

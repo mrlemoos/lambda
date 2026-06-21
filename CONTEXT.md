@@ -125,12 +125,20 @@ The on-screen page container that defines margins and printable area for formatt
 _Avoid_: Us letter paper, page wrapper (vague), canvas.
 
 **Page format**:
-Which standard page size the script page uses: US Letter or A4. Set via `<ScriptEditor pageFormat="…" />`; theme CSS defines measurements for each format (e.g. `data-page-format` on the editor root). Defaults to US Letter when omitted.
+Which standard page size the script page uses: US Letter or A4. Chosen in the **Export settings dialog**; applies to the editor writing surface, **Pagination**, **PDF preview**, and PDF export. Persisted in **Slugline Document Settings** on save. Defaults to US Letter when omitted.
 _Avoid_: Paper size (alone), locale.
 
+**Typeface**:
+Which screenplay font the formatted script uses: Courier Prime, Courier New, or Monospace. Chosen in the **Export settings dialog** alongside **Page format**; applies to the editor writing surface, **Pagination**, **PDF preview**, and PDF export. Persisted in **Slugline Document Settings** on save.
+_Avoid_: Font (generic UI term), typography (vague).
+
 **Export settings dialog**:
-The UI where an author chooses PDF preview/export settings such as **Page format** and **Typeface**. Not the same as screenplay **Dialogue**.
+The UI where an author chooses **Page format** and **Typeface** for the current **Script**. Opened from the preview workspace or before export. Not the same as screenplay **Dialogue**.
 _Avoid_: Dialogue (reserved for spoken text), page setup (too broad).
+
+**PDF preview**:
+A full-screen page-stack view of the script as it will export — **File → Preview…** from the writing shell. Shows the formatted **Title page** (when present), body pages with **Page number** labels, and **CONT'D** annotations. Uses the same **Pagination** break positions as the editor; always at actual size (unaffected by **Editor zoom**). Distinct from the Preview/Print/PDF export _feature area_ listed under out-of-scope editor parity (those are product capabilities, not element types).
+_Avoid_: Print preview (ambiguous with system print), thumbnail view.
 
 **Slugline Document Settings**:
 A hidden trailing metadata block in a Fountain file, wrapped in double curly braces and headed `Slugline Document Settings`. It stores document-level choices such as scene heading styling, note colours, **Page format** (`Page Format: US Letter` or `Page Format: A4`), and **Typeface** (`Typeface: Courier Prime`, `Typeface: Courier New`, or `Typeface: Monospace`). Lambda must preserve unknown keys with the script and omit the settings block from the editor surface and standard screenplay output.

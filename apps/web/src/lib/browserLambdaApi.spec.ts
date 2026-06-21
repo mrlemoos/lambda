@@ -114,4 +114,16 @@ describe('createBrowserLambdaApi', () => {
 
     expect(anchorClick).toHaveBeenCalled();
   });
+
+  it('opens the browser print dialog for exportPdf', async () => {
+    const print = vi.spyOn(window, 'print').mockImplementation(() => {
+      window.dispatchEvent(new Event('afterprint'));
+    });
+
+    api = createBrowserLambdaApi();
+
+    await api.exportPdf?.({ pageFormat: 'a4' });
+
+    expect(print).toHaveBeenCalled();
+  });
 });

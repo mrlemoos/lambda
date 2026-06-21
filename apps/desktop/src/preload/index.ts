@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 import type {
+  ExportPdfOptions,
   FileCommand,
   LambdaApi,
   LambdaPlatform,
@@ -45,6 +46,9 @@ const api: LambdaApi = {
   },
   setWindowTitle(title) {
     return ipcRenderer.invoke('window:set-title', title);
+  },
+  exportPdf(options: ExportPdfOptions) {
+    return ipcRenderer.invoke('pdf:export', options);
   },
 };
 

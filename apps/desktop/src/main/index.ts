@@ -3,6 +3,9 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { getElectronPrintPageSize } from '@lambda/print';
+import type { ExportPdfOptions } from '@lambda/shell';
+
 import {
   BrowserWindow,
   Menu,
@@ -168,5 +171,23 @@ function registerIpcHandlers(): void {
 
   ipcMain.handle('window:set-title', (_event, title: string) => {
     getMainWindow().setTitle(title);
+  });
+
+  ipcMain.handle('pdf:export', async (_event, options: ExportPdfOptions) => {
+    const result = await dialog.showSaveDialog(getMainWindow(), {
+      defaultPath: options.defaultName ?? 'Untitled.pdf',
+      filters: [{ name: 'PDF', extensions: ['pdf'] }],
+    });
+
+    if (result.canceled || !result.filePath) {
+      return;
+    }
+
+    const pdfBuffer = await getMainWindow().webContents.printToPDF({
+      printBackground: true,
+      pageSize: getElectronPrintPageSize(options.pageFormat),
+    });
+
+    await writeFile(result.filePath, pdfBuffer);
   });
 }

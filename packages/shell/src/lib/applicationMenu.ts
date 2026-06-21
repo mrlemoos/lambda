@@ -24,6 +24,7 @@ export const FILE_MENU_ITEMS: FileMenuItem[] = [
   { label: 'Save As…', accelerator: 'CmdOrCtrl+Shift+S', command: 'save-as' },
   { type: 'separator' },
   { label: 'Title Page…', command: 'title-page' },
+  { label: 'Preview…', command: 'preview' },
 ];
 
 export const VIEW_MENU_ITEMS: ViewMenuItem[] = [

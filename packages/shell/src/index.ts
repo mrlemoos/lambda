@@ -1,4 +1,5 @@
 export type {
+  ExportPdfOptions,
   FileCommand,
   LambdaApi,
   LambdaPlatform,
@@ -36,6 +37,7 @@ export { isDirty } from './lib/isDirty.js';
 export { EditorZoomSurface } from './components/EditorZoomSurface.js';
 export { WindowDragRegion } from './components/WindowDragRegion.js';
 export { ScriptPage } from './pages/ScriptPage.js';
+export { PreviewPage } from './pages/PreviewPage.js';
 export { WelcomePage } from './pages/WelcomePage.js';
 export { ShellRoutes } from './routes/ShellRoutes.js';
 export { LambdaApiProvider, useLambdaApi } from './session/LambdaApiContext.js';

@@ -1,3 +1,5 @@
+import { centeredTextPrintText } from './CenteredText';
+
 const FORCED_SCENE_HEADING = /^\.[A-Za-z0-9]/;
 
 const FORCED_PREFIXES = ['@', '>', '!', '~'] as const;
@@ -17,4 +19,21 @@ export function getForcedPrefixLength(text: string): number {
   }
 
   return 0;
+}
+
+/** Visible text for preview/print (omits Fountain force-syntax markers). */
+export function fountainPrintText(text: string): string {
+  const centered = centeredTextPrintText(text);
+
+  if (centered !== text) {
+    return centered;
+  }
+
+  const prefixLength = getForcedPrefixLength(text);
+
+  if (prefixLength > 0) {
+    return text.slice(prefixLength);
+  }
+
+  return text;
 }

@@ -8,6 +8,7 @@ import {
   type GeneralPaletteCommandId,
 } from '../lib/generalPaletteCommands.js';
 import { SCRIPT_PALETTE_COMMANDS } from '../lib/scriptPaletteCommands.js';
+import type { ScriptPaletteCommandId } from '../lib/scriptPaletteCommands.js';
 import { formatPlatformShortcut } from '../lib/platformShortcuts.js';
 import {
   COMMAND_PALETTE_DIALOG_CLASS,
@@ -21,8 +22,13 @@ type CommandPaletteProps = {
 };
 
 export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
-  const { script, startNewScript, openScriptFromDisk, openTitlePageDialog } =
-    useScriptSession();
+  const {
+    script,
+    startNewScript,
+    openScriptFromDisk,
+    openTitlePageDialog,
+    openPreview,
+  } = useScriptSession();
   const { dragHandleProps } = useCommandPaletteDrag(open);
 
   const runCommand = (commandId: GeneralPaletteCommandId) => {
@@ -34,8 +40,13 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     void openScriptFromDisk();
   };
 
-  const runScriptCommand = () => {
-    openTitlePageDialog();
+  const runScriptCommand = (commandId: ScriptPaletteCommandId) => {
+    if (commandId === 'title-page') {
+      openTitlePageDialog();
+      return;
+    }
+
+    openPreview();
   };
 
   return (
@@ -92,7 +103,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 value={command.id}
                 keywords={command.keywords}
                 onSelect={() => {
-                  runScriptCommand();
+                  runScriptCommand(command.id);
                   onOpenChange(false);
                 }}
               >

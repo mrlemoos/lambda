@@ -20,6 +20,7 @@
     "@base-ui/react": "^1.6.0",
     "@lambda/editor": "workspace:*",
     "@lambda/fountain": "workspace:*",
+    "@lambda/print": "workspace:*",
     "@lambda/theme": "workspace:*",
     "cmdk": "^1.1.1"
   },

@@ -4,6 +4,8 @@ import {
   stringifyFountain,
   stripTitlePageFromDocument,
   type FountainScript,
+  type PageFormat,
+  type Typeface,
 } from '@lambda/fountain';
 import type { ScriptEditorSurfaceProps } from '@lambda/editor';
 import { stringifyTitlePage, type TitlePageData } from '@lambda/editor';
@@ -27,6 +29,7 @@ import {
   ModalDialogTitle,
 } from '../components/ModalDialog.js';
 import { TitlePageDialog } from '../components/TitlePageDialog.js';
+import { ExportSettingsDialog } from '../components/ExportSettingsDialog.js';
 import { formatWindowTitle } from '../lib/formatWindowTitle.js';
 import { isDirty } from '../lib/isDirty.js';
 import { resolveTitlePageDialogInitialData } from '../lib/resolveTitlePageDialogInitialData.js';
@@ -39,6 +42,8 @@ type ScriptDocument = Parameters<
 
 type ScriptSessionContextValue = {
   script: FountainScript | null;
+  pageFormat: PageFormat;
+  typeface: Typeface;
   editorSessionKey: number;
   filePath: string | null;
   libraryId: string | null;
@@ -57,6 +62,11 @@ type ScriptSessionContextValue = {
   confirmUnsavedChanges: () => Promise<UnsavedChoice>;
   getSerializedFountainText: () => string | null;
   openTitlePageDialog: () => void;
+  openExportSettingsDialog: () => void;
+  updatePageFormat: (pageFormat: PageFormat) => void;
+  updateTypeface: (typeface: Typeface) => void;
+  openPreview: () => void;
+  exportPdf: () => Promise<void>;
   openError: string | null;
   clearOpenError: () => void;
 };
@@ -64,6 +74,10 @@ type ScriptSessionContextValue = {
 const ScriptSessionContext = createContext<ScriptSessionContextValue | null>(
   null,
 );
+
+function stringifyForSave(script: FountainScript): string {
+  return stringifyFountain(script, { persistDocumentSettings: true });
+}
 
 function createSessionFromText(
   text: string,
@@ -87,6 +101,8 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
   const [script, setScript] = useState<FountainScript | null>(null);
   const [editorSessionKey, setEditorSessionKey] = useState(0);
   const [titlePageDialogOpen, setTitlePageDialogOpen] = useState(false);
+  const [exportSettingsDialogOpen, setExportSettingsDialogOpen] =
+    useState(false);
   const [titlePageDialogInitialData, setTitlePageDialogInitialData] =
     useState<TitlePageData | null>(null);
   const scriptRef = useRef<FountainScript | null>(null);
@@ -187,7 +203,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       return true;
     }
 
-    const text = stringifyFountain(scriptRef.current);
+    const text = stringifyForSave(scriptRef.current);
     const result =
       (await persistence.flushPendingPersist()) ??
       (await persistence.persistScript({
@@ -275,6 +291,124 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     setTitlePageDialogOpen(true);
   }, [sessionDisplayName, filePath]);
 
+  const applyExportSettings = useCallback(
+    (nextPageFormat: PageFormat, nextTypeface: Typeface) => {
+      const previous = scriptRef.current;
+
+      if (!previous) {
+        return;
+      }
+
+      if (
+        previous.pageFormat === nextPageFormat &&
+        previous.typeface === nextTypeface
+      ) {
+        return;
+      }
+
+      const nextScript = {
+        ...previous,
+        pageFormat: nextPageFormat,
+        typeface: nextTypeface,
+        documentSettings: {
+          ...previous.documentSettings,
+          pageFormat: nextPageFormat,
+          typeface: nextTypeface,
+        },
+      };
+      const nextText = stringifyFountain(nextScript);
+
+      scriptRef.current = nextScript;
+      setScript(nextScript);
+      setDirty(isDirty(savedTextRef.current, nextText));
+
+      if (!persistence) {
+        return;
+      }
+
+      persistence.scheduleAutosave({
+        id: libraryIdRef.current,
+        text: nextText,
+        importFileName: importFileNameRef.current,
+        onPendingChange: (pending) => {
+          setDirty(pending || isDirty(savedTextRef.current, nextText));
+        },
+        onPersisted: (result) => {
+          applyPersistResult(nextText, result);
+          void refreshLibrary();
+        },
+      });
+    },
+    [applyPersistResult, persistence, refreshLibrary],
+  );
+
+  const updatePageFormat = useCallback(
+    (nextPageFormat: PageFormat) => {
+      const current = scriptRef.current;
+
+      if (!current) {
+        return;
+      }
+
+      applyExportSettings(nextPageFormat, current.typeface);
+    },
+    [applyExportSettings],
+  );
+
+  const updateTypeface = useCallback(
+    (nextTypeface: Typeface) => {
+      const current = scriptRef.current;
+
+      if (!current) {
+        return;
+      }
+
+      applyExportSettings(current.pageFormat, nextTypeface);
+    },
+    [applyExportSettings],
+  );
+
+  const openExportSettingsDialog = useCallback(() => {
+    if (!scriptRef.current) {
+      return;
+    }
+
+    setExportSettingsDialogOpen(true);
+  }, []);
+
+  const saveExportSettings = useCallback(
+    (settings: { pageFormat: PageFormat; typeface: Typeface }) => {
+      applyExportSettings(settings.pageFormat, settings.typeface);
+      setExportSettingsDialogOpen(false);
+    },
+    [applyExportSettings],
+  );
+
+  const openPreview = useCallback(() => {
+    if (!scriptRef.current) {
+      return;
+    }
+
+    navigate('/script/preview');
+  }, [navigate]);
+
+  const exportPdf = useCallback(async () => {
+    const current = scriptRef.current;
+
+    if (!current) {
+      return;
+    }
+
+    const baseName =
+      fileNameFromPath(filePath).replace(/\.(fountain|txt)$/i, '') ||
+      'Untitled';
+
+    await api.exportPdf?.({
+      pageFormat: current.pageFormat ?? 'us-letter',
+      defaultName: `${baseName}.pdf`,
+    });
+  }, [api, filePath]);
+
   const updateTitlePage = useCallback(
     (titlePage: string[]) => {
       const previous = scriptRef.current;
@@ -332,7 +466,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
         return false;
       }
 
-      const text = stringifyFountain(latestScript);
+      const text = stringifyForSave(latestScript);
       const fileName = await api.writeFile(path, text);
       savedTextRef.current = text;
       setFilePath(path);
@@ -529,7 +663,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       return null;
     }
 
-    return stringifyFountain(latest);
+    return stringifyForSave(latest);
   }, []);
 
   const resolveUnsavedPrompt = useCallback(
@@ -636,6 +770,11 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
 
       if (command === 'title-page') {
         openTitlePageDialog();
+        return;
+      }
+
+      if (command === 'preview') {
+        openPreview();
       }
     });
 
@@ -648,6 +787,7 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     saveScriptAs,
     startNewScript,
     openTitlePageDialog,
+    openPreview,
   ]);
 
   useEffect(() => {
@@ -665,9 +805,14 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
     };
   }, [dirty]);
 
+  const pageFormat = script?.pageFormat ?? 'us-letter';
+  const typeface = script?.typeface ?? 'courier-prime';
+
   const value = useMemo(
     () => ({
       script,
+      pageFormat,
+      typeface,
       editorSessionKey,
       filePath,
       libraryId,
@@ -686,11 +831,18 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       confirmUnsavedChanges,
       getSerializedFountainText,
       openTitlePageDialog,
+      openExportSettingsDialog,
+      updatePageFormat,
+      updateTypeface,
+      openPreview,
+      exportPdf,
       openError,
       clearOpenError,
     }),
     [
       script,
+      pageFormat,
+      typeface,
       editorSessionKey,
       filePath,
       libraryId,
@@ -709,6 +861,11 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       confirmUnsavedChanges,
       getSerializedFountainText,
       openTitlePageDialog,
+      openExportSettingsDialog,
+      updatePageFormat,
+      updateTypeface,
+      openPreview,
+      exportPdf,
       openError,
       clearOpenError,
     ],
@@ -726,6 +883,17 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
           onCancel={() => {
             setTitlePageDialogOpen(false);
             setTitlePageDialogInitialData(null);
+          }}
+        />
+      ) : null}
+      {exportSettingsDialogOpen && script ? (
+        <ExportSettingsDialog
+          open
+          pageFormat={pageFormat}
+          typeface={typeface}
+          onSave={saveExportSettings}
+          onCancel={() => {
+            setExportSettingsDialogOpen(false);
           }}
         />
       ) : null}

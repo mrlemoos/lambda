@@ -4,7 +4,12 @@
 @import '@fontsource/open-runde/700.css';
 
 @theme {
-  --font-script: Courier, 'Courier Prime', 'Courier New', monospace;
+  --font-script: 'Courier Prime', Courier, 'Courier New', monospace;
+  --font-script-courier-prime: 'Courier Prime', Courier, monospace;
+  --font-script-courier-new: 'Courier New', Courier, monospace;
+  --font-script-monospace:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    monospace;
   --font-outline: 'Open Runde', system-ui, sans-serif;
   --width-script-page-us-letter: 8.5in;
   --height-script-page-us-letter: 11in;
@@ -33,6 +38,18 @@
     --color-script-page-prefix: rgb(255 255 255 / 0.45);
     --color-script-page-number: rgb(255 255 255 / 0.45);
   }
+}
+
+[data-typeface='courier-prime'] {
+  --font-script: var(--font-script-courier-prime);
+}
+
+[data-typeface='courier-new'] {
+  --font-script: var(--font-script-courier-new);
+}
+
+[data-typeface='monospace'] {
+  --font-script: var(--font-script-monospace);
 }
 
 @utility section {

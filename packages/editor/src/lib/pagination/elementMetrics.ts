@@ -1,3 +1,4 @@
+import type { ScriptTypeface } from '../ScriptEditor';
 import {
   PT_PER_INCH,
   SCRIPT_LINE_HEIGHT_PT,
@@ -5,11 +6,20 @@ import {
 } from './pageLayout';
 import type { ScriptBlock, ScriptElementType } from './types';
 
-/** Pica table: 10 characters per inch at 12pt Courier (matches theme printable width). */
-const PICA_CHARS_PER_INCH_AT_12PT = 10;
+/** Pica table: characters per inch at 12pt for each screenplay typeface. */
+export const TYPEFACE_CHARS_PER_INCH_AT_12PT: Record<ScriptTypeface, number> = {
+  'courier-prime': 10,
+  'courier-new': 10,
+  monospace: 10,
+};
 
-/** Dialogue column width from theme (`max-width: 400px` at 96dpi). */
-const DIALOGUE_CONTENT_WIDTH_PT = (400 / 96) * PT_PER_INCH;
+export const DEFAULT_SCRIPT_TYPEFACE: ScriptTypeface = 'courier-prime';
+
+/** Theme dialogue block uses border-box `max-width: 400px` with `padding-left: 1.5in`. */
+const DIALOGUE_BOX_MAX_WIDTH_PT = (400 / 96) * PT_PER_INCH;
+const DIALOGUE_PADDING_LEFT_PT = 1.5 * PT_PER_INCH;
+const DIALOGUE_CONTENT_WIDTH_PT =
+  DIALOGUE_BOX_MAX_WIDTH_PT - DIALOGUE_PADDING_LEFT_PT;
 
 export type ElementMetrics = {
   fontSizePt: number;
@@ -161,10 +171,12 @@ export function contentWidthPt(
 export function charsPerLine(
   metrics: ElementMetrics,
   layout: PageLayout,
+  typeface: ScriptTypeface = DEFAULT_SCRIPT_TYPEFACE,
 ): number {
   const widthPt = contentWidthPt(metrics, layout);
   const inches = widthPt / PT_PER_INCH;
-  const charsPerInch = PICA_CHARS_PER_INCH_AT_12PT * (metrics.fontSizePt / 12);
+  const charsPerInch =
+    TYPEFACE_CHARS_PER_INCH_AT_12PT[typeface] * (metrics.fontSizePt / 12);
 
   return Math.max(1, Math.floor(inches * charsPerInch));
 }
@@ -240,13 +252,17 @@ export function measureBlock(
   block: ScriptBlock,
   layout: PageLayout,
   previousMarginBottomPt: number,
+  typeface: ScriptTypeface = DEFAULT_SCRIPT_TYPEFACE,
 ): BlockMeasurement {
   const metrics = ELEMENT_METRICS[block.type];
   const collapsedMarginTopPt = Math.max(
     metrics.marginTopPt,
     previousMarginBottomPt,
   );
-  const textLines = wrapTextLines(block.text, charsPerLine(metrics, layout));
+  const textLines = wrapTextLines(
+    block.text,
+    charsPerLine(metrics, layout, typeface),
+  );
   const textLineCount = textLines.length;
   const lineHeightPt =
     metrics.lineHeightPt === SCRIPT_LINE_HEIGHT_PT

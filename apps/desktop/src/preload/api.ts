@@ -1,8 +1,15 @@
 import type {
+  ExportPdfOptions,
   FileCommand,
   LambdaApi,
   LambdaPlatform,
   ViewCommand,
 } from '@lambda/shell';
 
-export type { FileCommand, LambdaApi, LambdaPlatform, ViewCommand };
+export type {
+  ExportPdfOptions,
+  FileCommand,
+  LambdaApi,
+  LambdaPlatform,
+  ViewCommand,
+};

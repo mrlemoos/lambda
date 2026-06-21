@@ -10,6 +10,7 @@ export type ScriptToolbarProps = {
   dirty: boolean;
   onBack: () => Promise<UnsavedChoice>;
   onTitlePage?: () => void;
+  onPreview?: () => void;
 };
 
 export function ScriptToolbar({
@@ -17,6 +18,7 @@ export function ScriptToolbar({
   dirty,
   onBack,
   onTitlePage,
+  onPreview,
 }: ScriptToolbarProps) {
   const { readout } = useEditorZoom();
 
@@ -54,6 +56,15 @@ export function ScriptToolbar({
             onClick={onTitlePage}
           >
             Title Page…
+          </button>
+        ) : null}
+        {onPreview ? (
+          <button
+            type="button"
+            className="ui-button ui-button-ghost script-toolbar-preview"
+            onClick={onPreview}
+          >
+            Preview…
           </button>
         ) : null}
         <span className="script-toolbar-zoom" aria-label="Editor zoom">

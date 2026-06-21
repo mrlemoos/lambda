@@ -52,6 +52,9 @@
       "path": "../fountain/tsconfig.lib.json"
     },
     {
+      "path": "../print/tsconfig.lib.json"
+    },
+    {
       "path": "../theme/tsconfig.lib.json"
     }
   ]

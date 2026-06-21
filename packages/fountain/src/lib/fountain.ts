@@ -5,12 +5,27 @@ import {
   type ClassifiedElement,
 } from '@lambda/editor';
 
+import {
+  DEFAULT_PAGE_FORMAT,
+  DEFAULT_TYPEFACE,
+  extractDocumentSettingsSection,
+  shouldPersistDocumentSettings,
+  stringifyDocumentSettingsBlock,
+  type PageFormat,
+  type ParsedDocumentSettings,
+  type Typeface,
+} from './documentSettings.js';
 import { stripTitlePageFromDocument } from './stripTitlePageFromDocument.js';
 
 export type FountainScript = {
   titlePage: string[];
   document: JSONContent;
+  pageFormat: PageFormat;
+  typeface: Typeface;
+  documentSettings: ParsedDocumentSettings;
 };
+
+export type { PageFormat, Typeface } from './documentSettings.js';
 
 const BODY_NODE_TYPE: Partial<Record<ClassifiedElement, string>> = {
   action: 'action',
@@ -28,7 +43,9 @@ const BODY_NODE_TYPE: Partial<Record<ClassifiedElement, string>> = {
 export function parseFountain(source: string): FountainScript {
   const lines = source.replace(/\r\n/g, '\n').split('\n');
   const { titlePage, bodyStartIndex } = extractTitlePageSection(lines);
-  const bodyLines = lines.slice(bodyStartIndex);
+  const { settings: documentSettings, bodyEndIndex } =
+    extractDocumentSettingsSection(lines.slice(bodyStartIndex));
+  const bodyLines = lines.slice(bodyStartIndex, bodyStartIndex + bodyEndIndex);
 
   const content: JSONContent[] = [];
   let previousLine: string | undefined;
@@ -89,6 +106,9 @@ export function parseFountain(source: string): FountainScript {
 
   return {
     titlePage,
+    pageFormat: documentSettings.pageFormat,
+    typeface: documentSettings.typeface,
+    documentSettings,
     document: stripTitlePageFromDocument(
       ensureEditableDocument({
         type: 'doc',
@@ -140,29 +160,69 @@ function stringifyBodyNodes(nodes: JSONContent[]): string[] {
   return bodyLines;
 }
 
-export function stringifyFountain(script: FountainScript): string {
+export type StringifyFountainOptions = {
+  persistDocumentSettings?: boolean;
+};
+
+function appendDocumentSettings(
+  text: string,
+  script: FountainScript,
+  options: StringifyFountainOptions,
+): string {
+  const settings = script.documentSettings ?? {
+    pageFormat: script.pageFormat ?? DEFAULT_PAGE_FORMAT,
+    typeface: script.typeface ?? DEFAULT_TYPEFACE,
+    settingsLines: [],
+    hadDocumentSettingsBlock: false,
+  };
+
+  if (
+    !shouldPersistDocumentSettings(
+      settings,
+      options.persistDocumentSettings === true,
+    )
+  ) {
+    return text;
+  }
+
+  const settingsBlock = stringifyDocumentSettingsBlock(
+    script.pageFormat ?? DEFAULT_PAGE_FORMAT,
+    script.typeface ?? DEFAULT_TYPEFACE,
+    settings,
+  ).join('\n');
+
+  const trimmed = text.replace(/\n$/, '');
+
+  return `${trimmed}\n\n${settingsBlock}\n`;
+}
+
+export function stringifyFountain(
+  script: FountainScript,
+  options: StringifyFountainOptions = {},
+): string {
   const bodyLines = stringifyBodyNodes(script.document.content ?? []);
   const hasTitlePage = script.titlePage.length > 0;
   const hasBody = bodyLines.some((line) => line.trim().length > 0);
+  let text: string;
 
   if (!hasTitlePage) {
     const hasBodyLines = bodyLines.length > 0;
 
-    return `${bodyLines.join('\n')}${hasBodyLines ? '\n' : ''}`;
-  }
-
-  if (!hasBody) {
+    text = `${bodyLines.join('\n')}${hasBodyLines ? '\n' : ''}`;
+  } else if (!hasBody) {
     const titleText = script.titlePage.join('\n');
     const lastLine = script.titlePage.at(-1) ?? '';
 
-    return lastLine.trim() === '' ? titleText : `${titleText}\n`;
+    text = lastLine.trim() === '' ? titleText : `${titleText}\n`;
+  } else {
+    const titleText = script.titlePage.join('\n');
+    const bodyText = bodyLines.join('\n');
+    const separator = bodyLines[0] === '' ? '\n' : '\n\n';
+
+    text = `${titleText}${separator}${bodyText}\n`;
   }
 
-  const titleText = script.titlePage.join('\n');
-  const bodyText = bodyLines.join('\n');
-  const separator = bodyLines[0] === '' ? '\n' : '\n\n';
-
-  return `${titleText}${separator}${bodyText}\n`;
+  return appendDocumentSettings(text, script, options);
 }
 
 function textNode(type: string, text: string): JSONContent {

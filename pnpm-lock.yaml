@@ -185,6 +185,9 @@ importers:
       '@lambda/fountain':
         specifier: workspace:*
         version: link:../../packages/fountain
+      '@lambda/print':
+        specifier: workspace:*
+        version: link:../../packages/print
       '@lambda/shell':
         specifier: workspace:*
         version: link:../../packages/shell
@@ -210,6 +213,9 @@ importers:
       '@lambda/editor':
         specifier: workspace:*
         version: link:../../packages/editor
+      '@lambda/print':
+        specifier: workspace:*
+        version: link:../../packages/print
       '@lambda/shell':
         specifier: workspace:*
         version: link:../../packages/shell
@@ -278,6 +284,28 @@ importers:
         specifier: ^3.25.0
         version: 3.25.0(@tiptap/pm@3.25.0)
 
+  packages/print:
+    dependencies:
+      '@lambda/editor':
+        specifier: workspace:*
+        version: link:../editor
+      '@lambda/theme':
+        specifier: workspace:*
+        version: link:../theme
+    devDependencies:
+      '@tailwindcss/vite':
+        specifier: ^4.1.13
+        version: 4.3.0(vite@8.0.16(@types/node@24.12.4)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0))
+      '@testing-library/jest-dom':
+        specifier: ^6.9.1
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: ^16.3.0
+        version: 16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@19.2.3(@types/react@19.2.16))(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      tailwindcss:
+        specifier: ^4.1.13
+        version: 4.3.0
+
   packages/shell:
     dependencies:
       '@base-ui/react':
@@ -289,6 +317,9 @@ importers:
       '@lambda/fountain':
         specifier: workspace:*
         version: link:../fountain
+      '@lambda/print':
+        specifier: workspace:*
+        version: link:../print
       '@lambda/theme':
         specifier: workspace:*
         version: link:../theme

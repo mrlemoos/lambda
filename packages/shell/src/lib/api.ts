@@ -1,4 +1,17 @@
-export type FileCommand = 'new' | 'open' | 'save' | 'save-as' | 'title-page';
+import type { PageFormat } from '@lambda/fountain';
+
+export type ExportPdfOptions = {
+  pageFormat: PageFormat;
+  defaultName?: string;
+};
+
+export type FileCommand =
+  | 'new'
+  | 'open'
+  | 'save'
+  | 'save-as'
+  | 'title-page'
+  | 'preview';
 
 export type ViewCommand = 'in' | 'out' | 'actual-size';
 
@@ -50,5 +63,6 @@ export type LambdaApi = {
   showOpenDialog: () => Promise<string | null>;
   showSaveDialog: (defaultName?: string) => Promise<string | null>;
   setWindowTitle: (title: string) => Promise<void>;
+  exportPdf?: (options: ExportPdfOptions) => Promise<void>;
   scriptPersistence?: ScriptPersistenceApi;
 };

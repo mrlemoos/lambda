@@ -1,7 +1,7 @@
 import type { JSONContent } from '@tiptap/core';
 import { useEffect, useState } from 'react';
 
-import type { PageFormat } from '../ScriptEditor';
+import type { PageFormat, ScriptTypeface } from '../ScriptEditor';
 import { ScriptEditorContent } from './ScriptEditorContent';
 import { ScriptEditorCommandsProvider } from './scriptEditorCommands.js';
 import { useScriptEditor } from './useScriptEditor';
@@ -10,6 +10,7 @@ const EMPTY_TITLE_PAGE_LINES: string[] = [];
 
 export type ScriptEditorSurfaceProps = {
   pageFormat?: PageFormat;
+  typeface?: ScriptTypeface;
   initialDocument?: JSONContent;
   titlePageLines?: string[];
   onDocumentChange?: (document: JSONContent) => void;
@@ -17,6 +18,7 @@ export type ScriptEditorSurfaceProps = {
 
 export function ScriptEditorSurface({
   pageFormat = 'us-letter',
+  typeface = 'courier-prime',
   initialDocument,
   titlePageLines = EMPTY_TITLE_PAGE_LINES,
   onDocumentChange,
@@ -62,6 +64,7 @@ export function ScriptEditorSurface({
       <ScriptEditorContent
         editor={editor}
         pageFormat={pageFormat}
+        typeface={typeface}
         titlePageLines={paginationTitlePageLines}
       />
     </ScriptEditorCommandsProvider>

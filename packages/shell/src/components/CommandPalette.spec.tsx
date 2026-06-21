@@ -9,6 +9,7 @@ const session = vi.hoisted(() => ({
   startNewScript: vi.fn(async () => undefined),
   openScriptFromDisk: vi.fn(async () => undefined),
   openTitlePageDialog: vi.fn(),
+  openPreview: vi.fn(),
 }));
 
 vi.mock('../session/ScriptSessionContext.js', () => ({
@@ -17,6 +18,7 @@ vi.mock('../session/ScriptSessionContext.js', () => ({
     startNewScript: session.startNewScript,
     openScriptFromDisk: session.openScriptFromDisk,
     openTitlePageDialog: session.openTitlePageDialog,
+    openPreview: session.openPreview,
   }),
 }));
 
@@ -86,6 +88,26 @@ describe('CommandPalette', () => {
 
     await waitFor(() => {
       expect(session.openTitlePageDialog).toHaveBeenCalledOnce();
+    });
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('lists preview when a script is open', () => {
+    session.script = { titlePage: [] };
+
+    renderOpenPalette();
+
+    expect(screen.getByText('Preview…')).not.toBeNull();
+  });
+
+  it('runs openPreview when Preview is selected', async () => {
+    session.script = { titlePage: [] };
+    const { onOpenChange } = renderOpenPalette();
+
+    fireEvent.click(screen.getByText('Preview…'));
+
+    await waitFor(() => {
+      expect(session.openPreview).toHaveBeenCalledOnce();
     });
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });

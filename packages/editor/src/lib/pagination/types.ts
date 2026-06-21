@@ -26,20 +26,28 @@ export type ScriptBlock = {
   text: string;
 };
 
-export type BlockPlacement = {
-  /** Extra space before this block so it clears the page boundary. */
-  marginTopPt: number;
-  topOffsetPt: number;
-  /** Extra page-start gaps inside a splittable text block. */
-  pageStarts?: InlinePageStart[];
-};
-
 export type InlinePageStart = {
   textOffset: number;
   marginTopPt: number;
   topOffsetPt: number;
   linesBefore: number;
   linesAfter: number;
+};
+
+export type SplitDialogueCharacterPlacement = {
+  text: string;
+  topOffsetPt: number;
+  marginTopPt: number;
+};
+
+export type BlockPlacement = {
+  /** Extra space before this block so it clears the page boundary. */
+  marginTopPt: number;
+  topOffsetPt: number;
+  /** Extra page-start gaps inside a splittable text block. */
+  pageStarts?: InlinePageStart[];
+  /** Virtual continuation cue after split dialogue enrichment. */
+  splitDialogueCharacter?: SplitDialogueCharacterPlacement;
 };
 
 export type ScriptPage = {

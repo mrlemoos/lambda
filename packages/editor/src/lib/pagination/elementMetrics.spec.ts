@@ -40,6 +40,30 @@ describe('measureBlock', () => {
     expect(measurement.paginationLines).toBe(1);
   });
 
+  it('measures blocks with each supported screenplay typeface', () => {
+    const layout = getPageLayout('us-letter');
+    const block = { type: 'action' as const, text: 'Hello world.' };
+
+    for (const typeface of [
+      'courier-prime',
+      'courier-new',
+      'monospace',
+    ] as const) {
+      const measurement = measureBlock(block, layout, 0, typeface);
+
+      expect(measurement.paginationLines).toBeGreaterThan(0);
+    }
+  });
+
+  it('wraps dialogue using border-box max-width minus left padding', () => {
+    const layout = getPageLayout('us-letter');
+    const oneLine = { type: 'dialogue' as const, text: 'A'.repeat(26) };
+    const twoLines = { type: 'dialogue' as const, text: 'A'.repeat(27) };
+
+    expect(measureBlock(oneLine, layout, 0).textLineCount).toBe(1);
+    expect(measureBlock(twoLines, layout, 0).textLineCount).toBe(2);
+  });
+
   it('predicts a page break using typed block heights instead of outline margins', () => {
     const layout = getPageLayout('us-letter');
     const blocks = [

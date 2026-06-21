@@ -40,13 +40,16 @@
       "path": "../../packages/theme/tsconfig.lib.json"
     },
     {
+      "path": "../../packages/shell/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/print/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/fountain/tsconfig.lib.json"
     },
     {
       "path": "../../packages/editor/tsconfig.lib.json"
-    },
-    {
-      "path": "../../packages/shell/tsconfig.lib.json"
     }
   ]
 }

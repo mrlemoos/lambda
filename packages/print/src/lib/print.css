@@ -1,0 +1,31 @@
+@media print {
+  .preview-toolbar,
+  .window-drag-region,
+  .application-menu-bar {
+    display: none !important;
+  }
+
+  .preview-workspace,
+  .preview-scroll {
+    display: block;
+    overflow: visible;
+    min-height: auto;
+    padding: 0;
+  }
+
+  .script-preview-stack {
+    gap: 0;
+    padding: 0;
+  }
+
+  .script-preview-page {
+    break-after: page;
+    break-inside: avoid;
+    margin: 0;
+    box-shadow: none;
+  }
+
+  .script-preview-page:last-child {
+    break-after: auto;
+  }
+}
