@@ -5,6 +5,22 @@ import { describe, expect, it, vi } from 'vitest';
 import { TitlePageDialog } from './TitlePageDialog';
 
 describe('TitlePageDialog', () => {
+  it('renders through the shared modal dialog shell', () => {
+    render(
+      <TitlePageDialog
+        open
+        initialData={{ title: [] }}
+        onSave={() => undefined}
+        onCancel={() => undefined}
+      />,
+    );
+
+    const dialog = screen.getByRole('dialog');
+
+    expect(dialog).toHaveClass('modal-dialog');
+    expect(dialog).toHaveClass('modal-dialog--title-page');
+  });
+
   it('prefills title page fields from parsed data', () => {
     render(
       <TitlePageDialog

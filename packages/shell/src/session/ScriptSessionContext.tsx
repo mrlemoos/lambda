@@ -25,6 +25,11 @@ import { useNavigate } from 'react-router-dom';
 
 import type { ScriptLibraryEntry } from '../lib/api.js';
 import { CommandPaletteHost } from '../components/CommandPalette.js';
+import {
+  ModalDialog,
+  ModalDialogDescription,
+  ModalDialogTitle,
+} from '../components/ModalDialog.js';
 import { TitlePageDialog } from '../components/TitlePageDialog.js';
 import { formatWindowTitle } from '../lib/formatWindowTitle.js';
 import { isDirty } from '../lib/isDirty.js';
@@ -712,44 +717,45 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
         />
       ) : null}
       {unsavedPromptOpen ? (
-        <div className="unsaved-modal-backdrop" role="presentation">
-          <dialog
-            className="unsaved-modal"
-            open
-            aria-modal="true"
-            aria-labelledby="unsaved-modal-title"
-          >
-            <h2 id="unsaved-modal-title" className="unsaved-modal-title">
-              Save changes?
-            </h2>
-            <p className="unsaved-modal-body">
-              Save changes to this script before continuing?
-            </p>
-            <div className="unsaved-modal-actions">
-              <button
-                type="button"
-                className="ui-button ui-button-primary"
-                onClick={() => void resolveUnsavedPrompt('save')}
-              >
-                Save
-              </button>
-              <button
-                type="button"
-                className="ui-button"
-                onClick={() => void resolveUnsavedPrompt('discard')}
-              >
-                Don&apos;t save
-              </button>
-              <button
-                type="button"
-                className="ui-button ui-button-ghost"
-                onClick={() => void resolveUnsavedPrompt('cancel')}
-              >
-                Cancel
-              </button>
-            </div>
-          </dialog>
-        </div>
+        <ModalDialog
+          open
+          popupClassName="modal-dialog--unsaved"
+          onOpenChange={(nextOpen) => {
+            if (!nextOpen) {
+              void resolveUnsavedPrompt('cancel');
+            }
+          }}
+        >
+          <ModalDialogTitle className="unsaved-modal-title">
+            Save changes?
+          </ModalDialogTitle>
+          <ModalDialogDescription className="unsaved-modal-body">
+            Save changes to this script before continuing?
+          </ModalDialogDescription>
+          <div className="unsaved-modal-actions">
+            <button
+              type="button"
+              className="ui-button ui-button-primary"
+              onClick={() => void resolveUnsavedPrompt('save')}
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              className="ui-button"
+              onClick={() => void resolveUnsavedPrompt('discard')}
+            >
+              Don&apos;t save
+            </button>
+            <button
+              type="button"
+              className="ui-button ui-button-ghost"
+              onClick={() => void resolveUnsavedPrompt('cancel')}
+            >
+              Cancel
+            </button>
+          </div>
+        </ModalDialog>
       ) : null}
     </ScriptSessionContext.Provider>
   );

@@ -11,6 +11,7 @@ vi.mock('../session/ScriptSessionContext.js', () => ({
   useScriptSession: () => ({
     startNewScript: vi.fn(async () => undefined),
     openScriptFromDisk: vi.fn(async () => undefined),
+    openTitlePageDialog: vi.fn(),
   }),
 }));
 

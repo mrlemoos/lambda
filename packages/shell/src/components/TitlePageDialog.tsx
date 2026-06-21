@@ -1,6 +1,8 @@
 import type { TitlePageData } from '@lambda/editor';
 import { useState } from 'react';
 
+import { ModalDialog, ModalDialogTitle } from './ModalDialog.js';
+
 export type TitlePageDialogProps = {
   open: boolean;
   initialData: TitlePageData;
@@ -99,117 +101,110 @@ function TitlePageDialogForm({
   const [notes, setNotes] = useState(() => initialData.notes ?? '');
 
   return (
-    <div className="title-page-modal-backdrop" role="presentation">
-      <dialog
-        className="title-page-modal"
-        open
-        aria-modal="true"
-        aria-labelledby="title-page-modal-title"
+    <>
+      <ModalDialogTitle className="title-page-modal-title">
+        Title Page
+      </ModalDialogTitle>
+      <form
+        className="title-page-form"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSave(
+            buildTitlePageData({
+              title,
+              credit,
+              author,
+              source,
+              draftDate,
+              contact,
+              copyright,
+              notes,
+            }),
+          );
+        }}
       >
-        <h2 id="title-page-modal-title" className="title-page-modal-title">
-          Title Page
-        </h2>
-        <form
-          className="title-page-form"
-          onSubmit={(event) => {
-            event.preventDefault();
-            onSave(
-              buildTitlePageData({
-                title,
-                credit,
-                author,
-                source,
-                draftDate,
-                contact,
-                copyright,
-                notes,
-              }),
-            );
-          }}
-        >
-          <label className="title-page-field">
-            <span>Title</span>
-            <textarea
-              aria-label="Title"
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              rows={3}
-            />
-          </label>
-          <label className="title-page-field">
-            <span>Credit</span>
-            <input
-              aria-label="Credit"
-              value={credit}
-              onChange={(event) => setCredit(event.target.value)}
-            />
-          </label>
-          <label className="title-page-field">
-            <span>Author</span>
-            <textarea
-              aria-label="Author"
-              value={author}
-              onChange={(event) => setAuthor(event.target.value)}
-              rows={2}
-            />
-          </label>
-          <label className="title-page-field">
-            <span>Source</span>
-            <input
-              aria-label="Source"
-              value={source}
-              onChange={(event) => setSource(event.target.value)}
-            />
-          </label>
-          <label className="title-page-field">
-            <span>Draft date</span>
-            <input
-              aria-label="Draft date"
-              value={draftDate}
-              onChange={(event) => setDraftDate(event.target.value)}
-            />
-          </label>
-          <label className="title-page-field">
-            <span>Contact</span>
-            <textarea
-              aria-label="Contact"
-              value={contact}
-              onChange={(event) => setContact(event.target.value)}
-              rows={3}
-            />
-          </label>
-          <label className="title-page-field">
-            <span>Copyright</span>
-            <input
-              aria-label="Copyright"
-              value={copyright}
-              onChange={(event) => setCopyright(event.target.value)}
-            />
-          </label>
-          <label className="title-page-field">
-            <span>Notes</span>
-            <textarea
-              aria-label="Notes"
-              value={notes}
-              onChange={(event) => setNotes(event.target.value)}
-              rows={2}
-            />
-          </label>
-          <div className="title-page-modal-actions">
-            <button type="submit" className="ui-button ui-button-primary">
-              Save
-            </button>
-            <button
-              type="button"
-              className="ui-button ui-button-ghost"
-              onClick={onCancel}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </dialog>
-    </div>
+        <label className="title-page-field">
+          <span>Title</span>
+          <textarea
+            aria-label="Title"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            rows={3}
+          />
+        </label>
+        <label className="title-page-field">
+          <span>Credit</span>
+          <input
+            aria-label="Credit"
+            value={credit}
+            onChange={(event) => setCredit(event.target.value)}
+          />
+        </label>
+        <label className="title-page-field">
+          <span>Author</span>
+          <textarea
+            aria-label="Author"
+            value={author}
+            onChange={(event) => setAuthor(event.target.value)}
+            rows={2}
+          />
+        </label>
+        <label className="title-page-field">
+          <span>Source</span>
+          <input
+            aria-label="Source"
+            value={source}
+            onChange={(event) => setSource(event.target.value)}
+          />
+        </label>
+        <label className="title-page-field">
+          <span>Draft date</span>
+          <input
+            aria-label="Draft date"
+            value={draftDate}
+            onChange={(event) => setDraftDate(event.target.value)}
+          />
+        </label>
+        <label className="title-page-field">
+          <span>Contact</span>
+          <textarea
+            aria-label="Contact"
+            value={contact}
+            onChange={(event) => setContact(event.target.value)}
+            rows={3}
+          />
+        </label>
+        <label className="title-page-field">
+          <span>Copyright</span>
+          <input
+            aria-label="Copyright"
+            value={copyright}
+            onChange={(event) => setCopyright(event.target.value)}
+          />
+        </label>
+        <label className="title-page-field">
+          <span>Notes</span>
+          <textarea
+            aria-label="Notes"
+            value={notes}
+            onChange={(event) => setNotes(event.target.value)}
+            rows={2}
+          />
+        </label>
+        <div className="title-page-modal-actions">
+          <button type="submit" className="ui-button ui-button-primary">
+            Save
+          </button>
+          <button
+            type="button"
+            className="ui-button ui-button-ghost"
+            onClick={onCancel}
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </>
   );
 }
 
@@ -219,15 +214,23 @@ export function TitlePageDialog({
   onSave,
   onCancel,
 }: TitlePageDialogProps) {
-  if (!open) {
-    return null;
-  }
-
   return (
-    <TitlePageDialogForm
-      initialData={initialData}
-      onSave={onSave}
-      onCancel={onCancel}
-    />
+    <ModalDialog
+      open={open}
+      popupClassName="modal-dialog--title-page"
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) {
+          onCancel();
+        }
+      }}
+    >
+      {open ? (
+        <TitlePageDialogForm
+          initialData={initialData}
+          onSave={onSave}
+          onCancel={onCancel}
+        />
+      ) : null}
+    </ModalDialog>
   );
 }
