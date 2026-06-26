@@ -1,6 +1,7 @@
 import {
   collapseEnrichedPlacements,
   enrichBlocks,
+  getPageLayout,
   paginateScript,
   titlePageBlocks,
   type PageFormat,
@@ -11,6 +12,7 @@ import {
 import { describe, expect, it } from 'vitest';
 
 import { buildPreviewPages } from './buildPreviewPages';
+import { resolveFlowFragmentTops } from './resolveFlowFragmentTops';
 
 function paginateForPreview(
   bodyBlocks: ScriptBlock[],
@@ -52,6 +54,17 @@ function actionLines(count: number): ScriptBlock[] {
   ]).flat();
 }
 
+function isMidWordSplit(text: string, offset: number): boolean {
+  if (offset <= 0 || offset >= text.length) {
+    return false;
+  }
+
+  const before = text[offset - 1];
+  const after = text[offset];
+
+  return /[A-Za-z0-9]/.test(before) && /[A-Za-z0-9]/.test(after);
+}
+
 describe('buildPreviewPages', () => {
   it('slices action text at pageStarts text offsets', () => {
     const longAction = Array.from(
@@ -79,8 +92,58 @@ describe('buildPreviewPages', () => {
     );
 
     expect(actionFragments).toHaveLength(2);
-    expect(actionFragments[0].text + actionFragments[1].text).toBe(longAction);
+    // Split lands on a space (line boundary); rejoining with it restores the text.
+    expect(`${actionFragments[0].text} ${actionFragments[1].text}`).toBe(
+      longAction,
+    );
     expect(actionFragments[0].text.length).toBe(pageStarts?.[0]?.textOffset);
+  });
+
+  it('does not split dialogue mid-word at page breaks', () => {
+    const dialogue = [
+      ...Array.from(
+        { length: 12 },
+        (_, index) =>
+          `Dialogue segment ${index + 1} carries enough words to wrap inside the narrower dialogue column.`,
+      ),
+      "what happens when the boss finds out you let him die? You're not gonna shoot me.",
+    ].join(' ');
+    const bodyBlocks: ScriptBlock[] = [
+      { type: 'sceneHeading', text: 'INT. CAR - DAY' },
+      ...actionLines(19),
+      { type: 'action', text: '-- Mario whips out his gun at Guillermo.' },
+      { type: 'character', text: 'GUILLERMO' },
+      { type: 'dialogue', text: dialogue },
+    ];
+    const { blocks, pagination } = paginateForPreview(bodyBlocks);
+    const dialogueIndex = blocks.findIndex(
+      (block) => block.type === 'dialogue',
+    );
+    const pageStarts = pagination.placements[dialogueIndex]?.pageStarts;
+
+    expect(pageStarts?.length).toBeGreaterThan(0);
+
+    for (const pageStart of pageStarts ?? []) {
+      expect(isMidWordSplit(dialogue, pageStart.textOffset)).toBe(false);
+    }
+
+    const result = buildPreviewPages({
+      blocks,
+      pagination,
+      pageFormat: 'us-letter',
+      typeface: 'courier-prime',
+      titlePageLines: [],
+    });
+    const dialogueFragments = result.pages
+      .flatMap((page) => page.fragments)
+      .filter((fragment) => fragment.elementType === 'dialogue');
+
+    expect(dialogueFragments.length).toBeGreaterThan(1);
+    // Each split lands on a space; rejoining the fragments with one restores
+    // the dialogue verbatim — no word is dropped or run together.
+    expect(dialogueFragments.map((fragment) => fragment.text).join(' ')).toBe(
+      dialogue,
+    );
   });
 
   it('omits outline elements from preview output', () => {
@@ -186,9 +249,36 @@ describe('buildPreviewPages', () => {
       text: "MARA (CONT'D)",
     });
     expect(continuationFragments[1]?.elementType).toBe('dialogue');
+    // Continuation begins at the first word, not the space the split landed on.
     expect(continuationFragments[1]?.text).toBe(
-      longDialogue.slice(continuationOffset),
+      longDialogue.slice(continuationOffset).replace(/^[^\S\n]+/, ''),
     );
+
+    const splitPage = bodyPages.find((page) =>
+      page.fragments.some(
+        (fragment) => fragment.elementType === 'splitDialogueMore',
+      ),
+    );
+
+    expect(splitPage?.fragments).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          elementType: 'splitDialogueMore',
+          text: '(MORE)',
+        }),
+      ]),
+    );
+    expect(
+      bodyPages
+        .find((page) =>
+          page.fragments.some(
+            (fragment) => fragment.elementType === 'splitDialogueCharacter',
+          ),
+        )
+        ?.fragments.some(
+          (fragment) => fragment.elementType === 'splitDialogueMore',
+        ),
+    ).toBe(false);
   });
 
   it('keeps distinct topOffsetPt for consecutive blocks on the same preview page', () => {
@@ -231,6 +321,11 @@ describe('buildPreviewPages', () => {
       { type: 'dialogue', text: longDialogue },
     ];
     const { blocks, pagination } = paginateForPreview(bodyBlocks);
+    const dialogueBlockIndex = blocks.findIndex(
+      (block) => block.type === 'dialogue',
+    );
+    const continuationMarginTopPt =
+      pagination.placements[dialogueBlockIndex]?.pageStarts?.[0]?.marginTopPt;
 
     const result = buildPreviewPages({
       blocks,
@@ -258,7 +353,96 @@ describe('buildPreviewPages', () => {
 
     expect(cueIndex).toBeGreaterThanOrEqual(0);
     expect(dialogueIndex).toBeGreaterThan(cueIndex);
-    expect(continuationPage?.fragments[dialogueIndex]?.marginTopPt).toBe(12);
+    expect(continuationMarginTopPt).toBeDefined();
+    expect(continuationPage?.fragments[dialogueIndex]?.marginTopPt).toBe(
+      continuationMarginTopPt,
+    );
+  });
+
+  it('places dialogue lines before (MORE) on the same preview page', () => {
+    const longDialogue = Array.from(
+      { length: 12 },
+      (_, index) =>
+        `Dialogue segment ${index + 1} carries enough words to wrap inside the narrower dialogue column.`,
+    ).join(' ');
+    const bodyBlocks: ScriptBlock[] = [
+      { type: 'sceneHeading', text: 'INT. LOFT - DAY' },
+      ...actionLines(19),
+      { type: 'character', text: 'MARA' },
+      { type: 'dialogue', text: longDialogue },
+    ];
+    const { blocks, pagination } = paginateForPreview(bodyBlocks);
+    const preview = buildPreviewPages({
+      blocks,
+      pagination,
+      pageFormat: 'us-letter',
+      typeface: 'courier-prime',
+      titlePageLines: [],
+    });
+    const morePage = preview.pages.find((page) =>
+      page.fragments.some(
+        (fragment) => fragment.elementType === 'splitDialogueMore',
+      ),
+    );
+    const dialogueBeforeMore =
+      morePage?.fragments.filter(
+        (fragment) => fragment.elementType === 'dialogue',
+      ) ?? [];
+
+    expect(morePage).toBeDefined();
+    expect(dialogueBeforeMore.length).toBeGreaterThan(0);
+    expect(dialogueBeforeMore[0]?.text.length).toBeGreaterThan(0);
+    expect(dialogueBeforeMore[0]?.paginationLineCount).toBeGreaterThan(0);
+  });
+
+  it('shows russell dialogue before (MORE) on a tight page', () => {
+    const guillermo =
+      "Son. Woods senior died a couple of years ago. Fitz's been working in his place since the old man got sick.";
+    const russell =
+      '"Sick." People who pick this line of work got one option down the road: (a beat) Most people don\'t see the time to wind down, is all.';
+    const bodyBlocks: ScriptBlock[] = [
+      { type: 'sceneHeading', text: 'INT. CAR - DAY' },
+      ...actionLines(47),
+      { type: 'character', text: 'GUILLERMO' },
+      { type: 'dialogue', text: guillermo },
+      { type: 'character', text: 'RUSSELL' },
+      { type: 'parenthetical', text: '(chuckles, then...)' },
+      { type: 'dialogue', text: russell },
+    ];
+    const { blocks, pagination } = paginateForPreview(bodyBlocks);
+    const preview = buildPreviewPages({
+      blocks,
+      pagination,
+      pageFormat: 'us-letter',
+      typeface: 'courier-prime',
+      titlePageLines: [],
+    });
+    const morePage = preview.pages.find((page) =>
+      page.fragments.some(
+        (fragment) => fragment.elementType === 'splitDialogueMore',
+      ),
+    );
+    const flow = morePage?.fragments ?? [];
+    const flowLayout = resolveFlowFragmentTops(
+      flow,
+      morePage?.contentTopOffsetPt ?? 0,
+      'us-letter',
+      'courier-prime',
+    );
+    const russellDialogueIdx = flow.findIndex(
+      (fragment) =>
+        fragment.elementType === 'dialogue' &&
+        fragment.paginationLineCount !== undefined &&
+        fragment.text.startsWith('"Sick."'),
+    );
+    const contentHeight = getPageLayout('us-letter').contentHeightPt;
+
+    expect(russellDialogueIdx).toBeGreaterThanOrEqual(0);
+    expect(flowLayout.lineCounts[russellDialogueIdx]).toBeGreaterThan(0);
+    expect(
+      (flowLayout.tops[russellDialogueIdx] ?? 0) +
+        (flowLayout.lineCounts[russellDialogueIdx] ?? 0) * 12,
+    ).toBeLessThanOrEqual(contentHeight - 12);
   });
 
   it('numbers body pages from one without a title sheet', () => {

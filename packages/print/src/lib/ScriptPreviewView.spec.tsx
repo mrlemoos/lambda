@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import {
   collapseEnrichedPlacements,
   enrichBlocks,
+  getPageLayout,
   paginateScript,
   titlePageBlocks,
   type ScriptBlock,
@@ -193,6 +194,280 @@ describe('ScriptPreviewView', () => {
       'MARIO',
       'RUSSELL (O.S.)',
     ]);
+  });
+
+  it('renders split-dialogue (MORE) on the reserved last line', () => {
+    const longDialogue = Array.from(
+      { length: 12 },
+      (_, index) =>
+        `Dialogue segment ${index + 1} carries enough words to wrap inside the narrower dialogue column.`,
+    ).join(' ');
+    const bodyBlocks: ScriptBlock[] = [
+      { type: 'sceneHeading', text: 'INT. LOFT - DAY' },
+      ...Array.from({ length: 19 }, (_, index) => [
+        {
+          type: 'action' as const,
+          text: `Action line ${index + 1}.`,
+        },
+        {
+          type: 'action' as const,
+          text: '',
+        },
+      ]).flat(),
+      { type: 'character', text: 'MARA' },
+      { type: 'dialogue', text: longDialogue },
+    ];
+    const { blocks, pagination } = paginateForPreview(bodyBlocks);
+
+    const { container } = render(
+      <ScriptPreviewView
+        blocks={blocks}
+        pagination={pagination}
+        titlePageLines={[]}
+      />,
+    );
+    const morePage = [
+      ...container.querySelectorAll('.script-preview-page'),
+    ].find((page) => page.querySelector('.split-dialogue-more'));
+    const moreMarker = morePage?.querySelector(
+      '.split-dialogue-more',
+    ) as HTMLElement | null;
+    const dialogueLines = [
+      ...(morePage?.querySelectorAll(
+        '.script-preview-page-body > p.dialogue',
+      ) ?? []),
+    ];
+    const lastDialogueLine = dialogueLines.at(-1) as HTMLElement | undefined;
+    const lastDialogueBottom =
+      parseFloat(lastDialogueLine?.style.top ?? '0') + 12;
+
+    expect(moreMarker?.textContent).toBe('(MORE)');
+    expect(parseFloat(moreMarker?.style.top ?? '0')).toBe(lastDialogueBottom);
+  });
+
+  it('keeps the last dialogue line above the (MORE) footer on split pages', () => {
+    const longDialogue = Array.from(
+      { length: 12 },
+      (_, index) =>
+        `Dialogue segment ${index + 1} carries enough words to wrap inside the narrower dialogue column.`,
+    ).join(' ');
+    const bodyBlocks: ScriptBlock[] = [
+      { type: 'sceneHeading', text: 'INT. LOFT - DAY' },
+      ...Array.from({ length: 19 }, (_, index) => [
+        {
+          type: 'action' as const,
+          text: `Action line ${index + 1}.`,
+        },
+        {
+          type: 'action' as const,
+          text: '',
+        },
+      ]).flat(),
+      { type: 'character', text: 'MARA' },
+      { type: 'dialogue', text: longDialogue },
+    ];
+    const { blocks, pagination } = paginateForPreview(bodyBlocks);
+
+    const { container } = render(
+      <ScriptPreviewView
+        blocks={blocks}
+        pagination={pagination}
+        titlePageLines={[]}
+      />,
+    );
+    const morePage = [
+      ...container.querySelectorAll('.script-preview-page'),
+    ].find((page) => page.querySelector('.split-dialogue-more'));
+    const dialogueLines = [
+      ...(morePage?.querySelectorAll(
+        '.script-preview-page-body > p.dialogue',
+      ) ?? []),
+    ];
+    const lastDialogueLine = dialogueLines.at(-1) as HTMLElement | undefined;
+    const pageBodyHeight = getPageLayout('us-letter').contentHeightPt;
+
+    expect(lastDialogueLine).toBeDefined();
+
+    const lastDialogueBottom =
+      parseFloat(lastDialogueLine?.style.top ?? '0') + 12;
+
+    expect(lastDialogueBottom).toBeLessThanOrEqual(pageBodyHeight - 12);
+    expect(dialogueLines.length).toBeGreaterThan(0);
+  });
+
+  it('renders russell dialogue above (MORE) on a tight page', () => {
+    const guillermo =
+      "Son. Woods senior died a couple of years ago. Fitz's been working in his place since the old man got sick.";
+    const russell =
+      '"Sick." People who pick this line of work got one option down the road: (a beat) Most people don\'t see the time to wind down, is all.';
+    const bodyBlocks: ScriptBlock[] = [
+      { type: 'sceneHeading', text: 'INT. CAR - DAY' },
+      ...Array.from({ length: 47 }, (_, index) => [
+        {
+          type: 'action' as const,
+          text: `Action line ${index + 1}.`,
+        },
+        {
+          type: 'action' as const,
+          text: '',
+        },
+      ]).flat(),
+      { type: 'character', text: 'GUILLERMO' },
+      { type: 'dialogue', text: guillermo },
+      { type: 'character', text: 'RUSSELL' },
+      { type: 'parenthetical', text: '(chuckles, then...)' },
+      { type: 'dialogue', text: russell },
+    ];
+    const { blocks, pagination } = paginateForPreview(bodyBlocks);
+
+    const { container } = render(
+      <ScriptPreviewView
+        blocks={blocks}
+        pagination={pagination}
+        titlePageLines={[]}
+      />,
+    );
+    const morePage = [
+      ...container.querySelectorAll('.script-preview-page'),
+    ].find((page) => page.querySelector('.split-dialogue-more'));
+    const russellLines = [
+      ...(morePage?.querySelectorAll(
+        '.script-preview-page-body > p.dialogue',
+      ) ?? []),
+    ].filter((line) => line.textContent?.includes('Sick.'));
+
+    expect(russellLines.length).toBeGreaterThan(0);
+  });
+
+  it('positions split-dialogue continuation one line below the repeated cue', () => {
+    const longDialogue = Array.from(
+      { length: 12 },
+      (_, index) =>
+        `Dialogue segment ${index + 1} carries enough words to wrap inside the narrower dialogue column.`,
+    ).join(' ');
+    const bodyBlocks: ScriptBlock[] = [
+      { type: 'sceneHeading', text: 'INT. LOFT - DAY' },
+      ...Array.from({ length: 19 }, (_, index) => [
+        {
+          type: 'action' as const,
+          text: `Action line ${index + 1}.`,
+        },
+        {
+          type: 'action' as const,
+          text: '',
+        },
+      ]).flat(),
+      { type: 'character', text: 'MARA' },
+      { type: 'dialogue', text: longDialogue },
+    ];
+    const { blocks, pagination } = paginateForPreview(bodyBlocks);
+
+    const { container } = render(
+      <ScriptPreviewView
+        blocks={blocks}
+        pagination={pagination}
+        titlePageLines={[]}
+      />,
+    );
+    const pages = [...container.querySelectorAll('.script-preview-page')];
+    const morePageIndex = pages.findIndex((page) =>
+      page.querySelector('.split-dialogue-more'),
+    );
+    const continuationPage = pages[morePageIndex + 1];
+    const cue = continuationPage?.querySelector('p.character');
+    const dialogue = continuationPage?.querySelector('p.dialogue');
+
+    expect(cue).toBeDefined();
+    expect(dialogue).toBeDefined();
+    const cueTop = parseFloat((cue as HTMLElement).style.top ?? '0');
+    const dialogueTop = parseFloat((dialogue as HTMLElement).style.top ?? '0');
+
+    expect(cueTop).toBeLessThan(dialogueTop);
+    expect(dialogueTop).toBe(cueTop + 12);
+  });
+
+  it("does not place (CONT'D) on the same page as (MORE)", () => {
+    const dialogue = [
+      ...Array.from(
+        { length: 12 },
+        (_, index) =>
+          `Dialogue segment ${index + 1} carries enough words to wrap inside the narrower dialogue column.`,
+      ),
+      "If you shoot me, the least that's gonna happen to you is a crash, what happens when the boss finds out you let him die? You're not gonna shoot me.",
+    ].join(' ');
+    const bodyBlocks: ScriptBlock[] = [
+      { type: 'sceneHeading', text: 'INT. CAR - DAY' },
+      ...Array.from({ length: 19 }, (_, index) => [
+        { type: 'action' as const, text: `Action line ${index + 1}.` },
+        { type: 'action' as const, text: '' },
+      ]).flat(),
+      { type: 'action', text: '-- Mario whips out his gun at Guillermo.' },
+      { type: 'character', text: 'GUILLERMO' },
+      { type: 'dialogue', text: dialogue },
+    ];
+    const { blocks, pagination } = paginateForPreview(bodyBlocks);
+
+    const { container } = render(
+      <ScriptPreviewView
+        blocks={blocks}
+        pagination={pagination}
+        titlePageLines={[]}
+      />,
+    );
+    const pages = [...container.querySelectorAll('.script-preview-page')];
+    const morePage = pages.find((page) =>
+      page.querySelector('.split-dialogue-more'),
+    );
+    const contdOnMorePage = [
+      ...(morePage?.querySelectorAll(
+        '.script-preview-page-body > p.character',
+      ) ?? []),
+    ].filter((line) => line.textContent?.includes("(CONT'D)"));
+
+    expect(contdOnMorePage).toHaveLength(0);
+  });
+
+  it('assigns unique vertical positions to every flow line on each page', () => {
+    const longDialogue = Array.from(
+      { length: 12 },
+      (_, index) =>
+        `Dialogue segment ${index + 1} carries enough words to wrap inside the narrower dialogue column.`,
+    ).join(' ');
+    const bodyBlocks: ScriptBlock[] = [
+      { type: 'sceneHeading', text: 'INT. LOFT - DAY' },
+      ...Array.from({ length: 19 }, (_, index) => [
+        {
+          type: 'action' as const,
+          text: `Action line ${index + 1}.`,
+        },
+        {
+          type: 'action' as const,
+          text: '',
+        },
+      ]).flat(),
+      { type: 'character', text: 'MARA' },
+      { type: 'dialogue', text: longDialogue },
+    ];
+    const { blocks, pagination } = paginateForPreview(bodyBlocks);
+
+    const { container } = render(
+      <ScriptPreviewView
+        blocks={blocks}
+        pagination={pagination}
+        titlePageLines={[]}
+      />,
+    );
+
+    for (const page of container.querySelectorAll('.script-preview-page')) {
+      const flowLines = [
+        ...page.querySelectorAll('.script-preview-page-body > p'),
+      ];
+      const tops = flowLines.map((line) =>
+        parseFloat((line as HTMLElement).style.top ?? '0'),
+      );
+
+      expect(new Set(tops).size).toBe(tops.length);
+    }
   });
 
   it('sets page format and typeface data attributes on the preview stack', () => {

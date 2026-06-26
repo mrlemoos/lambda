@@ -4,8 +4,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
-  padding: 1.5rem 0;
+  gap: 1rem;
+  padding: 1rem 0;
+  background: #e8e8ec;
+  color-scheme: only light;
 }
 
 @utility script-preview-page {
@@ -16,17 +18,33 @@
   min-height: var(--height-script-page-us-letter);
   margin-inline: auto;
   padding: 1in 1in 1in 1.5in;
-  background: var(--color-script-page-bg);
-  color: var(--color-script-page-fg);
+  background: #ffffff;
+  color: #000000;
   box-sizing: border-box;
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 0.14),
+    0 0 0 1px rgb(0 0 0 / 0.06);
+  color-scheme: only light;
 }
 
 @utility script-preview-page-body {
+  position: relative;
+  height: var(--height-script-content-us-letter);
   min-height: var(--height-script-content-us-letter);
+  max-height: var(--height-script-content-us-letter);
+  overflow: visible;
 }
 
 .script-preview-page-body > p {
+  position: absolute;
+  left: 0;
   margin: 0;
+  font-size: 12pt;
+  line-height: 12pt;
+  height: 12pt;
+  overflow-x: clip;
+  overflow-y: visible;
+  white-space: nowrap;
 }
 
 .script-preview-page-body > p:is(.dialogue, .parenthetical) {
@@ -38,14 +56,22 @@
   min-height: 12pt;
 }
 
+.script-preview-page-body > p.split-dialogue-more {
+  box-sizing: border-box;
+  max-width: 400px;
+  padding-left: 1.5in;
+  width: 100%;
+  text-align: center;
+}
+
 @utility script-preview-page-number {
   position: absolute;
   top: 1in;
   right: 1in;
   font-family: var(--font-script);
   font-size: 12pt;
-  line-height: var(--line-height-script-tight);
-  color: var(--color-script-page-number);
+  line-height: 12pt;
+  color: rgb(0 0 0 / 0.45);
 }
 
 [data-page-format='a4'] .script-preview-page {
@@ -54,9 +80,17 @@
 }
 
 [data-page-format='a4'] .script-preview-page-body {
+  height: var(--height-script-content-a4);
   min-height: var(--height-script-content-a4);
+  max-height: var(--height-script-content-a4);
 }
 
 .script-preview-page .centered-text {
   text-align: center;
+}
+
+.script-preview-stack .title-page-sheet {
+  background: #ffffff;
+  color: #000000;
+  color-scheme: only light;
 }

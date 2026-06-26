@@ -6,7 +6,10 @@ import type {
 
 export type PreviewElementType =
   | BodyScriptElementType
-  | 'splitDialogueCharacter';
+  | 'splitDialogueCharacter'
+  | 'splitDialogueMore';
+
+export const SPLIT_DIALOGUE_MORE_ANNOTATION = '(MORE)';
 
 export type PreviewFragment = {
   elementType: PreviewElementType;
@@ -15,6 +18,8 @@ export type PreviewFragment = {
   topOffsetPt: number;
   /** Flow margin before this fragment, derived from pagination offsets. */
   marginTopPt?: number;
+  /** Cap wrapped rows to pagination line budget (split-dialogue page before MORE). */
+  paginationLineCount?: number;
 };
 
 export type PreviewPageKind = 'title' | 'body';
@@ -70,7 +75,24 @@ export function previewElementClassName(
       return 'scene-heading';
     case 'splitDialogueCharacter':
       return 'character';
+    case 'splitDialogueMore':
+      return 'split-dialogue-more';
     default:
       return elementType;
   }
+}
+
+export function previewFragmentClassName(
+  elementType: PreviewElementType,
+  text: string,
+): string {
+  if (elementType === 'splitDialogueMore') {
+    return previewElementClassName(elementType);
+  }
+
+  const className = previewElementClassName(elementType);
+
+  return text.length === 0
+    ? `${className} script-preview-blank-line`
+    : className;
 }

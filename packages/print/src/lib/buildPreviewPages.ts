@@ -8,6 +8,7 @@ import type {
 
 import {
   isPreviewVisibleBlock,
+  SPLIT_DIALOGUE_MORE_ANNOTATION,
   type PreviewFragment,
   type PreviewPage,
   type PreviewPagesModel,
@@ -47,7 +48,11 @@ function sliceBlockText(
   const fragments: string[] = [];
 
   for (let index = 0; index < boundaries.length - 1; index += 1) {
-    fragments.push(text.slice(boundaries[index], boundaries[index + 1]));
+    const slice = text.slice(boundaries[index], boundaries[index + 1]);
+    // A split lands on the space between words; continuation fragments would
+    // otherwise begin with that space, indenting the line and shifting its wrap
+    // away from how the editor renders the same text.
+    fragments.push(index === 0 ? slice : slice.replace(/^[^\S\n]+/, ''));
   }
 
   return fragments;
@@ -61,6 +66,20 @@ function appendFragment(
 ): void {
   const previewPageIndex = bodyPageIndex + (hasTitlePage ? 1 : 0);
   pages[previewPageIndex].fragments.push(fragment);
+}
+
+function linesOnPageBeforeSplit(
+  pageStarts: NonNullable<BlockPlacement['pageStarts']>,
+  fragmentIndex: number,
+): number {
+  if (fragmentIndex === 0) {
+    return pageStarts[0]?.linesBefore ?? 0;
+  }
+
+  const current = pageStarts[fragmentIndex];
+  const previous = pageStarts[fragmentIndex - 1];
+
+  return current.linesBefore - previous.linesBefore;
 }
 
 function buildBodyPages(pagination: PaginationResult): PreviewPage[] {
@@ -83,7 +102,6 @@ export function buildPreviewPages({
   const pages: PreviewPage[] = hasTitlePage
     ? [{ kind: 'title', fragments: [] }, ...buildBodyPages(pagination)]
     : buildBodyPages(pagination);
-
   for (let blockIndex = 0; blockIndex < blocks.length; blockIndex += 1) {
     const block = blocks[blockIndex];
 
@@ -99,6 +117,7 @@ export function buildPreviewPages({
 
     if (placement.pageStarts && placement.pageStarts.length > 0) {
       const textFragments = sliceBlockText(block.text, placement.pageStarts);
+      let moreBodyPageIndex: number | undefined;
 
       textFragments.forEach((text, fragmentIndex) => {
         if (text.length === 0) {
@@ -116,13 +135,22 @@ export function buildPreviewPages({
           topOffsetPt,
           pagination.pages,
         );
+        let targetBodyPageIndex = bodyPageIndex;
+
+        if (
+          isContinuation &&
+          moreBodyPageIndex !== undefined &&
+          targetBodyPageIndex <= moreBodyPageIndex
+        ) {
+          targetBodyPageIndex = moreBodyPageIndex + 1;
+        }
 
         if (
           isContinuation &&
           fragmentIndex === 1 &&
           placement.splitDialogueCharacter
         ) {
-          appendFragment(pages, bodyPageIndex, hasTitlePage, {
+          appendFragment(pages, targetBodyPageIndex, hasTitlePage, {
             elementType: 'splitDialogueCharacter',
             text: placement.splitDialogueCharacter.text,
             topOffsetPt: placement.splitDialogueCharacter.topOffsetPt,
@@ -130,14 +158,32 @@ export function buildPreviewPages({
           });
         }
 
-        appendFragment(pages, bodyPageIndex, hasTitlePage, {
+        appendFragment(pages, targetBodyPageIndex, hasTitlePage, {
           elementType: block.type as PreviewFragment['elementType'],
           text,
           topOffsetPt,
           marginTopPt: isContinuation
             ? (pageStart?.marginTopPt ?? 0)
             : placement.marginTopPt,
+          paginationLineCount:
+            block.type === 'dialogue' &&
+            fragmentIndex < textFragments.length - 1 &&
+            placement.pageStarts
+              ? linesOnPageBeforeSplit(placement.pageStarts, fragmentIndex)
+              : undefined,
         });
+
+        if (
+          block.type === 'dialogue' &&
+          fragmentIndex < textFragments.length - 1
+        ) {
+          moreBodyPageIndex = targetBodyPageIndex;
+          appendFragment(pages, targetBodyPageIndex, hasTitlePage, {
+            elementType: 'splitDialogueMore',
+            text: SPLIT_DIALOGUE_MORE_ANNOTATION,
+            topOffsetPt,
+          });
+        }
       });
 
       continue;

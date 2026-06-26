@@ -1,26 +1,14 @@
+import type { ReactElement } from 'react';
 import type { PageFormat, ScriptTypeface } from '@lambda/editor';
-import { TitlePageView } from '@lambda/editor';
+import { SCRIPT_LINE_HEIGHT_PT, TitlePageView } from '@lambda/editor';
 
 import {
   buildPreviewPages,
   type BuildPreviewPagesInput,
 } from './buildPreviewPages';
-import {
-  formatPreviewFragmentText,
-  isBlankPreviewFragment,
-} from './formatPreviewFragmentText';
-import { previewElementClassName } from './previewTypes';
-
-export function previewFragmentClassName(
-  elementType: Parameters<typeof previewElementClassName>[0],
-  text: string,
-): string {
-  const className = previewElementClassName(elementType);
-
-  return isBlankPreviewFragment(text)
-    ? `${className} script-preview-blank-line`
-    : className;
-}
+import { expandPreviewFragmentLines } from './formatPaginatedFragmentText';
+import type { PreviewFragment } from './previewTypes';
+import { resolveFlowFragmentTops } from './resolveFlowFragmentTops';
 
 export type ScriptPreviewViewProps = Omit<
   BuildPreviewPagesInput,
@@ -30,14 +18,29 @@ export type ScriptPreviewViewProps = Omit<
   typeface?: ScriptTypeface;
 };
 
-function fragmentMarginStyle(marginTopPt: number | undefined): {
-  marginTop?: string;
-} {
-  if (!marginTopPt || marginTopPt <= 0) {
-    return {};
-  }
+function renderFragmentLines(
+  fragment: PreviewFragment,
+  fragmentTopPt: number,
+  lineCount: number | undefined,
+  pageFormat: PageFormat,
+  typeface: ScriptTypeface,
+  keyPrefix: string,
+): ReactElement[] {
+  const lines = expandPreviewFragmentLines(
+    fragment,
+    pageFormat,
+    typeface,
+  ).slice(0, lineCount);
 
-  return { marginTop: `${marginTopPt}pt` };
+  return lines.map((line, lineIndex) => (
+    <p
+      key={`${keyPrefix}-${lineIndex}`}
+      className={line.className}
+      style={{ top: `${fragmentTopPt + lineIndex * SCRIPT_LINE_HEIGHT_PT}pt` }}
+    >
+      {line.text}
+    </p>
+  ));
 }
 
 export function ScriptPreviewView({
@@ -72,6 +75,13 @@ export function ScriptPreviewView({
           );
         }
 
+        const flowLayout = resolveFlowFragmentTops(
+          page.fragments,
+          page.contentTopOffsetPt ?? 0,
+          pageFormat,
+          typeface,
+        );
+
         return (
           <article
             key={`body-page-${page.pageNumber ?? pageIndex}`}
@@ -85,18 +95,16 @@ export function ScriptPreviewView({
               </span>
             ) : null}
             <div className="script-preview-page-body">
-              {page.fragments.map((fragment, fragmentIndex) => (
-                <p
-                  key={`${page.pageNumber}-${fragmentIndex}`}
-                  className={previewFragmentClassName(
-                    fragment.elementType,
-                    fragment.text,
-                  )}
-                  style={fragmentMarginStyle(fragment.marginTopPt)}
-                >
-                  {formatPreviewFragmentText(fragment.text)}
-                </p>
-              ))}
+              {page.fragments.flatMap((fragment, fragmentIndex) =>
+                renderFragmentLines(
+                  fragment,
+                  flowLayout.tops[fragmentIndex] ?? 0,
+                  flowLayout.lineCounts[fragmentIndex],
+                  pageFormat,
+                  typeface,
+                  `${page.pageNumber}-flow-${fragmentIndex}`,
+                ),
+              )}
             </div>
           </article>
         );
