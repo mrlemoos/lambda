@@ -439,6 +439,23 @@ export function paginateScript(
             linesToPlace = linesRemaining - MIN_SPLIT_LINES;
           }
 
+          if (
+            block.type === 'dialogue' &&
+            linesRemaining > linesToPlace &&
+            linesToPlace >= MIN_SPLIT_LINES
+          ) {
+            const moreAdjusted = linesToPlace - 1;
+
+            if (
+              moreAdjusted >= MIN_SPLIT_LINES &&
+              linesRemaining - moreAdjusted >= MIN_SPLIT_LINES
+            ) {
+              linesToPlace = moreAdjusted;
+            } else if (linesToPlace > 1) {
+              linesToPlace = 1;
+            }
+          }
+
           if (linesToPlace <= 0) {
             break;
           }

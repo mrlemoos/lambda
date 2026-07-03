@@ -42,10 +42,17 @@ export {
 } from './lib/pagination/enrichBlocks';
 export {
   DEFAULT_SCRIPT_TYPEFACE,
+  ELEMENT_METRICS,
+  charsPerLine,
   measureBlock,
   TYPEFACE_CHARS_PER_INCH_AT_12PT,
+  wrapTextLines,
 } from './lib/pagination/elementMetrics';
-export { getPageLayout, type PageLayout } from './lib/pagination/pageLayout';
+export {
+  getPageLayout,
+  SCRIPT_LINE_HEIGHT_PT,
+  type PageLayout,
+} from './lib/pagination/pageLayout';
 export {
   classifyBlock,
   previousBlockContext,

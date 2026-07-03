@@ -510,6 +510,12 @@ html[data-platform='darwin'] .app-shell.script-workspace {
   min-height: 100vh;
 }
 
+.preview-workspace .preview-scroll,
+.preview-workspace .script-preview-stack {
+  background: #e8e8ec;
+  color-scheme: only light;
+}
+
 .preview-toolbar {
   display: flex;
   align-items: center;

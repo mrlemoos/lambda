@@ -9,6 +9,7 @@ import {
 } from '@lambda/fountain';
 import type { ScriptEditorSurfaceProps } from '@lambda/editor';
 import { stringifyTitlePage, type TitlePageData } from '@lambda/editor';
+import { applyPrintPageFormat } from '@lambda/print';
 import {
   createContext,
   useCallback,
@@ -403,10 +404,16 @@ export function ScriptSessionProvider({ children }: { children: ReactNode }) {
       fileNameFromPath(filePath).replace(/\.(fountain|txt)$/i, '') ||
       'Untitled';
 
-    await api.exportPdf?.({
-      pageFormat: current.pageFormat ?? 'us-letter',
-      defaultName: `${baseName}.pdf`,
-    });
+    const cleanup = applyPrintPageFormat(current.pageFormat ?? 'us-letter');
+
+    try {
+      await api.exportPdf?.({
+        pageFormat: current.pageFormat ?? 'us-letter',
+        defaultName: `${baseName}.pdf`,
+      });
+    } finally {
+      cleanup();
+    }
   }, [api, filePath]);
 
   const updateTitlePage = useCallback(

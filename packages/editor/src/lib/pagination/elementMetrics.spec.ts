@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { ELEMENT_METRICS, measureBlock } from './elementMetrics';
+import { ELEMENT_METRICS, measureBlock, wrapTextLines } from './elementMetrics';
 import { getPageLayout } from './pageLayout';
 
 const beatText = (n: number) =>
@@ -62,6 +62,24 @@ describe('measureBlock', () => {
 
     expect(measureBlock(oneLine, layout, 0).textLineCount).toBe(1);
     expect(measureBlock(twoLines, layout, 0).textLineCount).toBe(2);
+  });
+
+  it('wraps text at word boundaries instead of splitting words', () => {
+    const charsPerLineCount = 26;
+    const text = 'when the boss finds out you let him die';
+
+    const lines = wrapTextLines(text, charsPerLineCount);
+
+    expect(lines).toEqual([
+      { startOffset: 0, endOffset: 23 },
+      { startOffset: 24, endOffset: text.length },
+    ]);
+    expect(text.slice(lines[0].startOffset, lines[0].endOffset)).toBe(
+      'when the boss finds out',
+    );
+    expect(text.slice(lines[1].startOffset, lines[1].endOffset)).toBe(
+      'you let him die',
+    );
   });
 
   it('predicts a page break using typed block heights instead of outline margins', () => {

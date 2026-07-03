@@ -185,6 +185,7 @@ function registerIpcHandlers(): void {
 
     const pdfBuffer = await getMainWindow().webContents.printToPDF({
       printBackground: true,
+      preferCSSPageSize: true,
       pageSize: getElectronPrintPageSize(options.pageFormat),
     });
 

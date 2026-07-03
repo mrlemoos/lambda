@@ -75,7 +75,7 @@ export const ELEMENT_METRICS: Record<ScriptElementType, ElementMetrics> = {
     lineHeightPt: SCRIPT_LINE_HEIGHT_PT,
     marginTopPt: 0,
     marginBottomPt: 0,
-    contentWidthPt: 'full',
+    contentWidthPt: DIALOGUE_CONTENT_WIDTH_PT,
     countsTowardPageLines: true,
     countsTowardPageHeight: true,
   },
@@ -185,23 +185,54 @@ export function countTextLines(
   text: string,
   charsPerLineCount: number,
 ): number {
-  if (text.length === 0) {
-    return 1;
-  }
-
-  return text.split('\n').reduce((total, paragraph) => {
-    if (paragraph.length === 0) {
-      return total + 1;
-    }
-
-    return total + Math.max(1, Math.ceil(paragraph.length / charsPerLineCount));
-  }, 0);
+  return wrapTextLines(text, charsPerLineCount).length;
 }
 
 export type WrappedTextLine = {
   startOffset: number;
   endOffset: number;
 };
+
+function wrapParagraphLines(
+  paragraph: string,
+  paragraphStart: number,
+  charsPerLineCount: number,
+): WrappedTextLine[] {
+  if (paragraph.length === 0) {
+    return [{ startOffset: paragraphStart, endOffset: paragraphStart }];
+  }
+
+  const lines: WrappedTextLine[] = [];
+  let index = 0;
+
+  while (index < paragraph.length) {
+    const remaining = paragraph.length - index;
+
+    if (remaining <= charsPerLineCount) {
+      lines.push({
+        startOffset: paragraphStart + index,
+        endOffset: paragraphStart + paragraph.length,
+      });
+      break;
+    }
+
+    const window = paragraph.slice(index, index + charsPerLineCount);
+    const lastSpace = window.lastIndexOf(' ');
+    const breakLength = lastSpace > 0 ? lastSpace : charsPerLineCount;
+
+    lines.push({
+      startOffset: paragraphStart + index,
+      endOffset: paragraphStart + index + breakLength,
+    });
+
+    index += breakLength;
+    while (index < paragraph.length && paragraph[index] === ' ') {
+      index += 1;
+    }
+  }
+
+  return lines;
+}
 
 export function wrapTextLines(
   text: string,
@@ -215,23 +246,9 @@ export function wrapTextLines(
   let paragraphStart = 0;
 
   for (const paragraph of text.split('\n')) {
-    if (paragraph.length === 0) {
-      lines.push({ startOffset: paragraphStart, endOffset: paragraphStart });
-    } else {
-      for (
-        let offset = 0;
-        offset < paragraph.length;
-        offset += charsPerLineCount
-      ) {
-        lines.push({
-          startOffset: paragraphStart + offset,
-          endOffset:
-            paragraphStart +
-            Math.min(offset + charsPerLineCount, paragraph.length),
-        });
-      }
-    }
-
+    lines.push(
+      ...wrapParagraphLines(paragraph, paragraphStart, charsPerLineCount),
+    );
     paragraphStart += paragraph.length + 1;
   }
 
