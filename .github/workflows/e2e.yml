@@ -18,13 +18,17 @@ jobs:
           filter: tree:0
           fetch-depth: 0
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: 22
+          cache: pnpm
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
 
-      - run: npx playwright install --with-deps chromium webkit
+      - run: pnpm exec playwright install --with-deps chromium webkit
 
-      - run: npx nx e2e @lambda/web-e2e
+      - run: pnpm nx e2e @lambda/web-e2e
