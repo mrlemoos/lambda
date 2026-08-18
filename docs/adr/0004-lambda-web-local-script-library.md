@@ -93,6 +93,6 @@ Duplicate display names in the welcome list are distinguished by a relative last
 
 - Desktop local library or crash-recovery drafts.
 - Cross-tab live sync or single-tab lock.
-- Cloud sync, auth, or multi-device access.
+- Cloud sync, auth, or multi-device access — superseded by [ADR 0006](./0006-accounts-and-paid-storage.md). The **Local script library** remains the free on-device collection. **Store** into **Paid storage** is [ADR 0011](./0011-stored-scripts-crdt.md) (promote in place; not a twin copy). Desktop uses this same library because it loads **Lambda Web** ([ADR 0010](./0010-electron-loads-lambda-web.md)).
 - Replace-on-import prompts or duplicate detection on Open.
 - PWA offline caching (library works offline once loaded, but no service-worker work in this ADR).

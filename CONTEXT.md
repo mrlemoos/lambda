@@ -33,23 +33,43 @@ The product name. Use “Lambda” in prose; the glyph **ƛ** is acceptable in b
 _Avoid_: λ (lowercase lambda), “the app”, “the editor” when you mean the product as a whole.
 
 **Lambda Web**:
-The browser-hosted deployment of Lambda — the same writing experience as the desktop app, adapted for browser file APIs and in-app chrome rather than native OS menus and dialogs.
-_Avoid_: Web app (alone), PWA, online version.
+The browser-hosted product: public marketing, **Account** sign-in/sign-up, and the writing experience. One site — not a separate marketing app. Adapted for browser file APIs and in-app chrome rather than native OS menus and dialogs.
+_Avoid_: Web app (alone), PWA, online version, second marketing site, Cloudflare Pages SPA.
 
 **Writing shell**:
-The app chrome around the editor — welcome screen, script workspace, session and file I/O, application menu, and unsaved-change flows. Shared across desktop and Lambda Web; distinct from the TipTap writing surface (`@lambda/editor`).
-_Avoid_: Renderer (Electron jargon), app wrapper, shell app.
+The product chrome around the editor — welcome, script workspace, session and file I/O, application menu, unsaved-change flows — **composed in Lambda Web** from small packages (not a `@lambda/shell` module). Desktop shows this same chrome by loading **Lambda Web**. Distinct from the TipTap writing surface (`@lambda/editor`).
+_Avoid_: `@lambda/shell`, Shell component, mega-module, Renderer (Electron jargon), second desktop UI.
 
 **Script**:
 The screenplay document the author works on — one Fountain source, one narrative work in progress.
 _Avoid_: Document, file, project (unless you mean a separate product concept like a folder of scripts).
 
+**Account**:
+A signed-in Lambda identity, shared across **Lambda Web** and desktop. Required to write except during **First-run offline**. Email need not be verified to write locally; verification is required before **Paid storage**. Required to pay for **Paid storage** and to join **Collaboration** on a **Stored script**.
+_Avoid_: login, user (when you mean this identity), customer (the paying party; may be the same person), optional account.
+
+**First-run offline**:
+The only write path with no **Account**: this client already has a cached **Lambda Web** shell, is offline, and has never signed in. After any successful sign-in on that client, this path is gone; offline write uses the cached **Account** session. Guest **Local script library** entries from this path **attach** as local-only under that **Account** on this client — they are not auto-**Store**d. Online with no session is a sign-in wall, not a guest editor. A client that has never loaded **Lambda Web** (empty cache) cannot write while offline.
+_Avoid_: optional account, anonymous user, always-offline mode, Next.js inside the desktop app bundle.
+
+**Paid storage**:
+The paid product: keep **Scripts** on Lambda’s store. Buying it includes **Collaboration** (realtime + comments). Not a separate collab SKU. Paywall is **Store**, not sign-up.
+_Avoid_: licence, seat (until a later decision), “pay for realtime”.
+
+**Stored script**:
+A **Script** the customer pays to keep on Lambda’s store. Edited as shared operations (**Collaboration**), not a last-write-wins file replace. Distinct from a **Local script library** entry. Fountain download/export remains available.
+_Avoid_: cloud document, synced file, licensed script, last-write-wins blob.
+
+**Collaboration**:
+Realtime co-editing, range comments, live cursors, and presence on a **Stored script**, among invited people who already have an **Account**. Included with **Paid storage**. Invite is in-app by Account email; they need not have opened the product before.
+_Avoid_: sync (disk or library), Google Docs, live share (vague), public invite link, comments-only collab.
+
 **Local script library**:
-On **Lambda Web**, the author’s collection of **Scripts** persisted in the browser — listed on the welcome screen, editable without re-downloading on every save. Opening a script from disk **imports** a snapshot into the library; the library entry and the original file are then independent until the author explicitly exports or Save As back to disk. **Save** (⌘S) always persists to the library silently; **Save As** is the only way to write a `.fountain` file to disk. Edits **autosave** to the library after a short idle delay; ⌘S flushes immediately. On Lambda Web, the script toolbar **dirty indicator** shows whilst edits are pending autosave to the library — it clears once the flush completes. Navigating away (Back, New script) **flushes** any pending autosave silently before leaving; no unsaved-changes prompt unless the write fails. On return visit, Lambda Web **auto-resumes** the last open script; the welcome screen (Back from the script workspace) lists the full library (sorted by last edited, most recent first), with delete available per entry (confirmed; does not affect exported disk files). Duplicate display names are distinguished by a relative last-edited timestamp (e.g. `JULIE · 2 hours ago`). Library entries are named from Fountain **Title page** `Title:` metadata when present, otherwise the import filename, otherwise `"Untitled"`. A script whose display name is `"Untitled"` is **not persisted** to the library — it exists only for the current browser session, held in session storage so a refresh within the same tab recovers the draft, but it never appears in the library list and is lost when the session ends. A title page whose `Title:` is literally `Untitled` (or empty) counts as untitled.
-_Avoid_: Cloud library, project folder, database (implementation term), sync (implies ongoing two-way link with disk), cross-tab live sync (v1 uses last-write-wins across tabs).
+On **Lambda Web**, the author’s collection of **Scripts** persisted in the browser — listed on the welcome screen, editable without re-downloading on every save. Opening a script from disk **imports** a snapshot into the library; the library entry and the original file are then independent until the author explicitly exports or Save As back to disk. **Save** (⌘S) always persists to the library silently; **Save As** is the only way to write a `.fountain` file to disk. Edits **autosave** to the library after a short idle delay; ⌘S flushes immediately. On Lambda Web, the script toolbar **dirty indicator** shows whilst edits are pending autosave to the library — it clears once the flush completes. Navigating away (Back, New script) **flushes** any pending autosave silently before leaving; no unsaved-changes prompt unless the write fails. On return visit, Lambda Web **auto-resumes** the last open script; the welcome screen (Back from the script workspace) lists the full library (sorted by last edited, most recent first), with delete available per entry (confirmed; does not affect exported disk files). Duplicate display names are distinguished by a relative last-edited timestamp (e.g. `JULIE · 2 hours ago`). Library entries are named from Fountain **Title page** `Title:` metadata when present, otherwise the import filename, otherwise `"Untitled"`. A script whose display name is `"Untitled"` is **not persisted** to the library — it exists only for the current browser session, held in session storage so a refresh within the same tab recovers the draft, but it never appears in the library list and is lost when the session ends. A title page whose `Title:` is literally `Untitled` (or empty) counts as untitled. **Store** (paid) promotes a library entry in place to a **Stored script** — not a second Fountain copy.
+_Avoid_: Cloud library (use **Stored script**), project folder, database (implementation term), sync (implies ongoing two-way link with disk), cross-tab live sync (v1 uses last-write-wins across tabs for unpaid library entries).
 
 **Application menu**:
-The File, Edit, and View command surface — New, Open, Save, Save As; undo, redo, cut, copy, paste; **Editor zoom** (Zoom In, Zoom Out, Actual Size). On desktop, the native OS menu bar; on Lambda Web, an in-app menu bar with the same labels and keyboard shortcuts.
+The File, Edit, and View command surface — New, Open, Save, Save As; undo, redo, cut, copy, paste; **Editor zoom** (Zoom In, Zoom Out, Actual Size). Canonical UI is the in-app bar on **Lambda Web** (desktop shows the same page). A native OS menu in Electron is optional chrome, not a second command set.
 _Avoid_: Toolbar (alone), hamburger menu, command palette.
 
 **Editor zoom**:

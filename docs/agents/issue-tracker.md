@@ -17,3 +17,15 @@ Create a new file under `.scratch/<feature-slug>/` (creating the directory if ne
 ## When a skill says "fetch the relevant ticket"
 
 Read the file at the referenced path. The user will normally pass the path or the issue number directly.
+
+## Wayfinding operations
+
+Maps and tickets live under `.scratch/<feature-slug>/`.
+
+- **Map:** `.scratch/<feature-slug>/MAP.md`. YAML `labels` includes `wayfinder:map`.
+- **Tickets:** `.scratch/<feature-slug>/issues/<NN>-<slug>.md`. YAML `labels` includes one of `wayfinder:research`, `wayfinder:prototype`, `wayfinder:grilling`, `wayfinder:task`. `parent` is a relative path to `MAP.md`.
+- **Identity:** the file path is the issue id. Refer to tickets by **title**, wrapping that path.
+- **Claim:** set `assignee` in the ticket YAML before work. Empty `assignee` = unclaimed.
+- **Blocking:** this tracker has no native graph. Each ticket has `blocked_by:` — a YAML list of relative paths to other tickets. Empty list = unblocked.
+- **Frontier:** open tickets (`status` not `closed`) with empty `blocked_by` (or every listed blocker `status: closed`) and empty `assignee`.
+- **Resolution:** append under `## Resolution`, set `status: closed`, then add one gist line to the map's **Decisions so far**.

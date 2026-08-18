@@ -56,3 +56,10 @@ vite.config.*.timestamp*
 vitest.config.*.timestamp*
 
 storybook-static
+
+# Secrets and local cloud context
+.env
+.env.*
+!.env.example
+.neon
+.vercel

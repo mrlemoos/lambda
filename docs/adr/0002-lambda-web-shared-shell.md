@@ -31,8 +31,8 @@ Web-specific forks: no native OS menu or file paths; offline/PWA; deployment hos
 - **File I/O**: progressive enhancement — File System Access API where supported; `<input type="file">` + programmatic download elsewhere.
 - **Application menu**: in-app **File | Edit** bar on web (same labels and shortcuts as desktop); `document.title` mirrors desktop window title (`formatWindowTitle`).
 - **Edit commands**: `@lambda/editor` exposes a command bridge (`ScriptEditorCommandsProvider` / `useScriptEditorCommands`) for undo, redo, cut, copy, paste, selectAll. Desktop keeps native Edit roles in v1; web menu uses the bridge.
-- **Deploy**: Cloudflare Pages static SPA (`_redirects` or equivalent for client-side routing).
-- **Offline**: PWA/service worker deferred until shell parity is stable; v1 is an online SPA.
+- **Deploy**: superseded by [ADR 0009](./0009-one-nextjs-lambda-web.md) (one Next.js app on Vercel; Cloudflare Pages static SPA withdrawn).
+- **Offline**: service-worker cache of **Lambda Web** is required so Electron (and the browser) can run after the first successful load ([ADR 0010](./0010-electron-loads-lambda-web.md)). Not a bundled copy of Next inside the macOS app.
 
 ### Implementation order
 
@@ -57,4 +57,5 @@ Web-specific forks: no native OS menu or file paths; offline/PWA; deployment hos
 
 - Export settings dialog (ships with desktop, then shared in shell).
 - PWA install and offline caching.
-- Cloud sync, auth, preview/print/PDF export.
+- Cloud sync and auth — superseded by [ADR 0006](./0006-accounts-and-paid-storage.md).
+- Preview/print/PDF export (this spike; see ADR 0005).
