@@ -18,11 +18,15 @@ const session = vi.hoisted(() => ({
   clearOpenError: vi.fn(),
 }));
 
-vi.mock('@lambda/script-session', () => ({
-  useScriptSession: () => session,
-  formatLibraryEntryLabel: (entry: { displayName: string }) =>
-    `${entry.displayName} · just now`,
-}));
+vi.mock('@lambda/script-session', async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import('@lambda/script-session')>();
+
+  return {
+    ...actual,
+    useScriptSession: () => session,
+  };
+});
 
 describe('WelcomePage', () => {
   beforeEach(() => {
