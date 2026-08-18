@@ -94,8 +94,6 @@ function buildBodyPages(pagination: PaginationResult): PreviewPage[] {
 export function buildPreviewPages({
   blocks,
   pagination,
-  pageFormat,
-  typeface,
   titlePageLines,
 }: BuildPreviewPagesInput): PreviewPagesModel {
   const hasTitlePage = titlePageLines.length > 0;
