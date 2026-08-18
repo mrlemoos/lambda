@@ -4,18 +4,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   useForm as useReactHookForm,
   type FieldValues,
-  type UseFormReturn,
+  type Resolver,
 } from 'react-hook-form';
 import type { z } from 'zod';
 
-export type UseFormOptions<TSchema extends z.ZodType> = {
+export type UseFormOptions<TSchema extends z.ZodType<FieldValues>> = {
   schema: TSchema;
 };
 
-export function useForm<TSchema extends z.ZodType>({
+export function useForm<TSchema extends z.ZodType<FieldValues>>({
   schema,
-}: UseFormOptions<TSchema>): UseFormReturn<z.infer<TSchema> & FieldValues> {
-  return useReactHookForm<z.infer<TSchema> & FieldValues>({
-    resolver: zodResolver(schema),
+}: UseFormOptions<TSchema>) {
+  const resolver = zodResolver(schema as never) as Resolver<z.output<TSchema>>;
+
+  return useReactHookForm<z.output<TSchema>>({
+    resolver,
   });
 }

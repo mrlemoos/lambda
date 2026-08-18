@@ -50,19 +50,22 @@
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
   "references": [
     {
-      "path": "../editor/tsconfig.lib.json"
+      "path": "../lambda-api/tsconfig.lib.json"
     },
     {
-      "path": "../editor-zoom/tsconfig.lib.json"
-    },
-    {
-      "path": "../script-session/tsconfig.lib.json"
+      "path": "../fountain/tsconfig.lib.json"
     },
     {
       "path": "../design-system/tsconfig.lib.json"
     },
     {
-      "path": "../fountain/tsconfig.lib.json"
+      "path": "../script-session/tsconfig.lib.json"
+    },
+    {
+      "path": "../editor-zoom/tsconfig.lib.json"
+    },
+    {
+      "path": "../editor/tsconfig.lib.json"
     }
   ]
 }

@@ -20,6 +20,8 @@ const session = vi.hoisted(() => ({
 
 vi.mock('@lambda/script-session', () => ({
   useScriptSession: () => session,
+  formatLibraryEntryLabel: (entry: { displayName: string }) =>
+    `${entry.displayName} · just now`,
 }));
 
 describe('WelcomePage', () => {

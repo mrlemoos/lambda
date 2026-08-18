@@ -7,11 +7,13 @@ import {
   dragPositionFromPointer,
 } from './useCommandPaletteDrag.js';
 
-vi.mock('../session/ScriptSessionContext.js', () => ({
+vi.mock('@lambda/script-session', () => ({
   useScriptSession: () => ({
+    script: null,
     startNewScript: vi.fn(async () => undefined),
     openScriptFromDisk: vi.fn(async () => undefined),
     openTitlePageDialog: vi.fn(),
+    openPreview: vi.fn(),
   }),
 }));
 

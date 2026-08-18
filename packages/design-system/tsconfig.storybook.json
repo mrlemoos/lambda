@@ -1,5 +1,5 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "out-tsc/storybook",
     "module": "esnext",
@@ -18,5 +18,10 @@
     "src/**/*.d.ts",
     ".storybook/*.ts",
     ".storybook/*.tsx"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    }
   ]
 }

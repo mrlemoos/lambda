@@ -18,6 +18,7 @@
   "dependencies": {
     "@lambda/editor": "workspace:*",
     "@lambda/editor-zoom": "workspace:*",
+    "@lambda/lambda-api": "workspace:*",
     "@lambda/script-session": "workspace:*",
     "@lambda/design-system": "workspace:*",
     "@lambda/fountain": "workspace:*"

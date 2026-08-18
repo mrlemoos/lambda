@@ -14,7 +14,7 @@ export default defineConfig(() => ({
     lib: {
       entry: 'src/index.ts',
       name: 'theme',
-      formats: ['es'],
+      formats: ['es' as const],
       fileName: 'index',
     },
     rollupOptions: {

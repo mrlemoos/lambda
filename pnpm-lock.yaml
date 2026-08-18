@@ -657,6 +657,9 @@ importers:
       '@lambda/fountain':
         specifier: workspace:*
         version: link:../fountain
+      '@lambda/lambda-api':
+        specifier: workspace:*
+        version: link:../lambda-api
       '@lambda/script-session':
         specifier: workspace:*
         version: link:../script-session
