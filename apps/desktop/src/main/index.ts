@@ -15,10 +15,12 @@ import {
   nativeTheme,
 } from 'electron';
 
+import { isLambdaWebNavigation } from '../lib/isLambdaWebNavigation.js';
 import {
   configureMacWindowChrome,
   getMacBrowserWindowOptions,
 } from '../lib/macWindowChrome.js';
+import { resolveLambdaWebOrigin } from '../lib/resolveLambdaWebOrigin.js';
 import { resolveWindowBackgroundColor } from '../lib/windowBackground.js';
 import { createApplicationMenuTemplate } from './menu.js';
 import type { FileCommand } from '@lambda/shell';
@@ -72,6 +74,11 @@ function syncWindowBackgroundColor(window: BrowserWindow): void {
 }
 
 function createWindow(): void {
+  const lambdaWebOrigin = resolveLambdaWebOrigin({
+    isPackaged: app.isPackaged,
+    originFromEnv: process.env.LAMBDA_WEB_ORIGIN,
+  });
+
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -85,6 +92,7 @@ function createWindow(): void {
       preload: join(mainDir, '../preload/index.js'),
       contextIsolation: true,
       nodeIntegration: false,
+      partition: 'persist:lambda-web',
     },
   });
 
@@ -94,11 +102,19 @@ function createWindow(): void {
     configureMacWindowChrome(mainWindow);
   }
 
-  if (!app.isPackaged && process.env.ELECTRON_RENDERER_URL) {
-    mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL);
-  } else {
-    mainWindow.loadFile(join(mainDir, '../renderer/index.html'));
-  }
+  mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  const denyOffOrigin = (
+    event: { preventDefault: () => void },
+    url: string,
+  ) => {
+    if (!isLambdaWebNavigation(url, lambdaWebOrigin)) {
+      event.preventDefault();
+    }
+  };
+  mainWindow.webContents.on('will-navigate', denyOffOrigin);
+  mainWindow.webContents.on('will-redirect', denyOffOrigin);
+
+  void mainWindow.loadURL(lambdaWebOrigin);
 }
 
 app.whenReady().then(() => {
