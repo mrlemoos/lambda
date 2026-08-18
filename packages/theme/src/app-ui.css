@@ -1,16 +1,42 @@
-@source '../../shell/src/**/*.{ts,tsx}';
+@source '../../**/*.{ts,tsx}';
 @source '../../../apps/web/src/**/*.{ts,tsx}';
 
 @theme {
-  --font-ui: 'Open Runde', system-ui, sans-serif;
-  --color-accent: #0c4a6e;
-  --color-accent-fg: #ffffff;
-  --color-text-muted: rgb(17 17 17 / 0.62);
-  --color-text-subtle: rgb(17 17 17 / 0.45);
+  --font-ui: 'Nunito', 'Open Runde', system-ui, sans-serif;
+  --color-accent: oklch(0.62 0.22 350);
+  --color-accent-fg: oklch(0.99 0 0);
+  --color-text-muted: oklch(0.35 0.02 260);
+  --color-text-subtle: oklch(0.5 0.02 260);
   --radius-ui-sm: 6px;
   --radius-ui-pill: 999px;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --duration-ui-press: 160ms;
+}
+
+:root {
+  --background: oklch(0.99 0.005 260);
+  --foreground: oklch(0.2 0.02 260);
+  --primary: oklch(0.62 0.22 350);
+  --primary-foreground: oklch(0.99 0 0);
+  --lm-fill: oklch(0.97 0.01 260);
+  --lm-rim-hi: oklch(0.92 0.01 90);
+  --lm-rim-mid: oklch(0.72 0.02 80);
+  --lm-rim-lo: oklch(0.55 0.02 70);
+}
+
+.dark {
+  --background: oklch(0.18 0.02 260);
+  --foreground: oklch(0.97 0.01 260);
+  --primary: oklch(0.7 0.2 350);
+  --primary-foreground: oklch(0.18 0.02 260);
+  --color-accent: oklch(0.7 0.2 350);
+  --color-accent-fg: oklch(0.18 0.02 260);
+  --color-text-muted: oklch(0.82 0.02 260);
+  --color-text-subtle: oklch(0.7 0.02 260);
+  --lm-fill: oklch(0.24 0.02 260);
+  --lm-rim-hi: oklch(0.7 0.02 90);
+  --lm-rim-mid: oklch(0.5 0.02 80);
+  --lm-rim-lo: oklch(0.35 0.02 70);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -173,4 +199,47 @@
   font-size: 0.8125rem;
   color: var(--text-subtle);
   margin: 0;
+}
+
+.lm-button {
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--foreground, inherit);
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--lm-fill), var(--lm-fill)) padding-box,
+    linear-gradient(
+        135deg,
+        var(--lm-rim-hi),
+        var(--lm-rim-mid),
+        var(--lm-rim-lo),
+        var(--lm-rim-hi)
+      )
+      border-box;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.55),
+    0 1px 2px rgb(0 0 0 / 0.12);
+}
+
+.lm-button-pill {
+  border-radius: var(--radius-ui-pill);
+  padding: 0.625rem 1.25rem;
+}
+
+.lm-button-circle {
+  border-radius: 999px;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lm-button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }

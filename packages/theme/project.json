@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/theme/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["type:ui", "pkg:theme"],
   "// targets": "to see all targets run: nx show project @lambda/theme --web",
   "targets": {}
 }

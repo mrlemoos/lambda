@@ -4,9 +4,8 @@ import {
   EDIT_MENU_NATIVE_ROLES,
   FILE_MENU_ITEMS,
   VIEW_MENU_ITEMS,
-  type FileCommand,
-  type ViewCommand,
-} from '@lambda/shell';
+} from '@lambda/application-menu';
+import type { FileCommand, ViewCommand } from '@lambda/lambda-api';
 
 type CreateApplicationMenuTemplateOptions = {
   appName: string;

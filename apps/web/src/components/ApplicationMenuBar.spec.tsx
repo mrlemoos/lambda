@@ -2,12 +2,10 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { LambdaApi } from '@lambda/shell';
-import {
-  EditorZoomProvider,
-  LambdaApiProvider,
-  ScriptSessionProvider,
-} from '@lambda/shell';
+import type { LambdaApi } from '@lambda/lambda-api';
+import { EditorZoomProvider } from '@lambda/editor-zoom';
+import { LambdaApiProvider } from '@lambda/lambda-api';
+import { ScriptSessionProvider } from '@lambda/script-session';
 
 import { ApplicationMenuBar } from './ApplicationMenuBar.js';
 import { browserLambdaApi } from '../lib/browserLambdaApi.js';

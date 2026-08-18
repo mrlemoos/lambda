@@ -1,4 +1,4 @@
-import { useScriptSession } from '@lambda/shell';
+import { useScriptSession } from '@lambda/script-session';
 import { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 

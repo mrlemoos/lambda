@@ -22,6 +22,8 @@ describe('App', () => {
   it('renders the welcome screen', () => {
     render(<App />);
 
-    expect(screen.getByRole('heading', { name: 'Lambda' })).toBeInTheDocument();
+    const result = screen.getByRole('heading', { name: 'Lambda' });
+
+    expect(result).toBeInTheDocument();
   });
 });

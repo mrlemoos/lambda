@@ -1,4 +1,7 @@
 @import 'tailwindcss';
+@import '@fontsource/nunito/400.css';
+@import '@fontsource/nunito/600.css';
+@import '@fontsource/nunito/700.css';
 @import '@fontsource/open-runde/400.css';
 @import '@fontsource/open-runde/600.css';
 @import '@fontsource/open-runde/700.css';

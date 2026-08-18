@@ -1,11 +1,7 @@
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 
-import '@lambda/shell/styles.css';
-
 import App from './app/App.js';
-
-document.documentElement.dataset.platform = window.lambda.platform;
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
