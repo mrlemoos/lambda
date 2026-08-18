@@ -29,5 +29,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - run: pnpm exec oxlint .
       - run: pnpm nx format:check --base="remotes/origin/main"
       - run: pnpm nx run-many -t lint test build typecheck
