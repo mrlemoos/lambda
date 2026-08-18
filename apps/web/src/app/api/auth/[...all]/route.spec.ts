@@ -11,11 +11,9 @@ vi.mock('better-auth/next-js', () => ({
   }),
 }));
 
-import { GET, POST } from './route.js';
-
 describe('auth HTTP handlers', () => {
-  it('exports GET and POST for better-auth', () => {
-    const result = { GET, POST };
+  it('exports GET and POST for better-auth', async () => {
+    const result = await import('./route.js');
 
     expect(result.GET).toEqual(expect.any(Function));
     expect(result.POST).toEqual(expect.any(Function));
