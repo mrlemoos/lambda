@@ -33,4 +33,28 @@ describe('WritingRoutes', () => {
 
     expect(result).not.toBeNull();
   });
+
+  it('renders sign-in at /sign-in', () => {
+    render(
+      <MemoryRouter initialEntries={['/sign-in']}>
+        <WritingRoutes />
+      </MemoryRouter>,
+    );
+
+    const result = screen.getByRole('heading', { name: 'Sign in' });
+
+    expect(result).not.toBeNull();
+  });
+
+  it('renders sign-up at /sign-up', () => {
+    render(
+      <MemoryRouter initialEntries={['/sign-up']}>
+        <WritingRoutes />
+      </MemoryRouter>,
+    );
+
+    const result = screen.getByRole('heading', { name: 'Create account' });
+
+    expect(result).not.toBeNull();
+  });
 });
