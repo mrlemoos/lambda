@@ -17,6 +17,6 @@ export default [
     rules: {},
   },
   {
-    ignores: ['**/out-tsc'],
+    ignores: ['**/out-tsc', '**/.next', 'next-env.d.ts'],
   },
 ];

@@ -1,4 +1,4 @@
-name: Deploy Web
+name: Build Web
 
 on:
   push:
@@ -14,11 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: https://editor.lambda-studio.uk
     steps:
       - uses: actions/checkout@v4
 
@@ -33,8 +30,5 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Deploy to Cloudflare Pages
-        run: pnpm nx deploy @lambda/web
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Build Lambda Web
+        run: pnpm nx build @lambda/web

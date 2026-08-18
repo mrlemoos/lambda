@@ -1,3 +1,5 @@
+'use client';
+
 import { BrowserRouter } from 'react-router-dom';
 import {
   EditorZoomProvider,
@@ -10,8 +12,9 @@ import { ApplicationMenuBar } from '../components/ApplicationMenuBar.js';
 import { E2eRoutes } from '../e2e/E2eRoutes.js';
 import { E2eWindowApi } from '../e2e/E2eWindowApi.js';
 import { browserLambdaApi } from '../lib/browserLambdaApi.js';
+import { isLambdaWebE2e } from '../lib/isLambdaWebE2e.js';
 
-const e2eEnabled = import.meta.env.VITE_E2E === '1';
+const e2eEnabled = isLambdaWebE2e();
 
 export function App() {
   return (

@@ -6,27 +6,15 @@
   "tags": [],
   "targets": {
     "dev": {
-      "dependsOn": ["@lambda/desktop:generate-icons"]
+      "dependsOn": ["@lambda/desktop:generate-icons"],
+      "continuous": true,
+      "command": "next dev --port 4300",
+      "options": {
+        "cwd": "apps/web"
+      }
     },
     "build": {
       "dependsOn": ["@lambda/desktop:generate-icons", "^build"]
-    },
-    "deploy": {
-      "dependsOn": ["build"],
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "apps/web",
-        "command": "wrangler pages deploy --branch=main"
-      }
-    },
-    "pages-dev": {
-      "dependsOn": ["build"],
-      "continuous": true,
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "apps/web",
-        "command": "wrangler pages dev"
-      }
     }
   }
 }

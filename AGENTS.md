@@ -102,10 +102,10 @@ Screenplay typefaces and preview sheet canvas stay with editor/print; they do no
 
 ## Learned Workspace Facts
 
-- `apps/web` is **Lambda Web** (Next.js, ADR 0009 — Vite SPA until that migrate). `apps/desktop` is a thin Electron window that `loadURL`s that origin (`http://localhost:4300` unpackaged; `LAMBDA_WEB_ORIGIN` when packaged) and caches it in `persist:lambda-web` (ADR 0010). **Do not ship the Next.js build inside the macOS app.**
+- `apps/web` is **Lambda Web** (Next.js, ADR 0009) on port **4300**. `apps/desktop` is a thin Electron window that `loadURL`s that origin (`http://localhost:4300` unpackaged; `LAMBDA_WEB_ORIGIN` when packaged) and caches it in `persist:lambda-web` (ADR 0010). **Do not ship the Next.js build inside the macOS app.**
 - `@lambda/desktop` dev unsets `ELECTRON_RUN_AS_NODE` in its Nx command; Electron startup fails if this env var is set in the shell.
 - `apps/web` deploys to **Vercel** (Next.js). Cloudflare Pages / wrangler for web is withdrawn (ADR 0009).
-- Playwright e2e lives in `@lambda/web-e2e`; bootstrap routes and APIs are gated with `VITE_E2E=1` and excluded from production builds.
+- Playwright e2e lives in `@lambda/web-e2e`; bootstrap routes and APIs are gated with `NEXT_PUBLIC_E2E=1` (or `VITE_E2E=1`) and excluded from production builds.
 - `@lambda/print` owns preview/PDF sheet assembly; `@lambda/editor` owns pagination (ADR 0005).
 - Script session `pageFormat` and `typeface` drive editor metrics, preview, and export; defaults load from Slugline Document Settings in the `.fountain` file.
 - Preview renders at 100% canonical layout; editor zoom does not carry over (ADR 0003/0005).
