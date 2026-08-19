@@ -59,6 +59,9 @@
     },
     {
       "path": "./packages/application-menu"
+    },
+    {
+      "path": "./packages/css"
     }
   ]
 }

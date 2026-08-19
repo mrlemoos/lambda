@@ -1,0 +1,9 @@
+{
+  "name": "@lambda/css",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/css/src",
+  "projectType": "library",
+  "tags": ["type:util", "pkg:css"],
+  "// targets": "to see all targets run: nx show project @lambda/css --web",
+  "targets": {}
+}
