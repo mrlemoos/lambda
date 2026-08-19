@@ -30,7 +30,7 @@ export default defineConfig({
           'packages/fountain/src/index.ts',
         ),
       },
-      conditions: ['@org/source', 'import', 'module', 'browser', 'default'],
+      conditions: ['@lambda/source', 'import', 'module', 'browser', 'default'],
     },
     optimizeDeps: {
       exclude: ['@lambda/editor', '@lambda/fountain'],

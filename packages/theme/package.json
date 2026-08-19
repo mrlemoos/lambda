@@ -9,7 +9,7 @@
     "./app-ui.css": "./src/app-ui.css",
     "./chrome.css": "./src/chrome.css",
     ".": {
-      "@org/source": "./src/index.ts",
+      "@lambda/source": "./src/index.ts",
       "types": "./src/index.ts",
       "import": "./src/index.ts",
       "default": "./src/index.ts"

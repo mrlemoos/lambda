@@ -5,7 +5,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    conditions: ['@org/source', 'import', 'module', 'browser', 'default'],
+    conditions: ['@lambda/source', 'import', 'module', 'browser', 'default'],
   },
   test: {
     name: '@lambda/web',

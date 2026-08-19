@@ -2,6 +2,10 @@ const { composePlugins, withNx } = require('@nx/next');
 const { readdirSync, readFileSync } = require('node:fs');
 const { join } = require('node:path');
 
+const {
+  applyWorkspacePackageConditions,
+} = require('./src/lib/workspacePackageResolve.cjs');
+
 function isE2eEnabled() {
   return process.env.NEXT_PUBLIC_E2E === '1' || process.env.VITE_E2E === '1';
 }
@@ -55,6 +59,34 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_E2E: isE2eEnabled() ? '1' : '',
     NEXT_PUBLIC_E2E_FIXTURES: JSON.stringify(loadE2eFixtures()),
+  },
+  webpack: (config) => applyWorkspacePackageConditions(config),
+  experimental: {
+    turbo: {
+      resolveAlias: Object.fromEntries(
+        [
+          'auth',
+          'auth-forms',
+          'form',
+          'design-system',
+          'theme',
+          'lambda-api',
+          'script-session',
+          'editor-zoom',
+          'welcome',
+          'script-workspace',
+          'preview-workspace',
+          'command-palette',
+          'application-menu',
+          'editor',
+          'print',
+          'fountain',
+        ].map((directory) => [
+          `@lambda/${directory}`,
+          join(__dirname, `../../packages/${directory}/src/index.ts`),
+        ]),
+      ),
+    },
   },
 };
 
