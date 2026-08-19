@@ -6,6 +6,11 @@ const {
   applyWorkspacePackageConditions,
 } = require('./src/lib/workspacePackageResolve.cjs');
 
+const packageJson = require('./package.json');
+const dependencies = packageJson.dependencies;
+const devDependencies = packageJson.devDependencies;
+const allDependencies = { ...dependencies, ...devDependencies };
+
 function isE2eEnabled() {
   return process.env.NEXT_PUBLIC_E2E === '1' || process.env.VITE_E2E === '1';
 }
@@ -38,56 +43,12 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  transpilePackages: [
-    '@lambda/auth',
-    '@lambda/auth-forms',
-    '@lambda/form',
-    '@lambda/design-system',
-    '@lambda/theme',
-    '@lambda/lambda-api',
-    '@lambda/script-session',
-    '@lambda/editor-zoom',
-    '@lambda/welcome',
-    '@lambda/script-workspace',
-    '@lambda/preview-workspace',
-    '@lambda/command-palette',
-    '@lambda/application-menu',
-    '@lambda/editor',
-    '@lambda/print',
-    '@lambda/fountain',
-  ],
+  transpilePackages: Object.keys(allDependencies),
   env: {
     NEXT_PUBLIC_E2E: isE2eEnabled() ? '1' : '',
     NEXT_PUBLIC_E2E_FIXTURES: JSON.stringify(loadE2eFixtures()),
   },
   webpack: (config) => applyWorkspacePackageConditions(config),
-  experimental: {
-    turbo: {
-      resolveAlias: Object.fromEntries(
-        [
-          'auth',
-          'auth-forms',
-          'form',
-          'design-system',
-          'theme',
-          'lambda-api',
-          'script-session',
-          'editor-zoom',
-          'welcome',
-          'script-workspace',
-          'preview-workspace',
-          'command-palette',
-          'application-menu',
-          'editor',
-          'print',
-          'fountain',
-        ].map((directory) => [
-          `@lambda/${directory}`,
-          join(__dirname, `../../packages/${directory}/src/index.ts`),
-        ]),
-      ),
-    },
-  },
 };
 
 const plugins = [withNx];
