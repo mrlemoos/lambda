@@ -1,9 +1,14 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+const navigation = vi.hoisted(() => ({
+  pathname: '/',
+  push: vi.fn(),
+}));
 
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: vi.fn() }),
-  usePathname: () => '/',
+  useRouter: () => ({ push: navigation.push }),
+  usePathname: () => navigation.pathname,
 }));
 
 vi.mock('@lambda/auth', async (importOriginal) => {
@@ -33,7 +38,28 @@ vi.mock('../lib/browserLambdaApi.js', () => ({
 }));
 
 describe('WritingProviders', () => {
-  it('renders application chrome around the page', async () => {
+  beforeEach(() => {
+    navigation.pathname = '/';
+  });
+  it('hides the application menu off the editor page', async () => {
+    navigation.pathname = '/sign-in';
+    const { WritingProviders } = await import('./WritingProviders.js');
+
+    render(
+      <WritingProviders>
+        <h1>Sign in</h1>
+      </WritingProviders>,
+    );
+
+    const result = screen.queryByRole('navigation', {
+      name: 'Application menu',
+    });
+
+    expect(result).not.toBeInTheDocument();
+  });
+
+  it('renders the application menu on the editor page', async () => {
+    navigation.pathname = '/script';
     const { WritingProviders } = await import('./WritingProviders.js');
 
     render(
@@ -42,9 +68,8 @@ describe('WritingProviders', () => {
       </WritingProviders>,
     );
 
-    const result = screen.getByRole('heading', { name: 'Lambda' });
+    const result = screen.getByRole('button', { name: 'File' });
 
     expect(result).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'File' })).toBeInTheDocument();
   });
 });

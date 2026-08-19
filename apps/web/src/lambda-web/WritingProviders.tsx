@@ -26,7 +26,7 @@ export function WritingProviders({ children }: { children: ReactNode }) {
         <ScriptSessionProvider navigate={(path) => router.push(path)}>
           <WritingAccessProvider>
             {e2eEnabled ? <E2eWindowApi /> : null}
-            <ApplicationMenuBar />
+            {pathname === '/script' ? <ApplicationMenuBar /> : null}
             <CommandPaletteHost />
             <ScriptWorkspaceDialogs />
             {children}
