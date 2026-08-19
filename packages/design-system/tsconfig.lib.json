@@ -50,10 +50,13 @@
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
   "references": [
     {
-      "path": "../theme/tsconfig.lib.json"
+      "path": "../form/tsconfig.lib.json"
     },
     {
-      "path": "../form/tsconfig.lib.json"
+      "path": "../css/tsconfig.lib.json"
+    },
+    {
+      "path": "../theme/tsconfig.lib.json"
     }
   ]
 }

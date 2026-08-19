@@ -1,3 +1,4 @@
+import { cn } from '@lambda/css';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 export type LiquidMetalButtonShape = 'pill' | 'circle';
@@ -14,16 +15,17 @@ export function LiquidMetalButton({
   children,
   ...props
 }: LiquidMetalButtonProps) {
-  const classNames = [
-    'lm-button',
-    shape === 'circle' ? 'lm-button-circle' : 'lm-button-pill',
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
-
   return (
-    <button type={type} className={classNames} {...props}>
+    <button
+      type={type}
+      className={cn(
+        'lm-button',
+        shape === 'circle' ? 'lm-button-circle' : 'lm-button-pill',
+        className,
+      )}
+      {...props}
+      data-slot="button"
+    >
       {children}
     </button>
   );

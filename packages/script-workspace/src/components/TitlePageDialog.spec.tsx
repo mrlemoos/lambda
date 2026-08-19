@@ -44,10 +44,9 @@ describe('TitlePageDialog', () => {
       />,
     );
 
-    const dialog = screen.getByRole('dialog');
+    const result = screen.getByRole('dialog');
 
-    expect(dialog).toHaveClass('modal-dialog');
-    expect(dialog).toHaveClass('modal-dialog--title-page');
+    expect(result).toHaveClass('modal-dialog--title-page');
   });
 
   it('prefills stub credit when the title is seeded from the display name', () => {

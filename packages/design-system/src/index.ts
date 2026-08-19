@@ -11,3 +11,5 @@ export {
   type LiquidMetalButtonProps,
   type LiquidMetalButtonShape,
 } from './lib/LiquidMetalButton.js';
+export { Label, type LabelProps } from './lib/Label.js';
+export { Input, type InputProps } from './lib/Input.js';

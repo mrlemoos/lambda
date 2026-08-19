@@ -1,8 +1,17 @@
 /// <reference types='vitest' />
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import dts from 'vite-plugin-dts';
+import { writeFileSync } from 'node:fs';
 import * as path from 'path';
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import dts from 'vite-plugin-dts';
+
+const componentEntries = [
+  'Button',
+  'Input',
+  'Label',
+  'ModalDialog',
+  'LiquidMetalButton',
+] as const;
 
 export default defineConfig(() => ({
   root: import.meta.dirname,
@@ -12,6 +21,21 @@ export default defineConfig(() => ({
     dts({
       entryRoot: 'src',
       tsconfigPath: path.join(import.meta.dirname, 'tsconfig.lib.json'),
+      afterBuild(emittedFiles) {
+        for (const [filePath, content] of emittedFiles) {
+          for (const name of componentEntries) {
+            const nestedSuffix = `${path.sep}lib${path.sep}${name}.d.ts`;
+            if (filePath.endsWith(nestedSuffix)) {
+              writeFileSync(
+                filePath.slice(0, -nestedSuffix.length) +
+                  path.sep +
+                  `${name}.d.ts`,
+                content.replace(/\n\/\/# sourceMappingURL=.*$/u, ''),
+              );
+            }
+          }
+        }
+      },
     }),
   ],
   // Uncomment this if you are using workers.
@@ -28,12 +52,16 @@ export default defineConfig(() => ({
       transformMixedEsModules: true,
     },
     lib: {
-      // Could also be a dictionary or array of multiple entry points.
-      entry: 'src/index.ts',
+      entry: {
+        index: 'src/index.ts',
+        Button: 'src/lib/Button.tsx',
+        Input: 'src/lib/Input.tsx',
+        Label: 'src/lib/Label.tsx',
+        ModalDialog: 'src/lib/ModalDialog.tsx',
+        LiquidMetalButton: 'src/lib/LiquidMetalButton.tsx',
+      },
       name: '@lambda/design-system',
-      fileName: 'index',
-      // Change this to the formats you want to support.
-      // Don't forget to update your package.json as well.
+      fileName: (_format, entryName) => `${entryName}.js`,
       formats: ['es' as const],
     },
     rollupOptions: {

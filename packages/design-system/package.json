@@ -12,13 +12,44 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./Button": {
+      "@lambda/source": "./src/lib/Button.tsx",
+      "types": "./dist/Button.d.ts",
+      "import": "./dist/Button.js",
+      "default": "./dist/Button.js"
+    },
+    "./Input": {
+      "@lambda/source": "./src/lib/Input.tsx",
+      "types": "./dist/Input.d.ts",
+      "import": "./dist/Input.js",
+      "default": "./dist/Input.js"
+    },
+    "./Label": {
+      "@lambda/source": "./src/lib/Label.tsx",
+      "types": "./dist/Label.d.ts",
+      "import": "./dist/Label.js",
+      "default": "./dist/Label.js"
+    },
+    "./ModalDialog": {
+      "@lambda/source": "./src/lib/ModalDialog.tsx",
+      "types": "./dist/ModalDialog.d.ts",
+      "import": "./dist/ModalDialog.js",
+      "default": "./dist/ModalDialog.js"
+    },
+    "./LiquidMetalButton": {
+      "@lambda/source": "./src/lib/LiquidMetalButton.tsx",
+      "types": "./dist/LiquidMetalButton.d.ts",
+      "import": "./dist/LiquidMetalButton.js",
+      "default": "./dist/LiquidMetalButton.js"
     }
   },
   "private": true,
   "dependencies": {
     "@base-ui/react": "^1.6.0",
-    "@lambda/theme": "workspace:*",
-    "@lambda/form": "workspace:*"
+    "@lambda/css": "workspace:*",
+    "@lambda/form": "workspace:*",
+    "@lambda/theme": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",

@@ -12,6 +12,17 @@ describe('LiquidMetalButton', () => {
     expect(result).toHaveClass('lm-button');
     expect(result).toHaveClass('lm-button-pill');
     expect(result.className).not.toMatch(/ui-button/);
+    expect(result).toHaveAttribute('data-slot', 'button');
+  });
+
+  it('keeps the label on the button instead of an inset island', () => {
+    render(<LiquidMetalButton>Save</LiquidMetalButton>);
+
+    const result = screen.getByRole('button', { name: 'Save' });
+
+    expect(result.querySelector('.lm-rim')).toBeNull();
+    expect(result.querySelector('.lm-fill')).toBeNull();
+    expect(result).toHaveTextContent('Save');
   });
 
   it('renders a circle chrome button', () => {
