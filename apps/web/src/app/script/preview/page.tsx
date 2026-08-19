@@ -2,6 +2,12 @@
 
 import { PreviewPage } from '@lambda/preview-workspace';
 
+import { WritingGate } from '../../../lambda-web/WritingGate.js';
+
 export default function PreviewRoute() {
-  return <PreviewPage />;
+  return (
+    <WritingGate>
+      <PreviewPage />
+    </WritingGate>
+  );
 }

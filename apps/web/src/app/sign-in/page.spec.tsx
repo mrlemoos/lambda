@@ -5,6 +5,10 @@ vi.mock('@lambda/auth-forms', () => ({
   SignInForm: () => <h1>Sign in</h1>,
 }));
 
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
 describe('SignInRoute', () => {
   it('renders sign-in', async () => {
     const { default: SignInRoute } = await import('./page.js');

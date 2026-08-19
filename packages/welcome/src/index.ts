@@ -1,1 +1,5 @@
-export { WelcomePage } from './pages/WelcomePage.js';
+export {
+  WelcomePage,
+  type WelcomePageProps,
+  type WelcomeWritingAccess,
+} from './pages/WelcomePage.js';

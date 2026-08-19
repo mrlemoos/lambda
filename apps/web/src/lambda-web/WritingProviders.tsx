@@ -12,6 +12,7 @@ import { ApplicationMenuBar } from '../components/ApplicationMenuBar.js';
 import { E2eWindowApi } from '../e2e/E2eWindowApi.js';
 import { browserLambdaApi } from '../lib/browserLambdaApi.js';
 import { isLambdaWebE2e } from '../lib/isLambdaWebE2e.js';
+import { WritingAccessProvider } from './WritingAccessProvider.js';
 
 const e2eEnabled = isLambdaWebE2e();
 
@@ -23,11 +24,13 @@ export function WritingProviders({ children }: { children: ReactNode }) {
     <LambdaApiProvider api={browserLambdaApi}>
       <EditorZoomProvider pathname={pathname}>
         <ScriptSessionProvider navigate={(path) => router.push(path)}>
-          {e2eEnabled ? <E2eWindowApi /> : null}
-          <ApplicationMenuBar />
-          <CommandPaletteHost />
-          <ScriptWorkspaceDialogs />
-          {children}
+          <WritingAccessProvider>
+            {e2eEnabled ? <E2eWindowApi /> : null}
+            <ApplicationMenuBar />
+            <CommandPaletteHost />
+            <ScriptWorkspaceDialogs />
+            {children}
+          </WritingAccessProvider>
         </ScriptSessionProvider>
       </EditorZoomProvider>
     </LambdaApiProvider>

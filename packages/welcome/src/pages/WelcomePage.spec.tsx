@@ -44,6 +44,51 @@ describe('WelcomePage', () => {
     expect(screen.getByRole('button', { name: 'New script' })).not.toBeNull();
     expect(screen.getByRole('button', { name: 'Open…' })).not.toBeNull();
     expect(container.querySelector('.welcome-shortcuts')).toBeNull();
+    expect(
+      screen.getByText(
+        'Write in Fountain. Your Account is shared on Lambda Web and desktop.',
+      ),
+    ).not.toBeNull();
+  });
+
+  it('shows the sign-in wall instead of writing actions when online without a session', () => {
+    render(<WelcomePage writingAccess="sign-in-wall" />);
+
+    const result = screen.getByRole('button', { name: 'Sign in' });
+
+    expect(result).not.toBeNull();
+    expect(
+      screen.getByRole('button', { name: 'Create account' }),
+    ).not.toBeNull();
+    expect(screen.queryByRole('button', { name: 'New script' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Open…' })).toBeNull();
+    expect(screen.queryByText('Nothing leaves your machine')).toBeNull();
+  });
+
+  it('keeps writing actions during first-run offline', () => {
+    render(<WelcomePage writingAccess="write" hasSession={false} />);
+
+    const result = screen.getByRole('button', { name: 'New script' });
+
+    expect(result).not.toBeNull();
+    expect(screen.getByRole('button', { name: 'Open…' })).not.toBeNull();
+  });
+
+  it('offers Account when this client has a session', () => {
+    const onOpenAccount = vi.fn();
+    render(
+      <WelcomePage
+        writingAccess="write"
+        hasSession
+        onOpenAccount={onOpenAccount}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Account' }));
+
+    const result = onOpenAccount.mock.calls;
+
+    expect(result).toHaveLength(1);
   });
 
   it('shows open errors with dismiss control', () => {

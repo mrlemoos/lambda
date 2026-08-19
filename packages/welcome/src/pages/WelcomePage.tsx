@@ -5,7 +5,23 @@ import {
   useScriptSession,
 } from '@lambda/script-session';
 
-export function WelcomePage() {
+export type WelcomeWritingAccess = 'write' | 'sign-in-wall' | 'offline-blocked';
+
+export type WelcomePageProps = {
+  writingAccess?: WelcomeWritingAccess;
+  hasSession?: boolean;
+  onSignIn?: () => void;
+  onCreateAccount?: () => void;
+  onOpenAccount?: () => void;
+};
+
+export function WelcomePage({
+  writingAccess = 'write',
+  hasSession = false,
+  onSignIn,
+  onCreateAccount,
+  onOpenAccount,
+}: WelcomePageProps) {
   const {
     startNewScript,
     openScriptFromDisk,
@@ -17,6 +33,7 @@ export function WelcomePage() {
     clearOpenError,
   } = useScriptSession();
   const [nowMs] = useState(() => Date.now());
+  const canWrite = writingAccess === 'write';
 
   useEffect(() => {
     void refreshLibrary();
@@ -48,7 +65,7 @@ export function WelcomePage() {
         />
         <h1 className="ui-heading">Lambda</h1>
         <p className="ui-body welcome-tagline">
-          Write in Fountain. Save locally. Nothing leaves your machine.
+          {welcomeTagline(writingAccess)}
         </p>
       </div>
       {openError ? (
@@ -64,22 +81,52 @@ export function WelcomePage() {
         </p>
       ) : null}
       <div className="welcome-actions">
-        <button
-          type="button"
-          className="ui-button ui-button-primary"
-          onClick={() => void startNewScript()}
-        >
-          New script
-        </button>
-        <button
-          type="button"
-          className="ui-button"
-          onClick={() => void openScriptFromDisk()}
-        >
-          Open…
-        </button>
+        {canWrite ? (
+          <>
+            <button
+              type="button"
+              className="ui-button ui-button-primary"
+              onClick={() => void startNewScript()}
+            >
+              New script
+            </button>
+            <button
+              type="button"
+              className="ui-button"
+              onClick={() => void openScriptFromDisk()}
+            >
+              Open…
+            </button>
+            {hasSession ? (
+              <button
+                type="button"
+                className="ui-button"
+                onClick={() => onOpenAccount?.()}
+              >
+                Account
+              </button>
+            ) : null}
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              className="ui-button ui-button-primary"
+              onClick={() => onSignIn?.()}
+            >
+              Sign in
+            </button>
+            <button
+              type="button"
+              className="ui-button"
+              onClick={() => onCreateAccount?.()}
+            >
+              Create account
+            </button>
+          </>
+        )}
       </div>
-      {libraryItems.length > 0 ? (
+      {canWrite && libraryItems.length > 0 ? (
         <section className="welcome-library" aria-label="Local script library">
           <h2 className="ui-kicker welcome-library-heading">Your scripts</h2>
           <ul className="welcome-library-list">
@@ -115,4 +162,16 @@ export function WelcomePage() {
       ) : null}
     </main>
   );
+}
+
+function welcomeTagline(writingAccess: WelcomeWritingAccess): string {
+  if (writingAccess === 'offline-blocked') {
+    return 'You are offline. Sign in when you are back online to keep writing.';
+  }
+
+  if (writingAccess === 'sign-in-wall') {
+    return 'Sign in with your Account to write. Your Account is shared on Lambda Web and desktop.';
+  }
+
+  return 'Write in Fountain. Your Account is shared on Lambda Web and desktop.';
 }

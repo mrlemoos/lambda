@@ -2,6 +2,12 @@
 
 import { ScriptPage } from '@lambda/script-workspace';
 
+import { WritingGate } from '../../lambda-web/WritingGate.js';
+
 export default function ScriptRoute() {
-  return <ScriptPage />;
+  return (
+    <WritingGate>
+      <ScriptPage />
+    </WritingGate>
+  );
 }

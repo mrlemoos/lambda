@@ -6,6 +6,17 @@ vi.mock('next/navigation', () => ({
   usePathname: () => '/',
 }));
 
+vi.mock('@lambda/auth', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@lambda/auth')>();
+
+  return {
+    ...actual,
+    createLambdaAuthClient: () => ({
+      useSession: () => ({ data: null, isPending: false }),
+    }),
+  };
+});
+
 vi.mock('../lib/browserLambdaApi.js', () => ({
   browserLambdaApi: {
     platform: 'web',
