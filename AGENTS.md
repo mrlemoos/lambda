@@ -55,6 +55,17 @@ Tests must follow **Arrange–Act–Assert** (see `.cursor/rules/test-aaa-format
 
 Oxlint owns code-quality rules (React, a11y, import, Vitest, TypeScript). ESLint stays only for `@nx/enforce-module-boundaries` and `@nx/dependency-checks`. Do not delete ESLint. Do not enable oxfmt (Prettier formats). Root `.oxlintrc.json` + `.vscode` (`oxc.oxc-vscode`, `oxc.enable.oxfmt: false`) are specified in the auth/design-system map; apply on execute, not before.
 
+## Deprecated APIs
+
+Do not use deprecated React or TypeScript APIs when a current equivalent exists. Prefer the replacement in new code; migrate call sites you touch.
+
+Examples (not exhaustive):
+
+- `ref` as a prop — not `forwardRef`
+- `ComponentPropsWithoutRef` / `ComponentPropsWithRef` — not `ComponentProps`
+
+If a library still requires a deprecated API, wrap it at the boundary rather than spreading it through app code.
+
 ## CSS
 
 Do not add custom classes in raw CSS when Tailwind utilities (or existing `@lambda/theme` `@utility` classes) can express the same thing. Raw CSS is allowed only when the need cannot be solved with Tailwind — for example canvas/print layout math, third-party element styling you do not control, or `@font-face` / `@page`.
@@ -70,8 +81,9 @@ Canonical packages (see ADR 0007):
 - `@lambda/auth` — better-auth config and client helpers. No screens.
 - `@lambda/auth-forms` — sign-in and sign-up screens.
 - `@lambda/form` — headless form abstraction (react-hook-form + Zod `useForm({ schema })`, Planria-shaped `Form` / `FormField`). Visual field chrome lives in `@lambda/design-system`.
-- `@lambda/design-system` — React primitives (including **liquid-metal buttons** — prototype variant A: full-rim chrome, pill + circle, no glass/ghost `.ui-button`). Depends on `@lambda/theme` and `@lambda/form`.
+- `@lambda/design-system` — React primitives (including **liquid-metal buttons** — prototype variant A: full-rim chrome, pill + circle, no glass/ghost `.ui-button`). Subpath imports (`@lambda/design-system/Button`, `Input`, `Label`, `ModalDialog`) are supported. Composed parts use shadcn-style `data-slot` attributes. Depends on `@lambda/theme`, `@lambda/form`, and `@lambda/css`.
 - `@lambda/theme` — CSS tokens (oklch `:root` / `.dark`), **Nunito** for UI heading and body, and `ThemeProvider` (shadcn/next-themes: `attribute="class"`, system, `disableTransitionOnChange`).
+- `@lambda/css` — `cn` (clsx + tailwind-merge) and `computeVariants` (class-variance-authority `cva` facade). No React.
 - `@lambda/lambda-api` — `LambdaApi` contract + provider.
 - `@lambda/script-session` — script open/save/library session.
 - `@lambda/editor-zoom` — zoom math, storage, surface.
