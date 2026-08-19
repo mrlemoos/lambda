@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { EditorZoomProvider } from '@lambda/editor-zoom';
 import type { LambdaApi } from '@lambda/lambda-api';
@@ -41,6 +41,10 @@ function renderToolbar(props: {
 }
 
 describe('ScriptToolbar', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it('shows the filename and edited badge when dirty', () => {
     renderToolbar({ fileName: 'night-shift.fountain', dirty: true });
 
@@ -60,7 +64,28 @@ describe('ScriptToolbar', () => {
     expect(screen.queryByText('Edited')).toBeNull();
   });
 
-  it('calls onBack when the welcome link is clicked', async () => {
+  it('renders Welcome, Title Page, and Preview as liquid-metal pill buttons', () => {
+    renderToolbar({
+      fileName: 'night-shift.fountain',
+      dirty: false,
+      onTitlePage: vi.fn(),
+      onPreview: vi.fn(),
+    });
+
+    const result = [
+      screen.getByRole('button', { name: /welcome/i }),
+      screen.getByRole('button', { name: 'Title Page…' }),
+      screen.getByRole('button', { name: 'Preview…' }),
+    ];
+
+    for (const button of result) {
+      expect(button).toHaveClass('lm-button');
+      expect(button).toHaveClass('lm-button-pill');
+      expect(button.className).not.toMatch(/ui-button/);
+    }
+  });
+
+  it('calls onBack when the welcome button is clicked', async () => {
     const onBack = vi.fn(async () => 'cancel' as const);
 
     renderToolbar({
@@ -69,11 +94,50 @@ describe('ScriptToolbar', () => {
       onBack,
     });
 
-    fireEvent.click(screen.getByRole('link', { name: /welcome/i }));
+    fireEvent.click(screen.getByRole('button', { name: /welcome/i }));
 
     await waitFor(() => {
       expect(onBack).toHaveBeenCalledOnce();
     });
+  });
+
+  it('navigates home after welcome when onBack does not cancel', async () => {
+    const onBack = vi.fn(async () => 'discard' as const);
+    const assign = vi.fn();
+
+    vi.stubGlobal('location', { assign });
+
+    renderToolbar({
+      fileName: 'night-shift.fountain',
+      dirty: true,
+      onBack,
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /welcome/i }));
+
+    await waitFor(() => {
+      expect(assign).toHaveBeenCalledWith('/');
+    });
+  });
+
+  it('does not navigate home when welcome onBack returns cancel', async () => {
+    const onBack = vi.fn(async () => 'cancel' as const);
+    const assign = vi.fn();
+
+    vi.stubGlobal('location', { assign });
+
+    renderToolbar({
+      fileName: 'night-shift.fountain',
+      dirty: true,
+      onBack,
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /welcome/i }));
+
+    await waitFor(() => {
+      expect(onBack).toHaveBeenCalledOnce();
+    });
+    expect(assign).not.toHaveBeenCalled();
   });
 
   it('shows a title page button when onTitlePage is provided', () => {

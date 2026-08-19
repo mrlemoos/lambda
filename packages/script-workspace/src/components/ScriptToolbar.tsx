@@ -1,5 +1,4 @@
-import type { MouseEvent } from 'react';
-
+import { LiquidMetalButton } from '@lambda/design-system';
 import { useEditorZoom } from '@lambda/editor-zoom';
 import type { UnsavedChoice } from '@lambda/script-session';
 
@@ -20,23 +19,24 @@ export function ScriptToolbar({
 }: ScriptToolbarProps) {
   const { readout } = useEditorZoom();
 
-  const handleBack = async (event: MouseEvent<HTMLAnchorElement>) => {
+  const handleBack = async () => {
     const choice = await onBack();
 
     if (choice === 'cancel') {
-      event.preventDefault();
+      return;
     }
+
+    window.location.assign('/');
   };
 
   return (
     <header className="script-toolbar">
-      <a
-        href="/"
-        className="ui-button ui-button-ghost script-toolbar-back"
-        onClick={(event) => void handleBack(event)}
+      <LiquidMetalButton
+        className="script-toolbar-back"
+        onClick={() => void handleBack()}
       >
         ← Welcome
-      </a>
+      </LiquidMetalButton>
       <div className="script-toolbar-doc">
         <span className="script-toolbar-filename">{fileName}</span>
         {dirty ? (
@@ -48,22 +48,20 @@ export function ScriptToolbar({
           </span>
         ) : null}
         {onTitlePage ? (
-          <button
-            type="button"
-            className="ui-button ui-button-ghost script-toolbar-title-page"
+          <LiquidMetalButton
+            className="script-toolbar-title-page"
             onClick={onTitlePage}
           >
             Title Page…
-          </button>
+          </LiquidMetalButton>
         ) : null}
         {onPreview ? (
-          <button
-            type="button"
-            className="ui-button ui-button-ghost script-toolbar-preview"
+          <LiquidMetalButton
+            className="script-toolbar-preview"
             onClick={onPreview}
           >
             Preview…
-          </button>
+          </LiquidMetalButton>
         ) : null}
         <span className="script-toolbar-zoom" aria-label="Editor zoom">
           {readout}
