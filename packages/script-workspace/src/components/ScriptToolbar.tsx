@@ -1,7 +1,5 @@
 import type { MouseEvent } from 'react';
 
-import { Link } from 'react-router-dom';
-
 import { useEditorZoom } from '@lambda/editor-zoom';
 import type { UnsavedChoice } from '@lambda/script-session';
 
@@ -32,13 +30,13 @@ export function ScriptToolbar({
 
   return (
     <header className="script-toolbar">
-      <Link
-        to="/"
+      <a
+        href="/"
         className="ui-button ui-button-ghost script-toolbar-back"
         onClick={(event) => void handleBack(event)}
       >
         ← Welcome
-      </Link>
+      </a>
       <div className="script-toolbar-doc">
         <span className="script-toolbar-filename">{fileName}</span>
         {dirty ? (

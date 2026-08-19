@@ -1,5 +1,4 @@
 import { renderHook, act } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
@@ -17,13 +16,11 @@ describe('EditorZoomProvider', () => {
 
     const { result } = renderHook(() => useEditorZoom(), {
       wrapper: ({ children }) => (
-        <MemoryRouter initialEntries={['/script']}>
-          <LambdaApiProvider api={api}>
-            <EditorZoomProvider storage={storage}>
-              {children}
-            </EditorZoomProvider>
-          </LambdaApiProvider>
-        </MemoryRouter>
+        <LambdaApiProvider api={api}>
+          <EditorZoomProvider pathname="/script" storage={storage}>
+            {children}
+          </EditorZoomProvider>
+        </LambdaApiProvider>
       ),
     });
 

@@ -1,6 +1,5 @@
 import { paginateSessionDocument } from '@lambda/editor';
 import { ScriptPreviewView } from '@lambda/print';
-import { Link } from 'react-router-dom';
 
 import { useScriptSession } from '@lambda/script-session';
 
@@ -22,12 +21,12 @@ export function PreviewPage() {
   return (
     <main className="app-shell preview-workspace">
       <header className="preview-toolbar">
-        <Link
-          to="/script"
+        <a
+          href="/script"
           className="ui-button ui-button-ghost preview-toolbar-back"
         >
           ← Back
-        </Link>
+        </a>
         <div className="preview-toolbar-actions">
           <button
             type="button"

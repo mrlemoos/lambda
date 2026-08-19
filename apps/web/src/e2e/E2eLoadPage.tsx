@@ -1,17 +1,18 @@
+'use client';
+
 import { useScriptSession } from '@lambda/script-session';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { readE2eFixture, listE2eFixtureNames } from './fixtures.js';
+import { listE2eFixtureNames, readE2eFixture } from './fixtures.js';
 
-export function E2eLoadPage() {
-  const { fixtureName } = useParams<{ fixtureName: string }>();
+export function E2eLoadPage({ fixtureName }: { fixtureName: string }) {
   const { loadScriptFromText } = useScriptSession();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
     if (!fixtureName) {
-      navigate('/');
+      router.push('/');
       return;
     }
 
@@ -23,17 +24,17 @@ export function E2eLoadPage() {
         fixtureName,
         listE2eFixtureNames(),
       );
-      navigate('/');
+      router.push('/');
       return;
     }
 
     loadScriptFromText(fixture, `${fixtureName}.fountain`);
-  }, [fixtureName, loadScriptFromText, navigate]);
+  }, [fixtureName, loadScriptFromText, router]);
 
   return (
     <main className="app-shell welcome">
       <p>Loading fixture…</p>
-      <Link to="/">Back to welcome</Link>
+      <a href="/">Back to welcome</a>
     </main>
   );
 }

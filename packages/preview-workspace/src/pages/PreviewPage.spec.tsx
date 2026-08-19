@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PreviewPage } from './PreviewPage.js';
@@ -49,11 +48,7 @@ describe('PreviewPage', () => {
   });
 
   it('renders preview toolbar actions when a script is open', () => {
-    render(
-      <MemoryRouter initialEntries={['/script/preview']}>
-        <PreviewPage />
-      </MemoryRouter>,
-    );
+    render(<PreviewPage />);
 
     expect(screen.getByRole('link', { name: '← Back' })).not.toBeNull();
     expect(

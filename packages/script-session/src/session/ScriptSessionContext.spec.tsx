@@ -1,5 +1,4 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LambdaApi } from '@lambda/lambda-api';
@@ -59,13 +58,11 @@ describe('ScriptSessionProvider', () => {
 
   it('saves the latest document after an immediate edit', async () => {
     render(
-      <MemoryRouter>
-        <LambdaApiProvider api={api}>
-          <ScriptSessionProvider>
-            <SessionHarness />
-          </ScriptSessionProvider>
-        </LambdaApiProvider>
-      </MemoryRouter>,
+      <LambdaApiProvider api={api}>
+        <ScriptSessionProvider>
+          <SessionHarness />
+        </ScriptSessionProvider>
+      </LambdaApiProvider>,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Open' }));
@@ -95,13 +92,11 @@ Typeface: Courier Prime
     api.platform = 'darwin';
 
     render(
-      <MemoryRouter>
-        <LambdaApiProvider api={api}>
-          <ScriptSessionProvider>
-            <SessionHarness />
-          </ScriptSessionProvider>
-        </LambdaApiProvider>
-      </MemoryRouter>,
+      <LambdaApiProvider api={api}>
+        <ScriptSessionProvider>
+          <SessionHarness />
+        </ScriptSessionProvider>
+      </LambdaApiProvider>,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Open' }));
@@ -115,13 +110,11 @@ Typeface: Courier Prime
     api.readFile = vi.fn(async () => 'INT. KITCHEN - DAY\n');
 
     render(
-      <MemoryRouter>
-        <LambdaApiProvider api={api}>
-          <ScriptSessionProvider>
-            <SessionHarness />
-          </ScriptSessionProvider>
-        </LambdaApiProvider>
-      </MemoryRouter>,
+      <LambdaApiProvider api={api}>
+        <ScriptSessionProvider>
+          <SessionHarness />
+        </ScriptSessionProvider>
+      </LambdaApiProvider>,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Open' }));
@@ -171,13 +164,11 @@ Typeface: Courier Prime
     }
 
     render(
-      <MemoryRouter>
-        <LambdaApiProvider api={api}>
-          <ScriptSessionProvider>
-            <ExportSettingsHarness />
-          </ScriptSessionProvider>
-        </LambdaApiProvider>
-      </MemoryRouter>,
+      <LambdaApiProvider api={api}>
+        <ScriptSessionProvider>
+          <ExportSettingsHarness />
+        </ScriptSessionProvider>
+      </LambdaApiProvider>,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Open' }));
@@ -226,13 +217,11 @@ Typeface: Courier Prime
     }
 
     render(
-      <MemoryRouter>
-        <LambdaApiProvider api={api}>
-          <ScriptSessionProvider>
-            <ExportHarness />
-          </ScriptSessionProvider>
-        </LambdaApiProvider>
-      </MemoryRouter>,
+      <LambdaApiProvider api={api}>
+        <ScriptSessionProvider>
+          <ExportHarness />
+        </ScriptSessionProvider>
+      </LambdaApiProvider>,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Open' }));

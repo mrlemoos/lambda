@@ -23,8 +23,6 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { useLocation } from 'react-router-dom';
-
 import { useLambdaApi } from '@lambda/lambda-api';
 
 type EditorZoomContextValue = {
@@ -41,17 +39,18 @@ const EditorZoomContext = createContext<EditorZoomContextValue | null>(null);
 
 export type EditorZoomProviderProps = {
   children: ReactNode;
+  pathname?: string;
   storage?: Pick<Storage, 'getItem' | 'setItem'>;
 };
 
 export function EditorZoomProvider({
   children,
+  pathname = '/',
   storage = getEditorZoomStorage(),
 }: EditorZoomProviderProps) {
   const api = useLambdaApi();
-  const location = useLocation();
   const [level, setLevel] = useState(() => readStoredEditorZoom(storage));
-  const canAdjust = location.pathname === '/script';
+  const canAdjust = pathname === '/script';
 
   const applyAction = useCallback(
     (action: EditorZoomAction) => {

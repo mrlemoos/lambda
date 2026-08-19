@@ -24,6 +24,10 @@ import { Transition } from './transitionExtension';
 
 const EDITOR_RUNTIME_MARKER = 'lambda-editor-classify-v3';
 
+export function isDevRuntime(env: { DEV?: boolean } | undefined): boolean {
+  return env?.DEV === true;
+}
+
 export function getEditorRuntimeMarker(): string {
   return EDITOR_RUNTIME_MARKER;
 }
@@ -75,7 +79,7 @@ export function createScriptEditor(
 
 export function useScriptEditor(initialContent?: JSONContent): Editor | null {
   const extensions = useMemo(() => {
-    if (import.meta.env.DEV) {
+    if (isDevRuntime(import.meta.env)) {
       const names = createScriptEditorExtensions().map(
         (extension) => extension.name,
       );

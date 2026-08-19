@@ -20,7 +20,6 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import type { ScriptLibraryEntry } from '@lambda/lambda-api';
 import {
@@ -102,10 +101,17 @@ function fileNameFromPath(filePath: string | null): string {
   return filePath?.split(/[/\\]/).pop() || 'Untitled';
 }
 
-export function ScriptSessionProvider({ children }: { children: ReactNode }) {
+export type NavigateFn = (path: string) => void;
+
+export function ScriptSessionProvider({
+  children,
+  navigate = () => undefined,
+}: {
+  children: ReactNode;
+  navigate?: NavigateFn;
+}) {
   const api = useLambdaApi();
   const persistence = api.scriptPersistence;
-  const navigate = useNavigate();
   const [script, setScript] = useState<FountainScript | null>(null);
   const [editorSessionKey, setEditorSessionKey] = useState(0);
   const [titlePageDialogOpen, setTitlePageDialogOpen] = useState(false);

@@ -1,5 +1,4 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 import { EditorZoomProvider } from '@lambda/editor-zoom';
@@ -27,19 +26,17 @@ function renderToolbar(props: {
   };
 
   return render(
-    <MemoryRouter initialEntries={['/script']}>
-      <LambdaApiProvider api={api}>
-        <EditorZoomProvider>
-          <ScriptToolbar
-            fileName={props.fileName}
-            dirty={props.dirty}
-            onBack={onBack}
-            onTitlePage={props.onTitlePage}
-            onPreview={props.onPreview}
-          />
-        </EditorZoomProvider>
-      </LambdaApiProvider>
-    </MemoryRouter>,
+    <LambdaApiProvider api={api}>
+      <EditorZoomProvider>
+        <ScriptToolbar
+          fileName={props.fileName}
+          dirty={props.dirty}
+          onBack={onBack}
+          onTitlePage={props.onTitlePage}
+          onPreview={props.onPreview}
+        />
+      </EditorZoomProvider>
+    </LambdaApiProvider>,
   );
 }
 

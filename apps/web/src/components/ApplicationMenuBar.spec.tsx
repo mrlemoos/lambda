@@ -1,5 +1,4 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LambdaApi } from '@lambda/lambda-api';
@@ -7,20 +6,18 @@ import { EditorZoomProvider } from '@lambda/editor-zoom';
 import { LambdaApiProvider } from '@lambda/lambda-api';
 import { ScriptSessionProvider } from '@lambda/script-session';
 
-import { ApplicationMenuBar } from './ApplicationMenuBar.js';
 import { browserLambdaApi } from '../lib/browserLambdaApi.js';
+import { ApplicationMenuBar } from './ApplicationMenuBar.js';
 
-function renderMenuBar(initialPath = '/') {
+function renderMenuBar(pathname = '/') {
   return render(
-    <MemoryRouter initialEntries={[initialPath]}>
-      <LambdaApiProvider api={browserLambdaApi as LambdaApi}>
-        <EditorZoomProvider>
-          <ScriptSessionProvider>
-            <ApplicationMenuBar />
-          </ScriptSessionProvider>
-        </EditorZoomProvider>
-      </LambdaApiProvider>
-    </MemoryRouter>,
+    <LambdaApiProvider api={browserLambdaApi as LambdaApi}>
+      <EditorZoomProvider pathname={pathname}>
+        <ScriptSessionProvider>
+          <ApplicationMenuBar />
+        </ScriptSessionProvider>
+      </EditorZoomProvider>
+    </LambdaApiProvider>,
   );
 }
 

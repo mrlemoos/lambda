@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 import { ScriptPage } from './ScriptPage.js';
@@ -44,11 +43,7 @@ vi.mock('@lambda/script-session', () => ({
 
 describe('ScriptPage', () => {
   it('renders the script workspace when a script is open', () => {
-    render(
-      <MemoryRouter>
-        <ScriptPage />
-      </MemoryRouter>,
-    );
+    render(<ScriptPage />);
 
     const result = screen.getByText('Toolbar');
 

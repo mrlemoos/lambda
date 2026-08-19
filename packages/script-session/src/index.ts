@@ -1,6 +1,7 @@
 export {
   ScriptSessionProvider,
   useScriptSession,
+  type NavigateFn,
   type UnsavedChoice,
 } from './session/ScriptSessionContext.js';
 export { formatWindowTitle } from './lib/formatWindowTitle.js';

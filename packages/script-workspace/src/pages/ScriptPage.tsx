@@ -1,5 +1,5 @@
 import { ScriptEditorSurface } from '@lambda/editor';
-import { Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 import { EditorZoomSurface, useEditorZoom } from '@lambda/editor-zoom';
 import { useScriptSession } from '@lambda/script-session';
@@ -21,8 +21,14 @@ export function ScriptPage() {
   } = useScriptSession();
   const { level } = useEditorZoom();
 
+  useEffect(() => {
+    if (!script) {
+      window.location.replace('/');
+    }
+  }, [script]);
+
   if (!script) {
-    return <Navigate to="/" replace />;
+    return null;
   }
 
   return (

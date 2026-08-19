@@ -1,7 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import App from './App.js';
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+  usePathname: () => '/',
+}));
 
 vi.mock('../lib/browserLambdaApi.js', () => ({
   browserLambdaApi: {
@@ -18,12 +21,19 @@ vi.mock('../lib/browserLambdaApi.js', () => ({
   },
 }));
 
-describe('App', () => {
-  it('renders the welcome screen', () => {
-    render(<App />);
+describe('WritingProviders', () => {
+  it('renders application chrome around the page', async () => {
+    const { WritingProviders } = await import('./WritingProviders.js');
+
+    render(
+      <WritingProviders>
+        <h1>Lambda</h1>
+      </WritingProviders>,
+    );
 
     const result = screen.getByRole('heading', { name: 'Lambda' });
 
     expect(result).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'File' })).toBeInTheDocument();
   });
 });
