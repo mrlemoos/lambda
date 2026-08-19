@@ -1,7 +1,7 @@
 'use client';
 
 import { createLambdaAuthClient } from '@lambda/auth';
-import { LiquidMetalButton } from '@lambda/design-system';
+import { Input, Label, LiquidMetalButton } from '@lambda/design-system';
 import { Form, FormField, useForm } from '@lambda/form';
 import { z } from 'zod';
 
@@ -23,7 +23,7 @@ export function SignInForm({
 
   return (
     <Form
-      className="auth-form"
+      className="mx-auto flex min-h-svh max-w-sm flex-col justify-center gap-4 p-8"
       form={form}
       onSubmit={async (values) => {
         await authClient.signIn.email({
@@ -36,9 +36,9 @@ export function SignInForm({
       <h1 className="ui-heading">Sign in</h1>
       <FormField name="email">
         {(field) => (
-          <label className="auth-form-field">
+          <Label>
             Email
-            <input
+            <Input
               type="email"
               autoComplete="email"
               name={field.name}
@@ -48,14 +48,14 @@ export function SignInForm({
               ref={field.ref}
             />
             {field.error ? <span role="alert">{field.error}</span> : null}
-          </label>
+          </Label>
         )}
       </FormField>
       <FormField name="password">
         {(field) => (
-          <label className="auth-form-field">
+          <Label>
             Password
-            <input
+            <Input
               type="password"
               autoComplete="current-password"
               name={field.name}
@@ -65,7 +65,7 @@ export function SignInForm({
               ref={field.ref}
             />
             {field.error ? <span role="alert">{field.error}</span> : null}
-          </label>
+          </Label>
         )}
       </FormField>
       <LiquidMetalButton type="submit">Sign in</LiquidMetalButton>
