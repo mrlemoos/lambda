@@ -34,6 +34,14 @@ describe('ApplicationMenuBar', () => {
     expect(screen.getByRole('button', { name: 'View' })).toBeInTheDocument();
   });
 
+  it('uses a transparent fill on the menu bar', () => {
+    renderMenuBar();
+
+    const result = screen.getByRole('navigation', { name: 'Application menu' });
+
+    expect(result).toHaveClass('application-menu-bar', 'bg-transparent');
+  });
+
   it('dispatches a new file command from the File menu', () => {
     renderMenuBar();
 

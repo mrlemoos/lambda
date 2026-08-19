@@ -132,8 +132,11 @@ export function ApplicationMenuBar() {
   };
 
   return (
-    <nav className="application-menu-bar" aria-label="Application menu">
-      <div className="application-menu-bar-leading">
+    <nav
+      className="application-menu-bar sticky top-0 z-10 flex items-center justify-between gap-3 bg-transparent px-3 py-[0.35rem]"
+      aria-label="Application menu"
+    >
+      <div className="flex gap-1">
         <MenuDropdown label="File">
           {FILE_MENU_ITEMS.map((item, index) => {
             if ('type' in item) {
