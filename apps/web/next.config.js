@@ -40,6 +40,7 @@ function loadE2eFixtures() {
  */
 const nextConfig = {
   nx: {},
+  distDir: process.env.LAMBDA_VERIFY_DIST_DIR || '.next',
   eslint: {
     ignoreDuringBuilds: true,
   },
