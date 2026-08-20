@@ -1,0 +1,19 @@
+export function LambdaIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 1024 1024"
+      width={48}
+      height={48}
+      role="img"
+      aria-label="Lambda"
+    >
+      <rect x="80" y="80" width="864" height="864" rx="212" fill="#1A1E28" />
+      <path
+        d="M360 300h304l-34 80h-108l117 355h-92l-88-269-112 269h-92l146-355h-75z"
+        fill="#F8FAFF"
+      />
+      <rect x="606" y="348" width="70" height="70" rx="18" fill="#34E4FF" />
+    </svg>
+  );
+}
