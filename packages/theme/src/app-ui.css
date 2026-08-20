@@ -227,6 +227,8 @@
   font-weight: 600;
   line-height: 1;
   cursor: pointer;
+  background: var(--lm-fill);
+  border-color: color-mix(in oklch, var(--foreground) 16%, transparent);
 }
 
 .lm-button-pill {
@@ -249,7 +251,7 @@
   border-color: color-mix(in oklch, var(--foreground) 16%, transparent);
 }
 
-.lm-button,
+.lm-button:focus,
 .lm-field:focus-within {
   background:
     linear-gradient(var(--lm-fill), var(--lm-fill)) padding-box,
@@ -271,6 +273,7 @@
   animation: lm-spin 3.2s linear infinite;
 }
 
+.lm-button:focus,
 .lm-field:focus-within {
   border-color: transparent;
 }
@@ -278,7 +281,7 @@
 .lm-field input {
   flex: 1;
   min-width: 0;
-  width: 100%;
+  width: auto;
   box-sizing: border-box;
   border: 0;
   outline: none;
@@ -317,7 +320,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lm-button,
+  .lm-button:focus,
   .lm-field:focus-within {
     animation: none;
   }

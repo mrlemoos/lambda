@@ -20,6 +20,21 @@ describe('liquid-metal chrome', () => {
     expect(result).toMatch(/\.lm-button[\s\S]*animation:\s*lm-spin/);
   });
 
+  it('shows the spinning metal rim on buttons only while focused', () => {
+    const css = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), 'app-ui.css'),
+      'utf8',
+    );
+
+    const result = css;
+
+    expect(result).toMatch(
+      /\.lm-button:focus\s*,\s*\.lm-field:focus-within[\s\S]{0,800}animation:\s*lm-spin/,
+    );
+    expect(result).toMatch(/\.lm-button:focus[\s\S]{0,2500}conic-gradient/);
+    expect(result).not.toMatch(/\.lm-button,\s*\.lm-field:focus-within/);
+  });
+
   it('shows the spinning metal rim on fields only while focused', () => {
     const css = readFileSync(
       join(dirname(fileURLToPath(import.meta.url)), 'app-ui.css'),
@@ -29,10 +44,10 @@ describe('liquid-metal chrome', () => {
     const result = css;
 
     expect(result).toMatch(
-      /\.lm-field:focus-within[\s\S]{0,500}animation:\s*lm-spin/,
+      /\.lm-field:focus-within[\s\S]{0,2500}animation:\s*lm-spin/,
     );
     expect(result).toMatch(
-      /\.lm-field:focus-within[\s\S]{0,500}conic-gradient/,
+      /\.lm-field:focus-within[\s\S]{0,2500}conic-gradient/,
     );
     expect(result.match(/\.lm-field \{[^}]+\}/)?.[0] ?? '').not.toContain(
       'animation:',
