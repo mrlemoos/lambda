@@ -4,7 +4,7 @@ import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { getElectronPrintPageSize } from '@lambda/print';
-import type { ExportPdfOptions } from '@lambda/shell';
+import type { ExportPdfOptions } from '@lambda/lambda-api';
 
 import {
   BrowserWindow,
@@ -23,7 +23,7 @@ import {
 import { resolveLambdaWebOrigin } from '../lib/resolveLambdaWebOrigin.js';
 import { resolveWindowBackgroundColor } from '../lib/windowBackground.js';
 import { createApplicationMenuTemplate } from './menu.js';
-import type { FileCommand } from '@lambda/shell';
+import type { FileCommand } from '@lambda/lambda-api';
 
 const mainDir = fileURLToPath(new URL('.', import.meta.url));
 

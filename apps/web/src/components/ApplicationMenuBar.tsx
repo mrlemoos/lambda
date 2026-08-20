@@ -3,11 +3,10 @@ import {
   FILE_MENU_ITEMS,
   formatPlatformShortcut,
   matchesAccelerator,
-  useEditorZoom,
   VIEW_MENU_ITEMS,
-  type FileCommand,
-  type ViewCommand,
-} from '@lambda/shell';
+} from '@lambda/application-menu';
+import { useEditorZoom } from '@lambda/editor-zoom';
+import type { FileCommand, ViewCommand } from '@lambda/lambda-api';
 import { useScriptEditorCommands } from '@lambda/editor';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
@@ -143,6 +142,7 @@ export function ApplicationMenuBar() {
                   key={`separator-${index}`}
                   className="application-menu-separator"
                   role="separator"
+                  aria-hidden="true"
                 />
               );
             }
@@ -189,6 +189,7 @@ export function ApplicationMenuBar() {
                   <div
                     className="application-menu-separator"
                     role="separator"
+                    aria-hidden="true"
                   />
                 ) : null}
               </li>
@@ -203,6 +204,7 @@ export function ApplicationMenuBar() {
                   key={`view-separator-${index}`}
                   className="application-menu-separator"
                   role="separator"
+                  aria-hidden="true"
                 />
               );
             }

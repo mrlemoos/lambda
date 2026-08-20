@@ -4,6 +4,10 @@
     "fontsource",
     "iconset",
     "libpeerconnection",
+    "Nunito",
+    "oklch",
+    "oxfmt",
+    "oxlint",
     "runde",
     "Slugline",
     "testem",
@@ -12,5 +16,6 @@
     "vite",
     "vitest",
     "worktrees"
-  ]
+  ],
+  "oxc.enable.oxfmt": false
 }

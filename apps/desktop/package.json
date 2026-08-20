@@ -7,14 +7,17 @@
     "generate-icons": "python3 scripts/generate-icons.py"
   },
   "dependencies": {
+    "@lambda/application-menu": "workspace:*",
     "@lambda/editor": "workspace:*",
     "@lambda/fountain": "workspace:*",
+    "@lambda/lambda-api": "workspace:*",
     "@lambda/print": "workspace:*",
-    "@lambda/shell": "workspace:*",
     "@lambda/theme": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
     "electron": "^42.3.3",
     "electron-vite": "^5.0.0",
     "tailwindcss": "^4.1.13"

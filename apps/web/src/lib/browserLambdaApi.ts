@@ -3,7 +3,7 @@ import type {
   FileCommand,
   LambdaApi,
   ViewCommand,
-} from '@lambda/shell';
+} from '@lambda/lambda-api';
 import { printPreview } from '@lambda/print';
 
 import { createWebScriptLibraryPersistence } from './scriptLibrary/index.js';

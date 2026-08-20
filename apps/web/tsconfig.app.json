@@ -45,16 +45,52 @@
   ],
   "references": [
     {
+      "path": "../../packages/welcome/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/theme/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/shell/tsconfig.lib.json"
+      "path": "../../packages/script-workspace/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/script-session/tsconfig.lib.json"
     },
     {
       "path": "../../packages/print/tsconfig.lib.json"
     },
     {
+      "path": "../../packages/preview-workspace/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/lambda-api/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/fountain/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/form/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/editor-zoom/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/editor/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/design-system/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/command-palette/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/auth-forms/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/auth/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/application-menu/tsconfig.lib.json"
     }
   ]
 }

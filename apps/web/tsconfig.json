@@ -31,16 +31,52 @@
   ],
   "references": [
     {
+      "path": "../../packages/welcome"
+    },
+    {
       "path": "../../packages/theme"
     },
     {
-      "path": "../../packages/shell"
+      "path": "../../packages/script-workspace"
+    },
+    {
+      "path": "../../packages/script-session"
     },
     {
       "path": "../../packages/print"
     },
     {
+      "path": "../../packages/preview-workspace"
+    },
+    {
+      "path": "../../packages/lambda-api"
+    },
+    {
+      "path": "../../packages/fountain"
+    },
+    {
+      "path": "../../packages/form"
+    },
+    {
+      "path": "../../packages/editor-zoom"
+    },
+    {
       "path": "../../packages/editor"
+    },
+    {
+      "path": "../../packages/design-system"
+    },
+    {
+      "path": "../../packages/command-palette"
+    },
+    {
+      "path": "../../packages/auth-forms"
+    },
+    {
+      "path": "../../packages/auth"
+    },
+    {
+      "path": "../../packages/application-menu"
     },
     {
       "path": "./tsconfig.app.json"

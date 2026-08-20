@@ -4,7 +4,7 @@ import type {
   LambdaApi,
   LambdaPlatform,
   ViewCommand,
-} from '@lambda/shell';
+} from '@lambda/lambda-api';
 
 export type {
   ExportPdfOptions,

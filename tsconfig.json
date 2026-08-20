@@ -16,9 +16,6 @@
       "path": "./apps/desktop"
     },
     {
-      "path": "./packages/shell"
-    },
-    {
       "path": "./apps/web"
     },
     {
@@ -26,6 +23,42 @@
     },
     {
       "path": "./packages/print"
+    },
+    {
+      "path": "./packages/auth"
+    },
+    {
+      "path": "./packages/auth-forms"
+    },
+    {
+      "path": "./packages/form"
+    },
+    {
+      "path": "./packages/design-system"
+    },
+    {
+      "path": "./packages/lambda-api"
+    },
+    {
+      "path": "./packages/script-session"
+    },
+    {
+      "path": "./packages/editor-zoom"
+    },
+    {
+      "path": "./packages/welcome"
+    },
+    {
+      "path": "./packages/script-workspace"
+    },
+    {
+      "path": "./packages/preview-workspace"
+    },
+    {
+      "path": "./packages/command-palette"
+    },
+    {
+      "path": "./packages/application-menu"
     }
   ]
 }

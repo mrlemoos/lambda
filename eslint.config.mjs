@@ -24,7 +24,20 @@ export default [
         {
           enforceBuildableLibDependency: true,
           allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
-          depConstraints: [{ sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }],
+          depConstraints: [
+            {
+              sourceTag: 'pkg:auth',
+              notDependOnLibsWithTags: [
+                'pkg:auth-forms',
+                'pkg:design-system',
+                'type:feature',
+              ],
+            },
+            {
+              sourceTag: '*',
+              onlyDependOnLibsWithTags: ['*'],
+            },
+          ],
         },
       ],
     },

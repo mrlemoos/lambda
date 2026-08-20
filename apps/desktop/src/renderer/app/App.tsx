@@ -1,32 +1,9 @@
-import { HashRouter } from 'react-router-dom';
-import {
-  EditorZoomProvider,
-  LambdaApiProvider,
-  ScriptSessionProvider,
-  ShellRoutes,
-  useScriptSession,
-  WindowDragRegion,
-} from '@lambda/shell';
-
-function ScriptWindowDragRegion() {
-  const { fileName, script } = useScriptSession();
-
-  return <WindowDragRegion fileName={script ? fileName : null} />;
-}
-
+/**
+ * Desktop does not compose the writing UI. Electron loadURLs Lambda Web
+ * (ADR 0010). This renderer entry exists only for electron-vite.
+ */
 export function App() {
-  return (
-    <HashRouter>
-      <LambdaApiProvider api={window.lambda}>
-        <EditorZoomProvider>
-          <ScriptSessionProvider>
-            <ScriptWindowDragRegion />
-            <ShellRoutes />
-          </ScriptSessionProvider>
-        </EditorZoomProvider>
-      </LambdaApiProvider>
-    </HashRouter>
-  );
+  return null;
 }
 
 export default App;
