@@ -111,17 +111,20 @@ Screenplay typefaces and preview sheet canvas stay with editor/print; they do no
 - Title page metadata is edited via the Title Page dialog, not inline Fountain key lines in the editor.
 - Fountain force prefixes (`!`, `@`, `>`, `.`, `~`, etc.) must not appear in preview or PDF output.
 - Preview workspace should show white script sheets on the light grey editor canvas (`#e8e8ec`), regardless of system dark mode.
+- **Account** gates writing: online with no session shows the sign-in wall (email/password only; no OAuth). First-run offline (never signed in on this client) may write; after any successful sign-in that exception is gone. Welcome copy must not claim that nothing leaves the machine.
+- Feature packages must not import `next` or `react-router-dom`. Inject `Link` / `navigate` at the Next composition root.
+- The application menu bar belongs on the script/editor page only, not on auth screens.
 
 ## Learned Workspace Facts
 
-- `apps/web` is **Lambda Web** (Next.js, ADR 0009) on port **4300**. `apps/desktop` is a thin Electron window that `loadURL`s that origin (`http://localhost:4300` unpackaged; `LAMBDA_WEB_ORIGIN` when packaged) and caches it in `persist:lambda-web` (ADR 0010). **Do not ship the Next.js build inside the macOS app.**
+- `apps/web` is **Lambda Web** (Next.js, ADR 0009) on port **4300**. `apps/desktop` is a thin Electron window that `loadURL`s that origin (`http://localhost:4300` unpackaged; `LAMBDA_WEB_ORIGIN` when packaged) and caches it in `persist:lambda-web` (ADR 0010). Deny off-origin `will-navigate` / `window.open`. **Do not ship the Next.js build inside the macOS app.**
 - `@lambda/desktop` dev unsets `ELECTRON_RUN_AS_NODE` in its Nx command; Electron startup fails if this env var is set in the shell.
 - `apps/web` deploys to **Vercel** (Next.js). Cloudflare Pages / wrangler for web is withdrawn (ADR 0009).
-- Playwright e2e lives in `@lambda/web-e2e`; bootstrap routes and APIs are gated with `NEXT_PUBLIC_E2E=1` (or `VITE_E2E=1`) and excluded from production builds.
+- Playwright e2e lives in `@lambda/web-e2e`; bootstrap routes and APIs are gated with `NEXT_PUBLIC_E2E=1` (or `VITE_E2E=1`) and excluded from production builds. E2E may bypass the Account sign-in wall when that flag is set.
+- Workspace TypeScript `customConditions` is `@lambda/source` (not `@org/source`); library `exports` maps should include `@lambda/source` to source and `types`/`import` to built `dist`.
 - `@lambda/print` owns preview/PDF sheet assembly; `@lambda/editor` owns pagination (ADR 0005).
 - Script session `pageFormat` and `typeface` drive editor metrics, preview, and export; defaults load from Slugline Document Settings in the `.fountain` file.
 - Preview renders at 100% canonical layout; editor zoom does not carry over (ADR 0003/0005).
-- Desktop PDF export may still use Electron `printToPDF` on the loaded **Lambda Web** contents; the in-page path is `window.print()` with print `@page` CSS.
 - Import `@lambda/print/styles.css` from the app composition root (or `@lambda/theme`) so Tailwind emits preview/print utilities; component-only CSS imports do not reach the app bundle.
 - `(CONT'D)` and `(MORE)` are display-only enrichments from two-pass pagination (`paginate` → `enrichBlocks` → `paginate`); strip stale `(CONT'D)` from authored character cues before re-applying rules.
 - Scene-continuity `(CONT'D)` applies only when the same character returns after non-empty action with no other speaker in between (per `CONTEXT.md`).
