@@ -37,4 +37,13 @@ describe('LiquidMetalButton', () => {
     expect(result).toHaveClass('lm-button-circle');
     expect(result.className).not.toMatch(/ui-button/);
   });
+
+  it('forwards autofocus to the button element', () => {
+    // oxlint-disable-next-line jsx-a11y/no-autofocus -- verifies prop forwarding
+    render(<LiquidMetalButton autoFocus>Save</LiquidMetalButton>);
+
+    const result = screen.getByRole('button', { name: 'Save' });
+
+    expect(result).toHaveFocus();
+  });
 });

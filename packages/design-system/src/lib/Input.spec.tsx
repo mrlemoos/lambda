@@ -14,4 +14,19 @@ describe('Input', () => {
     expect(result).toHaveAttribute('data-slot', 'input');
     expect(result.closest('[data-slot="input-field"]')).not.toBeNull();
   });
+
+  it('renders an end control inside the chrome field', () => {
+    render(
+      <Input aria-label="Password">
+        <button type="button" aria-label="Show password" />
+      </Input>,
+    );
+
+    const field = screen.getByLabelText('Password').closest('.lm-field');
+    const result = field?.contains(
+      screen.getByRole('button', { name: 'Show password' }),
+    );
+
+    expect(result).toBe(true);
+  });
 });
