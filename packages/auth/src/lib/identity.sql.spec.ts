@@ -24,4 +24,20 @@ describe('identity SQL', () => {
     expect(result).toContain('email_verified');
     expect(result).toContain('REFERENCES "public"."user"("id")');
   });
+
+  it('backfills the issuer before requiring it', () => {
+    const result = readFileSync(
+      join(
+        dirname(fileURLToPath(import.meta.url)),
+        '../../drizzle/0001_add_account_issuer.sql',
+      ),
+      'utf8',
+    );
+
+    expect(result).toContain('ADD COLUMN "issuer" text');
+    expect(result).toContain(
+      'UPDATE "account" SET "issuer" = \'local:credential\'',
+    );
+    expect(result).toContain('ALTER COLUMN "issuer" SET NOT NULL');
+  });
 });

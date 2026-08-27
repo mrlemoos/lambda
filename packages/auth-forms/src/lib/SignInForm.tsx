@@ -33,10 +33,16 @@ export function SignInForm({
         className="flex w-full max-w-sm flex-col justify-center gap-4"
         form={form}
         onSubmit={async (values) => {
-          await authClient.signIn.email({
+          const result = await authClient.signIn.email({
             email: values.email,
             password: values.password,
           });
+
+          if (result.error) {
+            form.setError('root', { message: result.error.message });
+            return;
+          }
+
           onSignedIn?.();
         }}
       >
@@ -71,6 +77,11 @@ export function SignInForm({
             />
           )}
         </FormField>
+        {form.formState.errors.root?.message ? (
+          <p className="ui-alert ui-alert-error" role="alert">
+            {form.formState.errors.root.message}
+          </p>
+        ) : null}
         {/* oxlint-disable-next-line jsx-a11y/no-autofocus -- primary action on auth screen */}
         <LiquidMetalButton type="submit" autoFocus>
           Sign in

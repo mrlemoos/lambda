@@ -10,4 +10,15 @@ describe('createLambdaAuthClient', () => {
     expect(result.signUp).toBeDefined();
     expect(result.signOut).toBeDefined();
   });
+
+  it('shares one client between auth consumers', () => {
+    // Arrange
+    const firstClient = createLambdaAuthClient();
+
+    // Act
+    const secondClient = createLambdaAuthClient();
+
+    // Assert
+    expect(secondClient).toBe(firstClient);
+  });
 });

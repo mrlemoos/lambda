@@ -8,7 +8,7 @@ import { SignUpForm } from './SignUpForm.js';
 describe('SignUpForm', () => {
   it('submits name, email, and password to the auth client', async () => {
     const user = userEvent.setup();
-    const signUpEmail = vi.fn(async () => undefined);
+    const signUpEmail = vi.fn(async () => ({ error: null }));
     const authClient = {
       signUp: { email: signUpEmail },
     } as unknown as Parameters<typeof SignUpForm>[0]['authClient'];
@@ -25,6 +25,33 @@ describe('SignUpForm', () => {
       email: 'ada@example.com',
       password: 'correct horse',
     });
+  });
+
+  it('keeps the user on the form when account creation is rejected', async () => {
+    // Arrange
+    const user = userEvent.setup();
+    const onSignedUp = vi.fn();
+    const authClient = {
+      signUp: {
+        email: vi.fn(async () => ({
+          error: { message: 'Email is already in use' },
+        })),
+      },
+    } as unknown as Parameters<typeof SignUpForm>[0]['authClient'];
+
+    render(<SignUpForm authClient={authClient} onSignedUp={onSignedUp} />);
+    await user.type(screen.getByLabelText('Name'), 'Ada Lovelace');
+    await user.type(screen.getByLabelText('Email'), 'ada@example.com');
+    await user.type(screen.getByLabelText('Password'), 'correct horse');
+
+    // Act
+    await user.click(screen.getByRole('button', { name: 'Create account' }));
+
+    // Assert
+    expect(onSignedUp).not.toHaveBeenCalled();
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Email is already in use',
+    );
   });
 
   it('places the film crew illustration before the form', () => {

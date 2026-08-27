@@ -9,5 +9,6 @@ describe('account identity schema', () => {
     expect(result).toHaveLength(4);
     expect(user.email).toBeDefined();
     expect(session.token).toBeDefined();
+    expect(account.issuer).toBeDefined();
   });
 });

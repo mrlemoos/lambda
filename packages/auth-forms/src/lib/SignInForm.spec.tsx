@@ -8,7 +8,7 @@ import { SignInForm } from './SignInForm.js';
 describe('SignInForm', () => {
   it('submits email and password to the auth client', async () => {
     const user = userEvent.setup();
-    const signInEmail = vi.fn(async () => undefined);
+    const signInEmail = vi.fn(async () => ({ error: null }));
     const authClient = {
       signIn: { email: signInEmail },
     } as unknown as Parameters<typeof SignInForm>[0]['authClient'];
@@ -23,6 +23,32 @@ describe('SignInForm', () => {
       email: 'ada@example.com',
       password: 'correct horse',
     });
+  });
+
+  it('keeps the user on the form when credentials are rejected', async () => {
+    // Arrange
+    const user = userEvent.setup();
+    const onSignedIn = vi.fn();
+    const authClient = {
+      signIn: {
+        email: vi.fn(async () => ({
+          error: { message: 'Invalid email or password' },
+        })),
+      },
+    } as unknown as Parameters<typeof SignInForm>[0]['authClient'];
+
+    render(<SignInForm authClient={authClient} onSignedIn={onSignedIn} />);
+    await user.type(screen.getByLabelText('Email'), 'ada@example.com');
+    await user.type(screen.getByLabelText('Password'), 'wrong password');
+
+    // Act
+    await user.click(screen.getByRole('button', { name: 'Sign in' }));
+
+    // Assert
+    expect(onSignedIn).not.toHaveBeenCalled();
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Invalid email or password',
+    );
   });
 
   it('places the film crew illustration before the form', () => {
